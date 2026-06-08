@@ -3059,7 +3059,12 @@
     };
 
     // ---- BOOT THE GAME ----
-    document.addEventListener('DOMContentLoaded', initGame);
+    // The script is at the bottom of <body>, so DOM is already ready — call directly.
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initGame);
+    } else {
+      initGame();
+    }
   </script> 
 </body> 
 </html>
