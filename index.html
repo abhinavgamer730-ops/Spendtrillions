@@ -1380,7 +1380,7 @@
     }
 
     function renderLevelRules() {
-      const rule = LEVEL_RULES[selectedLevel];
+      const rule = LEVEL_RULES[selectedLevel] || LEVEL_RULES[1];
       const titleEl = document.getElementById('rules-title');
       const descEl = document.getElementById('rules-desc');
       if (titleEl) titleEl.innerText = rule.title;
@@ -2965,7 +2965,11 @@
     window.onload = function() {
       // Load progress
       try {
-        unlockedLevel = parseInt(localStorage.getItem('unlockedLevel')) || 1;
+        let val = parseInt(localStorage.getItem('unlockedLevel'));
+        if (isNaN(val) || val < 1 || val > 4) {
+          val = 1;
+        }
+        unlockedLevel = val;
       } catch (e) {
         console.warn("Failed to read progress from localStorage, defaulting to level 1:", e);
         unlockedLevel = 1;
@@ -2975,6 +2979,10 @@
       else if (selectedLevel === 2) selectedLevelCash = 500000000000;
       else if (selectedLevel === 3) selectedLevelCash = 1000000000000;
       else if (selectedLevel === 4) selectedLevelCash = 5000000000000;
+      else {
+        selectedLevel = 1;
+        selectedLevelCash = 100000000000;
+      }
 
       ITEMS.forEach(item => {
         if (item.invest) {
