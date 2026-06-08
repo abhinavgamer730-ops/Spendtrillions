@@ -2374,12 +2374,26 @@
       setTimeout(() => t.classList.remove('show'), 2000);
     }
 
-    // Fireworks particles and animation logic
-    let canvas = document.getElementById('fireworks');
-    let ctx = canvas.getContext('2d');
+    // Fireworks particles and animation logic (lazily initialized to prevent load-time crashes)
+    let canvas = null;
+    let ctx = null;
     let fireworksList = [];
     let particlesList = [];
     let animationId = null;
+
+    function initFireworks() {
+      if (!canvas) {
+        canvas = document.getElementById('fireworks');
+        if (canvas) {
+          try {
+            ctx = canvas.getContext('2d');
+          } catch (e) {
+            console.warn("Failed to get 2d context for fireworks canvas:", e);
+            ctx = null;
+          }
+        }
+      }
+    }
 
     function resizeCanvas() {
       if (canvas) {
@@ -2475,7 +2489,7 @@
     }
 
     function fireworksLoop() {
-      if (!canvas) return;
+      if (!canvas || !ctx) return;
       animationId = requestAnimationFrame(fireworksLoop);
       ctx.globalCompositeOperation = 'destination-out';
       ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
@@ -2537,6 +2551,7 @@
       }
       
       document.getElementById('celebration-screen').classList.add('active');
+      initFireworks();
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
       if (!animationId) {
@@ -2552,7 +2567,7 @@
         animationId = null;
       }
       window.removeEventListener('resize', resizeCanvas);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
       fireworksList = [];
       particlesList = [];
       window.clearAll();
@@ -2566,7 +2581,7 @@
         animationId = null;
       }
       window.removeEventListener('resize', resizeCanvas);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
       fireworksList = [];
       particlesList = [];
       
@@ -2962,7 +2977,7 @@
       }
     }
 
-    window.onload = function() {
+    function initGame() {
       // Load progress
       try {
         let val = parseInt(localStorage.getItem('unlockedLevel'));
