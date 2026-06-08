@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+﻿<!DOCTYPE html> 
 <html lang="en"> 
 <head> 
   <meta charset="UTF-8"> 
@@ -991,745 +991,486 @@
     };
   </script>
 
-  <script> 
-    // ---- CRITICAL: Hoist onclick handlers before any data that might cause errors ----
-    // These are declared as named functions so they are hoisted to the top of the script.
-    function selectLevelCard(lvl, amt, skipSound) {
-      try {
-        if (lvl > unlockedLevel) {
-          showToast('\uD83D\uDD12 Level ' + lvl + ' is locked! Clear the previous level first.');
-          return;
-        }
-        if (!skipSound) playSound('click');
-        selectedLevel = lvl;
-        selectedLevelCash = amt;
-        var selectorCards = document.querySelectorAll('.level-card-select');
-        for (var i = 0; i < selectorCards.length; i++) {
-          selectorCards[i].classList.remove('active');
-        }
-        var cardEl = document.getElementById('level-card-' + lvl);
-        if (cardEl) cardEl.classList.add('active');
-        if (typeof renderLevelRules === 'function') renderLevelRules();
-      } catch(e) { console.error('selectLevelCard error:', e); }
+  <script>
+    // ============================================================
+    // ALL GAME STATE VARIABLES
+    // ============================================================
+    var TOTAL = 1000000000000;
+    var cash = TOTAL;
+    var balance = TOTAL;
+    var spent = 0;
+    var purchases = {};
+    var activeFilter = 'all';
+    var qtyState = {};
+    var transactionLog = [];
+    var unlockedLevel = 1;
+    var selectedLevel = 1;
+    var selectedLevelCash = 100000000000;
+    var passiveIncomeEnabled = false;
+    var passiveIncomeInterval = null;
+    var passiveIncomeTimer = 45;
+    var investPrices = {};
+    var investTrends = {};
+    var isHacking = false;
+    var consecutiveBurns = 0;
+    var timerStarted = false;
+    var timerStopped = false;
+    var timerSeconds = 0;
+    var timerInterval = null;
+    var maxUnlockedHint = 1;
+    var activeHintIdx = 0;
+    var hintTimer = 30;
+    var hintInterval = null;
+    var selectedRating = 5;
+    var reviewsData = [];
+    var audioCtx = null;
+    var soundEnabled = true;
+    var canvas = null;
+    var ctx = null;
+    var fireworksList = [];
+    var particlesList = [];
+    var animationId = null;
+
+    // ============================================================
+    // SUPABASE (optional)
+    // ============================================================
+    var SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
+    var SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+    var supabase = null;
+    if (SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY_HERE') {
+      try { supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }
+      catch (err) { console.error('Supabase init failed', err); }
     }
-    window.selectLevelCard = selectLevelCard;
 
-    function startGame() {
-      try {
-        playSound('click');
-        TOTAL = selectedLevelCash;
-        var checkbox = document.getElementById('passive-income-checkbox');
-        passiveIncomeEnabled = checkbox ? checkbox.checked : false;
-        var overlayEl = document.getElementById('level-overlay');
-        if (overlayEl) overlayEl.classList.add('hide');
-        if (typeof window.clearAll === 'function') window.clearAll();
-      } catch(e) { console.error('startGame error:', e); }
-    }
-    window.startGame = startGame;
-
-    let TOTAL = 1000000000000; 
-    let cash = TOTAL;
-    let balance = TOTAL; // Net Worth (Cash + Portfolio)
-    let spent = 0; 
-    let purchases = {}; 
-    let activeFilter = 'all'; 
-    let qtyState = {};
-    let transactionLog = []; // Stores random event history for the receipt 
-    let unlockedLevel = 1;
- 
-    // Live asset price and trend tracker
-    let investPrices = {};
-    let investTrends = {};
- 
-    const ITEMS = [ 
-      { id:'coffee', cat:'everyday', emoji:'☕', name:'Premium Coffee', price:7 }, 
-      { id:'book', cat:'everyday', emoji:'📚', name:'Sci-Fi Book', price:15 },
-      { id:'pizza', cat:'everyday', emoji:'🍕', name:'Pizza Feast', price:18 }, 
-      { id:'ticket', cat:'everyday', emoji:'🎟️', name:'Movie Ticket & Popcorn', price:25 },
-      { id:'charity', cat:'everyday', emoji:'❤️', name:'Donate to Charity', price:100 },
-      { id:'guitar', cat:'everyday', emoji:'🎸', name:'Acoustic Guitar', price:850 }, 
-      { id:'sneakers', cat:'everyday', emoji:'👟', name:'Designer Sneakers', price:250 }, 
-      { id:'phone', cat:'everyday', emoji:'📱', name:'Smartphone Pro Max', price:1400 }, 
-      { id:'pc_setup', cat:'everyday', emoji:'🖥️', name:'Ultimate PC Setup', price:5500 }, 
-      { id:'figurines', cat:'everyday', emoji:'🧸', name:'Scale Figurine Set', price:1200 }, 
-      { id:'rolex', cat:'luxury', emoji:'⌚', name:'Rolex Daytona', price:45000 }, 
-      { id:'piano', cat:'luxury', emoji:'🎹', name:'Steinway Grand Piano', price:120000 },
-      { id:'jewelry', cat:'luxury', emoji:'💍', name:'Gold & Diamond Stock', price:250000 }, 
-      { id:'ferrari', cat:'luxury', emoji:'🏎', name:'Ferrari Hypercar', price:350000 }, 
-      { id:'sub', cat:'luxury', emoji:'🤿', name:'Deep-Sea Submarine', price:2500000 },
-      { id:'bitcoin', cat:'luxury', emoji:'🪙', name:'Bitcoin Portfolio', price:10000000, invest:true },
-      { id:'yacht', cat:'luxury', emoji:'⛵', name:'Mega Superyacht', price:150000000 }, 
-      { id:'castle', cat:'property', emoji:'🏰', name:'Scottish Castle', price:18000000 },
-      { id:'dubai_pent', cat:'property', emoji:'🏙️', name:'Dubai Penthouse', price:28000000 }, 
-      { id:'mansion', cat:'property', emoji:'🏰', name:'Luxury Villa', price:45000000 }, 
-      { id:'island', cat:'property', emoji:'🏝', name:'Private Island', price:150000000 }, 
-      { id:'skyscraper',cat:'property', emoji:'🏙', name:'City Skyscraper', price:850000000 }, 
-      { id:'space_station', cat:'property', emoji:'🛰️', name:'Orbital Space Station', price:35000000000 },
-      { id:'scorpio', cat:'transport', emoji:'🚙', name:'Scorpio N Z8T MT', price:30000 },
-      { id:'hoverboard', cat:'transport', emoji:'🛹', name:'Prototype Hoverboard', price:150000 },
-      { id:'hyperloop', cat:'transport', emoji:'🚊', name:'Hyperloop Pod', price:8000000 },
-      { id:'jet', cat:'transport', emoji:'✈️', name:'Private Jet', price:65000000 }, 
-      { id:'rocket', cat:'transport', emoji:'🚀', name:'SpaceX Rocket', price:150000000 }, 
-      { id:'cruise', cat:'transport', emoji:'🚢', name:'Cruise Liner', price:620000000 }, 
-      { id:'saree_empire', cat:'mega', emoji:'🥻', name:'Global Saree Empire', price:500000000 },
-      { id:'sip_calc', cat:'mega', emoji:'📈', name:'Infinite SIP Portfolio', price:1000000000, invest:true },
-      { id:'football_club', cat:'mega', emoji:'⚽', name:'Buy a Football Club', price:3500000000 },
-      { id:'gold_vault', cat:'mega', emoji:'🪙', name:'Massive Gold Vault', price:5000000000, invest:true },
-      { id:'ai_cluster', cat:'mega', emoji:'🧠', name:'AI Supercomputer', price:12000000000, invest:true },
-      { id:'nfl', cat:'mega', emoji:'🏈', name:'Buy an NFL Team', price:4000000000 }, 
-      { id:'twitter', cat:'mega', emoji:'🐦', name:'Buy Twitter X', price:44000000000, invest:true },
-      { id:'moon_base', cat:'mega', emoji:'🌑', name:'Lunar Colony Base', price:80000000000 },
-      { id:'dark_matter', cat:'mega', emoji:'🛸', name:'Dark Matter Propulsion Engine', price:120000000000 },
-      { id:'mars_terraform', cat:'mega', emoji:'🪐', name:'Mars Terraforming Project', price:180000000000 },
-      { id:'mind_upload', cat:'mega', emoji:'🧠', name:'Cybernetic Mind Upload Network', price:220000000000 },
-      { id:'dyson_swarm', cat:'mega', emoji:'🌌', name:'Dyson Swarm Array', price:250000000000 }
-    ]; 
-
-    const TICKER_HEADLINES = [
-      "ELON MUSK DEMANDS PAYOUT IN DOGECOIN...",
-      "AI INFLATION DECLARED UNSTOPPABLE BY TECH COGNIZANCE...",
-      "SPACEX ANNOUNCES TICKET PRICES TO MARS DECREASED BY 1.2%...",
-      "SAREE EMPIRE EXPANDS TO CYBER-NEO TOKYO...",
-      "SIP CALCULATORS REPORT HISTORIC RETURNS OF 18% APY...",
-      "GLOBAL GOLD RESERVE REPORTED SECURE IN DIGITAL VAULT...",
-      "LOCAL PC BUILDER DESIGNS A QUANTUM GRAPHICS CARD...",
-      "GLOBAL WARMING SOLVED BY A NEW SHIELD EMITTER...",
-      "TWITTER X INTRODUCES NEURAL-LINK DIRECT TWEETING..."
+    // ============================================================
+    // GAME DATA
+    // ============================================================
+    var ITEMS = [
+      { id:'coffee',        cat:'everyday',  emoji:'☕',  name:'Premium Coffee',                  price:7 },
+      { id:'book',          cat:'everyday',  emoji:'📚',  name:'Sci-Fi Book',                     price:15 },
+      { id:'pizza',         cat:'everyday',  emoji:'🍕',  name:'Pizza Feast',                     price:18 },
+      { id:'ticket',        cat:'everyday',  emoji:'🎟️', name:'Movie Ticket & Popcorn',           price:25 },
+      { id:'charity',       cat:'everyday',  emoji:'❤️', name:'Donate to Charity',                price:100 },
+      { id:'guitar',        cat:'everyday',  emoji:'🎸',  name:'Acoustic Guitar',                 price:850 },
+      { id:'sneakers',      cat:'everyday',  emoji:'👟',  name:'Designer Sneakers',               price:250 },
+      { id:'phone',         cat:'everyday',  emoji:'📱',  name:'Smartphone Pro Max',              price:1400 },
+      { id:'pc_setup',      cat:'everyday',  emoji:'🖥️', name:'Ultimate PC Setup',                price:5500 },
+      { id:'figurines',     cat:'everyday',  emoji:'🧸',  name:'Scale Figurine Set',              price:1200 },
+      { id:'rolex',         cat:'luxury',    emoji:'⌚',  name:'Rolex Daytona',                   price:45000 },
+      { id:'piano',         cat:'luxury',    emoji:'🎹',  name:'Steinway Grand Piano',            price:120000 },
+      { id:'jewelry',       cat:'luxury',    emoji:'💍',  name:'Gold & Diamond Stock',            price:250000 },
+      { id:'ferrari',       cat:'luxury',    emoji:'🏎',  name:'Ferrari Hypercar',                price:350000 },
+      { id:'sub',           cat:'luxury',    emoji:'🤿',  name:'Deep-Sea Submarine',              price:2500000 },
+      { id:'bitcoin',       cat:'luxury',    emoji:'🪙',  name:'Bitcoin Portfolio',               price:10000000,    invest:true },
+      { id:'yacht',         cat:'luxury',    emoji:'⛵',  name:'Mega Superyacht',                 price:150000000 },
+      { id:'castle',        cat:'property',  emoji:'🏰',  name:'Scottish Castle',                 price:18000000 },
+      { id:'dubai_pent',    cat:'property',  emoji:'🏙️', name:'Dubai Penthouse',                 price:28000000 },
+      { id:'mansion',       cat:'property',  emoji:'🏰',  name:'Luxury Villa',                   price:45000000 },
+      { id:'island',        cat:'property',  emoji:'🏝',  name:'Private Island',                 price:150000000 },
+      { id:'skyscraper',    cat:'property',  emoji:'🏙',  name:'City Skyscraper',                price:850000000 },
+      { id:'space_station', cat:'property',  emoji:'🛰️', name:'Orbital Space Station',           price:35000000000 },
+      { id:'scorpio',       cat:'transport', emoji:'🚙',  name:'Scorpio N Z8T MT',               price:30000 },
+      { id:'hoverboard',    cat:'transport', emoji:'🛹',  name:'Prototype Hoverboard',           price:150000 },
+      { id:'hyperloop',     cat:'transport', emoji:'🚊',  name:'Hyperloop Pod',                  price:8000000 },
+      { id:'jet',           cat:'transport', emoji:'✈️', name:'Private Jet',                     price:65000000 },
+      { id:'rocket',        cat:'transport', emoji:'🚀',  name:'SpaceX Rocket',                  price:150000000 },
+      { id:'cruise',        cat:'transport', emoji:'🚢',  name:'Cruise Liner',                   price:620000000 },
+      { id:'saree_empire',  cat:'mega',      emoji:'🥻',  name:'Global Saree Empire',            price:500000000 },
+      { id:'sip_calc',      cat:'mega',      emoji:'📈',  name:'Infinite SIP Portfolio',         price:1000000000,  invest:true },
+      { id:'football_club', cat:'mega',      emoji:'⚽',  name:'Buy a Football Club',            price:3500000000 },
+      { id:'gold_vault',    cat:'mega',      emoji:'🪙',  name:'Massive Gold Vault',             price:5000000000,  invest:true },
+      { id:'ai_cluster',    cat:'mega',      emoji:'🧠',  name:'AI Supercomputer',               price:12000000000, invest:true },
+      { id:'nfl',           cat:'mega',      emoji:'🏈',  name:'Buy an NFL Team',                price:4000000000 },
+      { id:'twitter',       cat:'mega',      emoji:'🐦',  name:'Buy Twitter X',                  price:44000000000, invest:true },
+      { id:'moon_base',     cat:'mega',      emoji:'🌑',  name:'Lunar Colony Base',              price:80000000000 },
+      { id:'dark_matter',   cat:'mega',      emoji:'🛸',  name:'Dark Matter Propulsion Engine',  price:120000000000 },
+      { id:'mars_terraform',cat:'mega',      emoji:'🪐',  name:'Mars Terraforming Project',      price:180000000000 },
+      { id:'mind_upload',   cat:'mega',      emoji:'🧠',  name:'Cybernetic Mind Upload Network', price:220000000000 },
+      { id:'dyson_swarm',   cat:'mega',      emoji:'🌌',  name:'Dyson Swarm Array',              price:250000000000 }
     ];
 
-    const EVENTS = [
-      {
-        title: "IRS Audit Fine",
-        effect: function() {
-          let fine = 30000000000; 
-          let actualLoss = liquidateForLoss(fine);
-          transactionLog.push({ emoji: '🚨', name: 'IRS Audit Fine', amount: -actualLoss });
-          showEventAlert("🚨 IRS Audit Fine", `The IRS audited you and fined you ${fmt(actualLoss)}!`, false);
-        }
-      },
-      {
-        title: "Crypto Crash",
-        effect: function() {
-          let oldPrice = investPrices['bitcoin'] || 10000000;
-          let crashed = Math.round(oldPrice * 0.4);
-          let loss = (purchases['bitcoin'] ? purchases['bitcoin'].qty : 0) * (oldPrice - crashed);
-          investPrices['bitcoin'] = crashed;
-          investTrends['bitcoin'] = -60;
-          if (loss > 0) transactionLog.push({ emoji: '📉', name: 'Bitcoin Crypto Crash (-60%)', amount: -loss });
-          else transactionLog.push({ emoji: '📉', name: 'Bitcoin Crypto Crash (-60%)', amount: 0 });
-          showEventAlert("📉 Crypto Crashed", `Meme coin speculation bubble burst. Bitcoin crashed by 60%!`, false);
-        }
-      },
-      {
-        title: "Biotech Fail",
-        effect: function() {
-          let loss = 15000000000; 
-          let actualLoss = liquidateForLoss(loss);
-          transactionLog.push({ emoji: '💥', name: 'Biotech Startup Fails', amount: -actualLoss });
-          showEventAlert("💥 Startup Fails", `Neural-link biotech failed clinical trials. Lost -${fmt(actualLoss)}.`, false);
-        }
-      },
-      {
-        title: "Space Crash Loss",
-        effect: function() {
-          let cost = 25000000000; 
-          let actualLoss = liquidateForLoss(cost);
-          transactionLog.push({ emoji: '🚀', name: 'Rocket Launch Failure', amount: -actualLoss });
-          showEventAlert("🚀 Rocket Launch Fails", `Uninsured SpaceX launch failed. Rebuilding rocket cost -${fmt(actualLoss)}.`, false);
-        }
-      },
-      {
-        title: "Billionaire Bash",
-        effect: function() {
-          let partyCost = 10000000000; 
-          let actualLoss = liquidateForLoss(partyCost);
-          transactionLog.push({ emoji: '🎉', name: 'Monaco Mega-Party', amount: -actualLoss });
-          showEventAlert("🎉 Monaco Mega-Party", `Spent -${fmt(actualLoss)} renting out Monaco for a weekend gala.`, false);
-        }
-      },
-      {
-        title: "Patent Royalties",
-        effect: function() {
-          let royalty = 5000000000; 
-          cash += royalty;
-          transactionLog.push({ emoji: '⚙️', name: 'Quantum Chip Patent Royalties', amount: royalty });
-          showEventAlert("⚙️ Patent Royalties", `Your quantum chip patent licensing paid out +${fmt(royalty)}.`, true);
-        }
-      },
-      {
-        title: "Saree Market Loss",
-        effect: function() {
-          let loss = 8000000000; 
-          let actualLoss = liquidateForLoss(loss);
-          transactionLog.push({ emoji: '🥻', name: 'Saree Cargo Ship Sinks', amount: -actualLoss });
-          showEventAlert("🥻 Saree Ship Sinks", `Cargo freighter carrying global saree stock sank in a storm. Lost -${fmt(actualLoss)}.`, false);
-        }
-      },
-      {
-        title: "Island Meteor",
-        effect: function() {
-          let cost = 12000000000; 
-          let actualLoss = liquidateForLoss(cost);
-          transactionLog.push({ emoji: '☄️', name: 'Asteroid Island Damage', amount: -actualLoss });
-          showEventAlert("☄️ Meteor Strikes Island", `Sustained -${fmt(actualLoss)} in rebuilding damages on your private island.`, false);
-        }
-      }
+    var TICKER_HEADLINES = [
+      'ELON MUSK DEMANDS PAYOUT IN DOGECOIN...',
+      'AI INFLATION DECLARED UNSTOPPABLE BY TECH COGNIZANCE...',
+      'SPACEX ANNOUNCES TICKET PRICES TO MARS DECREASED BY 1.2%...',
+      'SAREE EMPIRE EXPANDS TO CYBER-NEO TOKYO...',
+      'SIP CALCULATORS REPORT HISTORIC RETURNS OF 18% APY...',
+      'GLOBAL GOLD RESERVE REPORTED SECURE IN DIGITAL VAULT...',
+      'LOCAL PC BUILDER DESIGNS A QUANTUM GRAPHICS CARD...',
+      'GLOBAL WARMING SOLVED BY A NEW SHIELD EMITTER...',
+      'TWITTER X INTRODUCES NEURAL-LINK DIRECT TWEETING...'
     ];
 
-    function fmt(n) { 
-      if (n >= 1e12) return '$' + (n/1e12).toFixed(2) + 'T'; 
-      if (n >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B'; 
-      if (n >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M'; 
-      return '$' + n.toLocaleString(); 
-    } 
+    var LEVEL_RULES = {
+      1: { title: 'Level 1: Starter Loan 🍼',      desc: 'You start with <b>$100 Billion</b>. Perfect for learning the market and testing your speedrunning strategies. A quick, fun playground.' },
+      2: { title: 'Level 2: Billionaire Prep 💼',   desc: 'You start with <b>$500 Billion</b>. A moderate challenge. Balance luxury buys, Scorpio N fleets, and basic investments.' },
+      3: { title: 'Level 3: Trillionaire Grind 🏆', desc: 'You start with <b>$1.00 Trillion</b>. The classic simulator experience. Empty the digital vault and race against market fluctuations!' },
+      4: { title: 'Level 4: Tech Lord Mode 🚀',     desc: 'You start with <b>$5.00 Trillion</b>. The ultimate cyber challenge. Unlock trillion-dollar items and spend it all!' }
+    };
+
+    var HINTS = [
+      { emoji: '🏆', text: 'Buy Mega items first! One Lunar Colony Base drains $80 Billion instantly.' },
+      { emoji: '🚫', text: 'Avoid assets like Bitcoin or Twitter X! They can GROW your net worth.' },
+      { emoji: '🔢', text: 'Set quantity to 999 on cheap items to burn through cash fast.' },
+      { emoji: '⏱️', text: 'Speed tip: Filter by MEGA and spam-buy everything.' },
+      { emoji: '☄️', text: 'Random events strike every 35 seconds and drain billions!' },
+      { emoji: '⚡', text: 'The Auto-Liquidate system sells your investments automatically.' }
+    ];
+
+    var EVENTS = [
+      { title: 'IRS Audit Fine',    effect: function() { var loss = liquidateForLoss(30000000000);  transactionLog.push({ emoji:'🚨', name:'IRS Audit Fine', amount:-loss });            showEventAlert('🚨 IRS Audit Fine', 'The IRS audited you and fined you ' + fmt(loss) + '!', false); } },
+      { title: 'Crypto Crash',      effect: function() { var oldP = investPrices['bitcoin'] || 10000000; var cp = Math.round(oldP*0.4); var qty = purchases['bitcoin'] ? purchases['bitcoin'].qty : 0; var loss = qty*(oldP-cp); investPrices['bitcoin']=cp; investTrends['bitcoin']=-60; transactionLog.push({ emoji:'📉', name:'Bitcoin Crash (-60%)', amount:loss>0?-loss:0 }); showEventAlert('📉 Crypto Crashed', 'Bitcoin crashed by 60%!', false); } },
+      { title: 'Biotech Fail',      effect: function() { var loss = liquidateForLoss(15000000000);  transactionLog.push({ emoji:'💥', name:'Biotech Startup Fails', amount:-loss });       showEventAlert('💥 Startup Fails', 'Neural-link biotech failed. Lost -' + fmt(loss) + '.', false); } },
+      { title: 'Space Crash',       effect: function() { var loss = liquidateForLoss(25000000000);  transactionLog.push({ emoji:'🚀', name:'Rocket Launch Failure', amount:-loss });       showEventAlert('🚀 Rocket Fails', 'SpaceX launch failed. Cost -' + fmt(loss) + '.', false); } },
+      { title: 'Billionaire Bash',  effect: function() { var loss = liquidateForLoss(10000000000);  transactionLog.push({ emoji:'🎉', name:'Monaco Mega-Party', amount:-loss });           showEventAlert('🎉 Monaco Party', 'Spent -' + fmt(loss) + ' on a Monaco gala.', false); } },
+      { title: 'Patent Royalties',  effect: function() { cash += 5000000000; transactionLog.push({ emoji:'⚙️', name:'Quantum Chip Patent', amount:5000000000 }); showEventAlert('⚙️ Patent Royalties', 'Your patent paid out +' + fmt(5000000000) + '.', true); } },
+      { title: 'Saree Sink',        effect: function() { var loss = liquidateForLoss(8000000000);   transactionLog.push({ emoji:'🥻', name:'Saree Cargo Sinks', amount:-loss });           showEventAlert('🥻 Saree Ship Sinks', 'Cargo sank. Lost -' + fmt(loss) + '.', false); } },
+      { title: 'Island Meteor',     effect: function() { var loss = liquidateForLoss(12000000000);  transactionLog.push({ emoji:'☄️', name:'Asteroid Island Damage', amount:-loss });     showEventAlert('☄️ Meteor Strikes', 'Island damaged. Cost -' + fmt(loss) + '.', false); } }
+    ];
+
+    // ============================================================
+    // UTILITIES
+    // ============================================================
+    function fmt(n) {
+      if (n >= 1e12) return '$' + (n/1e12).toFixed(2) + 'T';
+      if (n >= 1e9)  return '$' + (n/1e9).toFixed(2)  + 'B';
+      if (n >= 1e6)  return '$' + (n/1e6).toFixed(2)  + 'M';
+      return '$' + n.toLocaleString();
+    }
+
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      if (!t) return;
+      t.innerText = msg;
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, 2000);
+    }
+
+    function escapeHTML(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/[&<>'"]/g, function(tag) {
+        return ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[tag] || tag);
+      });
+    }
 
     function updateMetaTags() {
-      const randomID = "TX-" + Math.floor(100000 + Math.random() * 900000);
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-      document.getElementById('receipt-tx-id').innerText = randomID;
-      document.getElementById('receipt-timestamp').innerText = timeStr;
+      var randomID = 'TX-' + Math.floor(100000 + Math.random() * 900000);
+      var timeStr = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+      var txEl = document.getElementById('receipt-tx-id');
+      var tsEl = document.getElementById('receipt-timestamp');
+      if (txEl) txEl.innerText = randomID;
+      if (tsEl) tsEl.innerText = timeStr;
     }
 
-    // ---- AUDIO SYNTH ENGINE ----
-    let audioCtx = null;
-    let soundEnabled = true;
-
+    // ============================================================
+    // AUDIO
+    // ============================================================
     function initAudio() {
       if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        catch(e) { console.warn('AudioContext not supported', e); }
       }
     }
 
     window.toggleSound = function() {
       soundEnabled = !soundEnabled;
-      const btn = document.getElementById('sound-toggle-btn');
-      if (btn) {
-        btn.innerHTML = soundEnabled ? '🔊 Sound On' : '🔇 Muted';
-      }
+      var btn = document.getElementById('sound-toggle-btn');
+      if (btn) btn.innerHTML = soundEnabled ? '🔊 Sound On' : '🔇 Muted';
     };
 
     function playSound(type) {
       if (!soundEnabled) return;
       try {
         initAudio();
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-        
-        const now = audioCtx.currentTime;
-        
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        var now = audioCtx.currentTime;
+        var osc, g;
         if (type === 'click' || type === 'buy') {
-          // Soothing pop click (triangle wave)
-          const osc = audioCtx.createOscillator();
-          const gainNode = audioCtx.createGain();
-          osc.connect(gainNode);
-          gainNode.connect(audioCtx.destination);
+          osc = audioCtx.createOscillator(); g = audioCtx.createGain();
+          osc.connect(g); g.connect(audioCtx.destination);
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(450, now);
           osc.frequency.exponentialRampToValueAtTime(180, now + 0.08);
-          gainNode.gain.setValueAtTime(0.35, now);
-          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-          osc.start(now);
-          osc.stop(now + 0.08);
-        } 
-        else if (type === 'firewall') {
-          // Soothing triangle sweep down (bet lost)
-          const osc = audioCtx.createOscillator();
-          const gainNode = audioCtx.createGain();
-          osc.connect(gainNode);
-          gainNode.connect(audioCtx.destination);
+          g.gain.setValueAtTime(0.35, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now); osc.stop(now + 0.08);
+        } else if (type === 'firewall') {
+          osc = audioCtx.createOscillator(); g = audioCtx.createGain();
+          osc.connect(g); g.connect(audioCtx.destination);
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(580, now);
-          osc.frequency.exponentialRampToValueAtTime(200, now + 0.3);
-          gainNode.gain.setValueAtTime(0.25, now);
-          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-          osc.start(now);
-          osc.stop(now + 0.3);
-        } 
-        else if (type === 'winnings') {
-          // Soft warning bell - dual triangle oscillators (bet won)
-          const fNotes = [180, 220];
-          fNotes.forEach(freq => {
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(freq, now);
-            gainNode.gain.setValueAtTime(0.25, now);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
-            osc.start(now);
-            osc.stop(now + 0.6);
-          });
+          osc.frequency.setValueAtTime(580, now); osc.frequency.exponentialRampToValueAtTime(200, now + 0.3);
+          g.gain.setValueAtTime(0.25, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now); osc.stop(now + 0.3);
+        } else if (type === 'winnings') {
+          var fNotes = [180, 220];
+          for (var fn = 0; fn < fNotes.length; fn++) {
+            osc = audioCtx.createOscillator(); g = audioCtx.createGain();
+            osc.connect(g); g.connect(audioCtx.destination);
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(fNotes[fn], now);
+            g.gain.setValueAtTime(0.25, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+            osc.start(now); osc.stop(now + 0.6);
+          }
+        } else if (type === 'firework_launch') {
+          osc = audioCtx.createOscillator(); g = audioCtx.createGain();
+          osc.connect(g); g.connect(audioCtx.destination);
+          osc.type = 'triangle'; osc.frequency.setValueAtTime(350, now); osc.frequency.linearRampToValueAtTime(1400, now + 0.6);
+          g.gain.setValueAtTime(0.12, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+          osc.start(now); osc.stop(now + 0.6);
+        } else if (type === 'firework_pop') {
+          osc = audioCtx.createOscillator(); g = audioCtx.createGain();
+          osc.connect(g); g.connect(audioCtx.destination);
+          osc.type = 'triangle'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(45, now + 0.45);
+          g.gain.setValueAtTime(0.38, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+          osc.start(now); osc.stop(now + 0.45);
+        } else if (type === 'win') {
+          var wNotes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50];
+          for (var wi = 0; wi < wNotes.length; wi++) {
+            osc = audioCtx.createOscillator(); g = audioCtx.createGain();
+            osc.connect(g); g.connect(audioCtx.destination);
+            osc.type = 'square'; osc.frequency.setValueAtTime(wNotes[wi], now + wi * 0.08);
+            g.gain.setValueAtTime(0.03, now + wi * 0.08); g.gain.exponentialRampToValueAtTime(0.002, now + wi * 0.08 + 0.12);
+            osc.start(now + wi * 0.08); osc.stop(now + wi * 0.08 + 0.12);
+          }
         }
-        else if (type === 'firework_launch') {
-          // Whistling rocket launch ("Suuuu")
-          const osc = audioCtx.createOscillator();
-          const gainNode = audioCtx.createGain();
-          osc.connect(gainNode);
-          gainNode.connect(audioCtx.destination);
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(350, now);
-          osc.frequency.linearRampToValueAtTime(1400, now + 0.6);
-          gainNode.gain.setValueAtTime(0.12, now);
-          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
-          osc.start(now);
-          osc.stop(now + 0.6);
+      } catch (e) { console.error('Audio error', e); }
+    }
 
-          // Whooshing noise
-          const bufferSize = audioCtx.sampleRate * 0.6;
-          const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-          const data = buffer.getChannelData(0);
-          for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-          }
-          const noise = audioCtx.createBufferSource();
-          noise.buffer = buffer;
-          const filter = audioCtx.createBiquadFilter();
-          filter.type = 'bandpass';
-          filter.frequency.setValueAtTime(800, now);
-          filter.frequency.exponentialRampToValueAtTime(1600, now + 0.6);
-          const noiseGain = audioCtx.createGain();
-          noiseGain.gain.setValueAtTime(0.06, now);
-          noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
-          
-          noise.connect(filter);
-          filter.connect(noiseGain);
-          noiseGain.connect(audioCtx.destination);
-          noise.start(now);
-          noise.stop(now + 0.6);
-        }
-        else if (type === 'firework_pop') {
-          // Initial Crack/Snap
-          const bufferSize = audioCtx.sampleRate * 0.08;
-          const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-          const data = buffer.getChannelData(0);
-          for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-          }
-          const noise = audioCtx.createBufferSource();
-          noise.buffer = buffer;
-          const filter = audioCtx.createBiquadFilter();
-          filter.type = 'highpass';
-          filter.frequency.setValueAtTime(1000, now);
-          const noiseGain = audioCtx.createGain();
-          noiseGain.gain.setValueAtTime(0.15, now);
-          noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-          
-          noise.connect(filter);
-          filter.connect(noiseGain);
-          noiseGain.connect(audioCtx.destination);
-          noise.start(now);
-          noise.stop(now + 0.08);
+    // ============================================================
+    // LEVEL SELECTOR
+    // ============================================================
+    function renderLevelRules() {
+      var rule = LEVEL_RULES[selectedLevel] || LEVEL_RULES[1];
+      var titleEl = document.getElementById('rules-title');
+      var descEl  = document.getElementById('rules-desc');
+      if (titleEl) titleEl.innerText = rule.title;
+      if (descEl)  descEl.innerHTML  = rule.desc;
+    }
 
-          // Low thud
-          const osc = audioCtx.createOscillator();
-          const gainNode = audioCtx.createGain();
-          osc.connect(gainNode);
-          gainNode.connect(audioCtx.destination);
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(150, now);
-          osc.frequency.exponentialRampToValueAtTime(45, now + 0.45);
-          gainNode.gain.setValueAtTime(0.38, now);
-          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
-          osc.start(now);
-          osc.stop(now + 0.45);
-          
-          // Crackling Sparks
-          const count = 7;
-          for (let i = 0; i < count; i++) {
-            const popOsc = audioCtx.createOscillator();
-            const popGain = audioCtx.createGain();
-            popOsc.connect(popGain);
-            popGain.connect(audioCtx.destination);
-            
-            const delay = 0.08 + Math.random() * 0.28;
-            popOsc.type = 'square';
-            popOsc.frequency.setValueAtTime(800 + Math.random() * 1000, now + delay);
-            popGain.gain.setValueAtTime(0.015, now + delay);
-            popGain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.02);
-            
-            popOsc.start(now + delay);
-            popOsc.stop(now + delay + 0.02);
+    function updateLevelSelectorUI() {
+      for (var l = 1; l <= 4; l++) {
+        var card = document.getElementById('level-card-' + l);
+        if (!card) continue;
+        if (l > unlockedLevel) {
+          card.classList.add('locked');
+          var nameEl = card.querySelector('.level-card-name');
+          if (nameEl && nameEl.innerText.indexOf('🔒') < 0) {
+            if (!card.dataset.origName) card.dataset.origName = nameEl.innerHTML;
+            nameEl.innerHTML = '🔒 Locked';
           }
+        } else {
+          card.classList.remove('locked');
+          var nameEl2 = card.querySelector('.level-card-name');
+          if (nameEl2 && card.dataset.origName) nameEl2.innerHTML = card.dataset.origName;
         }
-        else if (type === 'win') {
-          const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50];
-          notes.forEach((freq, index) => {
-            const oscN = audioCtx.createOscillator();
-            const gainN = audioCtx.createGain();
-            oscN.connect(gainN);
-            gainN.connect(audioCtx.destination);
-            
-            oscN.type = 'square';
-            oscN.frequency.setValueAtTime(freq, now + index * 0.08);
-            gainN.gain.setValueAtTime(0.03, now + index * 0.08);
-            gainN.gain.exponentialRampToValueAtTime(0.002, now + index * 0.08 + 0.12);
-            
-            oscN.start(now + index * 0.08);
-            oscN.stop(now + index * 0.08 + 0.12);
-          });
-        }
-      } catch (e) {
-        console.error("Audio error", e);
       }
     }
 
-    // ---- LEVEL STATE & PASSIVE INCOME ----
-    let selectedLevel = 3; // default is level 3 (Trillionaire Grind)
-    let selectedLevelCash = 1000000000000;
-    let passiveIncomeEnabled = false;
-    let passiveIncomeInterval = null;
-    let passiveIncomeTimer = 45; // 45s countdown
-
-    const LEVEL_RULES = {
-      1: {
-        title: "Level 1: Starter Loan 🍼",
-        desc: "You start with <b>$100 Billion</b>. Perfect for learning the market and testing your speedrunning strategies. A quick, fun playground."
-      },
-      2: {
-        title: "Level 2: Billionaire Prep 💼",
-        desc: "You start with <b>$500 Billion</b>. A moderate challenge. You will need to balance luxury buys, Scorpio N fleets, and basic investments."
-      },
-      3: {
-        title: "Level 3: Trillionaire Grind 🏆",
-        desc: "You start with <b>$1.00 Trillion</b>. The classic simulator experience. Empty the digital vault and race against market fluctuations!"
-      },
-      4: {
-        title: "Level 4: Tech Lord Mode 🚀",
-        desc: "You start with <b>$5.00 Trillion</b>. The ultimate cyber challenge. Unlock trillion-dollar items capped at $250B and spend it all!"
-      }
-    };
-
-    // selectLevelCard is already declared as a hoisted function above.
-    // Reassign with the full implementation here (overrides the stub).
     window.selectLevelCard = function(lvl, amt, skipSound) {
-      if (lvl > unlockedLevel) {
-        showToast(`🔒 Level ${lvl} is locked! Clear the previous level first.`);
-        return;
-      }
+      if (lvl > unlockedLevel) { showToast('🔒 Level ' + lvl + ' is locked! Clear the previous level first.'); return; }
       if (!skipSound) playSound('click');
-      selectedLevel = lvl;
-      selectedLevelCash = amt;
-      const selectorCards = document.querySelectorAll('.level-card-select');
-      for (let i = 0; i < selectorCards.length; i++) {
-        selectorCards[i].classList.remove('active');
-      }
-      const cardEl = document.getElementById('level-card-' + lvl);
+      selectedLevel = lvl; selectedLevelCash = amt;
+      var cards = document.querySelectorAll('.level-card-select');
+      for (var i = 0; i < cards.length; i++) cards[i].classList.remove('active');
+      var cardEl = document.getElementById('level-card-' + lvl);
       if (cardEl) cardEl.classList.add('active');
       renderLevelRules();
     };
 
-    function updateLevelSelectorUI() {
-      for (let l = 1; l <= 4; l++) {
-        const card = document.getElementById('level-card-' + l);
-        if (card) {
-          const isLocked = l > unlockedLevel;
-          if (isLocked) {
-            card.classList.add('locked');
-            const nameEl = card.querySelector('.level-card-name');
-            if (nameEl && !nameEl.innerText.includes('🔒')) {
-              if (!card.dataset.origName) {
-                card.dataset.origName = nameEl.innerHTML;
-              }
-              nameEl.innerHTML = `🔒 Locked`;
-            }
-          } else {
-            card.classList.remove('locked');
-            const nameEl = card.querySelector('.level-card-name');
-            if (nameEl && card.dataset.origName) {
-              nameEl.innerHTML = card.dataset.origName;
-            }
-          }
-        }
-      }
-    }
-
-    function renderLevelRules() {
-      const rule = LEVEL_RULES[selectedLevel] || LEVEL_RULES[1];
-      const titleEl = document.getElementById('rules-title');
-      const descEl = document.getElementById('rules-desc');
-      if (titleEl) titleEl.innerText = rule.title;
-      if (descEl) descEl.innerHTML = rule.desc;
-    }
-
     window.togglePassiveIncome = function() {
       playSound('click');
-      const checkbox = document.getElementById('passive-income-checkbox');
-      if (checkbox) {
-        checkbox.checked = !checkbox.checked;
-        passiveIncomeEnabled = checkbox.checked;
-      }
+      var cb = document.getElementById('passive-income-checkbox');
+      if (cb) { cb.checked = !cb.checked; passiveIncomeEnabled = cb.checked; }
     };
 
-    // startGame is already declared as a hoisted function above.
-    // Reassign with full implementation here.
     window.startGame = function() {
       playSound('click');
-      TOTAL = selectedLevelCash;
-      const checkbox = document.getElementById('passive-income-checkbox');
-      passiveIncomeEnabled = checkbox ? checkbox.checked : false;
-      
-      // Hide welcome overlay
-      const overlayEl = document.getElementById('level-overlay');
-      if (overlayEl) overlayEl.classList.add('hide');
-      
-      // Reset game with new starting balance
+      TOTAL = selectedLevelCash; cash = TOTAL; balance = TOTAL;
+      var cb = document.getElementById('passive-income-checkbox');
+      passiveIncomeEnabled = cb ? cb.checked : false;
+      var overlay = document.getElementById('level-overlay');
+      if (overlay) overlay.classList.add('hide');
       window.clearAll();
     };
 
     window.openLevelSelector = function() {
       playSound('click');
-      // Pause timers
       if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
       if (passiveIncomeInterval) { clearInterval(passiveIncomeInterval); passiveIncomeInterval = null; }
-      
-      // Show level selector overlay
-      const overlayEl = document.getElementById('level-overlay');
-      if (overlayEl) overlayEl.classList.remove('hide');
-      
-      // Update locked visual states
+      var overlay = document.getElementById('level-overlay');
+      if (overlay) overlay.classList.remove('hide');
       updateLevelSelectorUI();
-      
-      // Sync checkbox
-      const checkbox = document.getElementById('passive-income-checkbox');
-      if (checkbox) checkbox.checked = passiveIncomeEnabled;
+      var cb = document.getElementById('passive-income-checkbox');
+      if (cb) cb.checked = passiveIncomeEnabled;
       window.selectLevelCard(selectedLevel, selectedLevelCash, true);
     };
 
+    // ============================================================
+    // PASSIVE INCOME
+    // ============================================================
     function startPassiveIncomeTimer() {
       if (passiveIncomeInterval) clearInterval(passiveIncomeInterval);
       if (!passiveIncomeEnabled) return;
-      
       passiveIncomeTimer = 45;
-      passiveIncomeInterval = setInterval(() => {
-        if (isGamePaused()) return; // only run while the speedrun timer is active!
+      passiveIncomeInterval = setInterval(function() {
+        if (isGamePaused()) return;
         passiveIncomeTimer--;
-        
         if (passiveIncomeTimer <= 0) {
           passiveIncomeTimer = 45;
-          let gain = Math.round(cash * 0.02);
+          var gain = Math.round(cash * 0.02);
           if (gain > 0) {
             cash += gain;
-            updateWallet();
-            renderItems();
-            renderReceipt();
-            
-            // Log passive income as a random event in the receipt!
-            transactionLog.push({ emoji: '⚠️', name: 'Passive Income Interest (+2%)', amount: gain });
-            renderReceipt();
-            
-            // Visual alert
-            showToast(`⚠️ Passive Income: +${fmt(gain)} added!`);
-            
-            const balEl = document.getElementById('balance');
-            const walletEl = document.querySelector('.wallet');
+            transactionLog.push({ emoji:'⚠️', name:'Passive Income (+2%)', amount:gain });
+            updateWallet(); renderItems(); renderReceipt();
+            showToast('⚠️ Passive Income: +' + fmt(gain) + ' added!');
+            var balEl = document.getElementById('balance');
+            var walletEl = document.querySelector('.wallet');
             if (balEl && walletEl) {
-              walletEl.classList.add('shake-wallet');
-              balEl.classList.add('flash-red');
-              setTimeout(() => {
-                walletEl.classList.remove('shake-wallet');
-                balEl.classList.remove('flash-red');
-              }, 1200);
+              walletEl.classList.add('shake-wallet'); balEl.classList.add('flash-red');
+              setTimeout(function() { walletEl.classList.remove('shake-wallet'); balEl.classList.remove('flash-red'); }, 1200);
             }
           }
         }
       }, 1000);
     }
 
-    // Liquidate assets to cover a cash loss/fine
-    function liquidateForLoss(amount) {
-      calculateNetWorth(); // update balance
-      if (balance <= amount) {
-        // Lose everything!
-        let actualLoss = balance;
-        cash = 0;
-        for (let id in purchases) {
-          if (purchases[id].item.invest) {
-            delete purchases[id];
-          }
-        }
-        return actualLoss;
-      }
-      
-      // Otherwise, we have enough total net worth. Liquidate assets if needed to cover the loss.
-      let needed = amount - cash;
-      if (needed > 0) {
-        for (let id in purchases) {
-          if (purchases[id].item.invest) {
-            let price = investPrices[id];
-            let ownedQty = purchases[id].qty;
-            let assetValue = ownedQty * price;
-            
-            if (assetValue >= needed) {
-              let qtyToSell = Math.ceil(needed / price);
-              if (qtyToSell > ownedQty) qtyToSell = ownedQty;
-              let revenue = qtyToSell * price;
-              cash += revenue;
-              purchases[id].qty -= qtyToSell;
-              purchases[id].total -= (purchases[id].total / (purchases[id].qty + qtyToSell)) * qtyToSell;
-              if (purchases[id].qty === 0) {
-                delete purchases[id];
-              }
-              needed -= revenue;
-            } else {
-              cash += assetValue;
-              delete purchases[id];
-              needed -= assetValue;
-            }
-            if (needed <= 0) break;
-          }
-        }
-      }
-      // Now cash is guaranteed to be >= amount (since balance > amount and we liquidated assets)
-      cash -= amount;
-      return amount;
+    // ============================================================
+    // LIQUIDATION
+    // ============================================================
+    function calculateNetWorth() {
+      var pv = 0;
+      for (var id in purchases) { if (purchases[id].item.invest) pv += purchases[id].qty * investPrices[id]; }
+      balance = cash + pv;
     }
 
-    // ---- CYBER CASINO HACK ENGINE ----
-    let isHacking = false;
-    let consecutiveBurns = 0;
+    function liquidateForLoss(amount) {
+      calculateNetWorth();
+      if (balance <= amount) {
+        var lost = balance; cash = 0;
+        for (var id in purchases) { if (purchases[id].item.invest) delete purchases[id]; }
+        return lost;
+      }
+      var needed = amount - cash;
+      if (needed > 0) {
+        for (var id in purchases) {
+          if (!purchases[id].item.invest) continue;
+          var price = investPrices[id]; var qty = purchases[id].qty; var av = qty * price;
+          if (av >= needed) {
+            var qs = Math.ceil(needed / price); if (qs > qty) qs = qty;
+            var rev = qs * price; cash += rev;
+            purchases[id].qty -= qs; purchases[id].total -= (purchases[id].total / (purchases[id].qty + qs)) * qs;
+            if (purchases[id].qty === 0) delete purchases[id];
+            needed -= rev;
+          } else { cash += av; delete purchases[id]; needed -= av; }
+          if (needed <= 0) break;
+        }
+      }
+      cash -= amount; return amount;
+    }
 
+    function autoLiquidate(amount) {
+      var needed = amount - cash;
+      if (needed <= 0) return true;
+      var pv = 0;
+      for (var id in purchases) { if (purchases[id].item.invest) pv += purchases[id].qty * investPrices[id]; }
+      if (cash + pv < amount) return false;
+      for (var id in purchases) {
+        if (!purchases[id].item.invest) continue;
+        var price = investPrices[id]; var qty = purchases[id].qty; var av = qty * price;
+        if (av >= needed) {
+          var qs = Math.ceil(needed / price); if (qs > qty) qs = qty;
+          var rev = qs * price; cash += rev;
+          purchases[id].qty -= qs; purchases[id].total -= (purchases[id].total / (purchases[id].qty + qs)) * qs;
+          if (purchases[id].qty === 0) delete purchases[id];
+          needed -= rev;
+        } else { cash += av; delete purchases[id]; needed -= av; }
+        if (needed <= 0) break;
+      }
+      return true;
+    }
+
+    // ============================================================
+    // CASINO
+    // ============================================================
     window.sanitizeCasinoInput = function() {
-      const input = document.getElementById('casino-bet-val');
-      if (!input) return;
-      let val = parseInt(input.value);
-      if (isNaN(val) || val < 1) val = 1000000000; // default 1B
-      let maxBetLimit = Math.round(balance * 0.5); // Cap bet at 50% of current Net Worth
-      if (maxBetLimit < 1) maxBetLimit = 1;
-      let limit = Math.min(cash, maxBetLimit);
-      if (limit < 1 && cash > 0) limit = cash;
-      if (val > limit) val = limit;
-      if (val < 1 && cash > 0) val = 1;
+      var input = document.getElementById('casino-bet-val'); if (!input) return;
+      var val = parseInt(input.value); if (isNaN(val) || val < 1) val = 1000000000;
+      var maxBet = Math.max(1, Math.round(balance * 0.5));
+      var limit = Math.min(cash, maxBet); if (limit < 1 && cash > 0) limit = cash;
+      if (val > limit) val = limit; if (val < 1 && cash > 0) val = 1;
       input.value = val;
     };
 
     window.setCasinoPreset = function(percent) {
       playSound('click');
-      const input = document.getElementById('casino-bet-val');
-      if (!input) return;
-      let betAmt = Math.round(balance * (percent / 100));
-      if (betAmt > cash) betAmt = cash;
-      if (betAmt < 1) betAmt = 1;
-      input.value = betAmt;
-      window.sanitizeCasinoInput();
+      var input = document.getElementById('casino-bet-val'); if (!input) return;
+      var bet = Math.round(balance * (percent / 100));
+      if (bet > cash) bet = cash; if (bet < 1) bet = 1;
+      input.value = bet; window.sanitizeCasinoInput();
     };
 
     window.runCyberHack = function() {
       if (isHacking) return;
-      playSound('click');
-      window.sanitizeCasinoInput();
-      
-      const betVal = parseInt(document.getElementById('casino-bet-val').value);
-      if (betVal > cash || betVal <= 0) {
-        showToast("Insufficient cash for this bet!");
-        return;
-      }
-      
-      startTimer(); // Hack triggers the speedrun timer!
-      
-      isHacking = true;
-      const hackBtn = document.getElementById('decryptor-hack-btn');
-      if (hackBtn) {
-        hackBtn.classList.add('hacking');
-        hackBtn.innerText = "🎰 GAMBLING WEALTH...";
-      }
-      
-      const progressWrap = document.getElementById('decryptor-progress');
-      const progressFill = document.getElementById('decryptor-progress-fill');
-      const progressStatus = document.getElementById('decryptor-progress-status');
-      const resultBox = document.getElementById('decryptor-result-box');
-      
-      if (progressWrap) progressWrap.style.display = 'flex';
-      if (resultBox) resultBox.style.display = 'none';
-      if (progressFill) progressFill.style.width = '0%';
-      
-      let progress = 0;
-      let hackTimer = setInterval(() => {
+      playSound('click'); window.sanitizeCasinoInput();
+      var betVal = parseInt(document.getElementById('casino-bet-val').value);
+      if (isNaN(betVal) || betVal > cash || betVal <= 0) { showToast('Insufficient cash for this bet!'); return; }
+      startTimer(); isHacking = true;
+      var hackBtn = document.getElementById('decryptor-hack-btn');
+      if (hackBtn) { hackBtn.classList.add('hacking'); hackBtn.innerText = '🎰 GAMBLING WEALTH...'; }
+      var pWrap = document.getElementById('decryptor-progress');
+      var pFill = document.getElementById('decryptor-progress-fill');
+      var pStatus = document.getElementById('decryptor-progress-status');
+      var rBox = document.getElementById('decryptor-result-box');
+      if (pWrap) pWrap.style.display = 'flex';
+      if (rBox) rBox.style.display = 'none';
+      if (pFill) pFill.style.width = '0%';
+      var progress = 0;
+      var hackTimer = setInterval(function() {
         progress += Math.floor(Math.random() * 12) + 5;
-        if (progress >= 100) {
-          progress = 100;
-          clearInterval(hackTimer);
-          executeHackOutcome(betVal);
-        }
-        if (progressFill) progressFill.style.width = progress + '%';
-        if (progressStatus) progressStatus.innerText = `Securing High-Risk Encryption Bet... ${progress}%`;
+        if (progress >= 100) { progress = 100; clearInterval(hackTimer); executeHackOutcome(betVal); }
+        if (pFill) pFill.style.width = progress + '%';
+        if (pStatus) pStatus.innerText = 'Securing Encryption Bet... ' + progress + '%';
       }, 100);
     };
 
     function executeHackOutcome(betVal) {
       isHacking = false;
-      const hackBtn = document.getElementById('decryptor-hack-btn');
-      if (hackBtn) {
-        hackBtn.classList.remove('hacking');
-        hackBtn.innerText = "Gamble Wealth ⚡";
-      }
-      
-      const pWrap = document.getElementById('decryptor-progress');
-      if (pWrap) pWrap.style.display = 'none';
-      
-      const resultBox = document.getElementById('decryptor-result-box');
-      if (resultBox) {
-        resultBox.style.display = 'block';
-        
-        // 60% probability of failing the hack (Losing money - Win condition!)
-        // 40% probability of succeeding the hack (Gaining money - Lose condition!)
-        const rolls = Math.random();
-        let forcedWin = false;
-        if (consecutiveBurns >= 3) {
-          forcedWin = true; // Force win (double money/defeat) on 4th consecutive cash burn
-        }
-        
+      var hackBtn = document.getElementById('decryptor-hack-btn');
+      if (hackBtn) { hackBtn.classList.remove('hacking'); hackBtn.innerText = 'Gamble Wealth ⚡'; }
+      var pWrap = document.getElementById('decryptor-progress'); if (pWrap) pWrap.style.display = 'none';
+      var rBox = document.getElementById('decryptor-result-box');
+      if (rBox) {
+        rBox.style.display = 'block';
+        var rolls = Math.random(); var forcedWin = (consecutiveBurns >= 3);
         if (rolls < 0.6 && !forcedWin) {
-          // HACK DETECTED - Cash burned! (Success/Win)
-          consecutiveBurns++;
-          playSound('firewall');
-          cash -= betVal;
-          resultBox.className = "decryptor-result loss";
-          resultBox.innerHTML = `⚠️ <b>BET LOST (VICTORY)!</b> Bank firewall incinerated your bet of <b>-${fmt(betVal)}</b>! (Yes!)`;
-          
-          transactionLog.push({ emoji: '🚨', name: 'Federal Firewall Cash Burn', amount: -betVal });
-          showToast(`-${fmt(betVal)} burned! 🍾`);
+          consecutiveBurns++; playSound('firewall'); cash -= betVal;
+          rBox.className = 'decryptor-result loss';
+          rBox.innerHTML = '⚠️ <b>BET LOST (VICTORY)!</b> Firewall burned your bet of <b>-' + fmt(betVal) + '</b>! (Yes!)';
+          transactionLog.push({ emoji:'🚨', name:'Federal Firewall Cash Burn', amount:-betVal });
+          showToast('-' + fmt(betVal) + ' burned! 🍾');
         } else {
-          // HACK SUCCESSFUL - Stole double! (Failure/Loss)
-          consecutiveBurns = 0;
-          playSound('winnings');
-          let winnings = betVal * 2;
-          cash += winnings;
-          resultBox.className = "decryptor-result win";
-          if (forcedWin) {
-            resultBox.innerHTML = `💸 <b>BET WON (DEFEAT)!</b> Anti-cheat lock triggered: Stole an extra <b>+${fmt(winnings)}</b> to halt your win streak! (Noooo!)`;
-          } else {
-            resultBox.innerHTML = `💸 <b>BET WON (DEFEAT)!</b> Bypassed security and stole an extra <b>+${fmt(winnings)}</b>! (Noooo!)`;
-          }
-          
-          transactionLog.push({ emoji: '💸', name: 'Bank Hack Loot (Double Bet)', amount: winnings });
-          showToast(`+${fmt(winnings)} added! 😭`);
+          consecutiveBurns = 0; playSound('winnings'); var winnings = betVal * 2; cash += winnings;
+          rBox.className = 'decryptor-result win';
+          rBox.innerHTML = forcedWin
+            ? '💸 <b>BET WON (DEFEAT)!</b> Anti-cheat triggered: stole extra <b>+' + fmt(winnings) + '</b>! (Noooo!)'
+            : '💸 <b>BET WON (DEFEAT)!</b> Bypassed security and stole <b>+' + fmt(winnings) + '</b>! (Noooo!)';
+          transactionLog.push({ emoji:'💸', name:'Bank Hack Loot', amount:winnings });
+          showToast('+' + fmt(winnings) + ' added! 😭');
         }
       }
-      
-      updateWallet();
-      renderItems();
-      renderReceipt();
+      updateWallet(); renderItems(); renderReceipt();
     }
 
-    // ---- TIMER STATE ----
-    let timerStarted = false;
-    let timerStopped = false;
-    let timerSeconds = 0;
-    let timerInterval = null;
-
+    // ============================================================
+    // TIMER
+    // ============================================================
     function startTimer() {
       if (timerStarted || timerStopped) return;
       timerStarted = true;
-      const el = document.getElementById('game-timer');
-      if (el) el.classList.add('running');
-      const stEl = document.getElementById('timer-status');
-      if (stEl) stEl.innerText = '⏱ Running...';
-      timerInterval = setInterval(() => {
+      var el = document.getElementById('game-timer'); if (el) el.classList.add('running');
+      var stEl = document.getElementById('timer-status'); if (stEl) stEl.innerText = '⏱ Running...';
+      timerInterval = setInterval(function() {
         timerSeconds++;
-        const timerEl = document.getElementById('game-timer');
+        var timerEl = document.getElementById('game-timer');
         if (timerEl) timerEl.innerText = formatTime(timerSeconds);
       }, 1000);
       startPassiveIncomeTimer();
@@ -1740,1370 +1481,510 @@
       timerStopped = true;
       if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
       if (passiveIncomeInterval) { clearInterval(passiveIncomeInterval); passiveIncomeInterval = null; }
-      const el = document.getElementById('game-timer');
+      var el = document.getElementById('game-timer');
       if (el) { el.classList.remove('running'); el.classList.add('finished'); }
-      const stEl = document.getElementById('timer-status');
-      if (stEl) stEl.innerText = `🏆 Finished in ${formatTime(timerSeconds)}!`;
+      var stEl = document.getElementById('timer-status'); if (stEl) stEl.innerText = '🏆 Finished in ' + formatTime(timerSeconds) + '!';
     }
 
     function resetTimer() {
-      timerStarted = false;
-      timerStopped = false;
-      timerSeconds = 0;
+      timerStarted = false; timerStopped = false; timerSeconds = 0;
       if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
       if (passiveIncomeInterval) { clearInterval(passiveIncomeInterval); passiveIncomeInterval = null; }
-      const el = document.getElementById('game-timer');
+      var el = document.getElementById('game-timer');
       if (el) { el.innerText = '0m 00s'; el.classList.remove('running', 'finished'); }
-      const stEl = document.getElementById('timer-status');
-      if (stEl) stEl.innerText = 'Starts on your first purchase';
+      var stEl = document.getElementById('timer-status'); if (stEl) stEl.innerText = 'Starts on your first purchase';
     }
 
     function formatTime(s) {
-      const m = Math.floor(s / 60);
-      const sec = s % 60;
-      return `${m}m ${sec.toString().padStart(2, '0')}s`;
+      var m = Math.floor(s / 60); var sec = s % 60;
+      return m + 'm ' + (sec < 10 ? '0' : '') + sec + 's';
     }
 
-    // ---- HINTS ----
-    const HINTS = [
-      { emoji: '🏆', text: "Buy Mega items first! One Lunar Colony Base drains $80 Billion instantly — the fastest path to zero!" },
-      { emoji: '🚫', text: "Avoid assets like Bitcoin or Twitter X! They fluctuate and can GROW your net worth, making it harder to go broke." },
-      { emoji: '🔢', text: "Set quantity to 999 on cheap items to burn through cash fast. Try buying 500 Ferraris at once!" },
-      { emoji: '⏱️', text: "Speed tip: Filter by MEGA and spam-buy everything. Orbital Space Station at $35B each is absolutely devastating!" },
-      { emoji: '☄️', text: "Random events strike every 35 seconds and drain billions! IRS Fine alone costs $30B — spend faster than events can hit!" },
-      { emoji: '⚡', text: "The Auto-Liquidate system sells your investments automatically if you run low on cash — no need to sell manually!" },
-    ];
-    let maxUnlockedHint = 1; // starts at 1, max is HINTS.length (6)
-    let activeHintIdx = 0; // the index of the hint currently viewed in the modal
-    let hintTimer = 30; // countdown timer for the next hint
-    let hintInterval = null;
+    // ============================================================
+    // HINTS
+    // ============================================================
+    window.showHint = function() { playSound('click'); activeHintIdx = maxUnlockedHint - 1; renderHintModal(); document.getElementById('hint-overlay').classList.add('active'); };
+    window.closeHint = function() { playSound('click'); document.getElementById('hint-overlay').classList.remove('active'); };
+    window.prevHint = function() { playSound('click'); if (activeHintIdx > 0) { activeHintIdx--; renderHintModal(); } };
+    window.nextHint = function() { playSound('click'); if (activeHintIdx < maxUnlockedHint - 1) { activeHintIdx++; renderHintModal(); } };
 
-    window.showHint = function() {
-      playSound('click');
-      activeHintIdx = maxUnlockedHint - 1; // default to the latest unlocked hint
-      renderHintModal();
-      document.getElementById('hint-overlay').classList.add('active');
-    };
-
-    window.closeHint = function() {
-      playSound('click');
-      document.getElementById('hint-overlay').classList.remove('active');
-    };
-
-    window.prevHint = function() {
-      playSound('click');
-      if (activeHintIdx > 0) {
-        activeHintIdx--;
-        renderHintModal();
-      }
-    };
-
-    window.nextHint = function() {
-      playSound('click');
-      if (activeHintIdx < maxUnlockedHint - 1) {
-        activeHintIdx++;
-        renderHintModal();
-      }
-    };
+    function renderHintModal() {
+      var h = HINTS[activeHintIdx];
+      var emojiEl = document.getElementById('hint-emoji'); var textEl = document.getElementById('hint-text'); var cEl = document.getElementById('hint-counter');
+      if (emojiEl) emojiEl.innerText = h.emoji; if (textEl) textEl.innerText = h.text; if (cEl) cEl.innerText = (activeHintIdx+1) + ' / ' + maxUnlockedHint;
+      var prevBtn = document.getElementById('hint-prev-btn'); var nextBtn = document.getElementById('hint-next-btn');
+      if (prevBtn) { prevBtn.disabled = (activeHintIdx===0); prevBtn.style.opacity = activeHintIdx===0?'0.3':'1'; prevBtn.style.cursor = activeHintIdx===0?'not-allowed':'pointer'; }
+      if (nextBtn) { var cn = activeHintIdx < maxUnlockedHint-1; nextBtn.disabled = !cn; nextBtn.style.opacity = !cn?'0.3':'1'; nextBtn.style.cursor = !cn?'not-allowed':'pointer'; }
+      var infoEl = document.getElementById('hint-next-info-box');
+      if (infoEl) { if (maxUnlockedHint >= HINTS.length) { infoEl.style.display='none'; } else { infoEl.style.display='block'; var cdEl=document.getElementById('hint-countdown'); if(cdEl) cdEl.innerText=hintTimer; } }
+    }
 
     function startHintTimer() {
       if (hintInterval) clearInterval(hintInterval);
-      hintTimer = 30;
-      updateHintButtonText();
-      
-      hintInterval = setInterval(() => {
+      hintTimer = 30; updateHintButtonText();
+      hintInterval = setInterval(function() {
         if (maxUnlockedHint < HINTS.length) {
-          hintTimer--;
-          const cdEl = document.getElementById('hint-countdown');
-          if (cdEl) cdEl.innerText = hintTimer;
-          
+          hintTimer--; var cdEl = document.getElementById('hint-countdown'); if (cdEl) cdEl.innerText = hintTimer;
           if (hintTimer <= 0) {
-            maxUnlockedHint++;
-            hintTimer = 30;
-            showToast('💡 New strategy hint unlocked!');
-            
-            // If the modal is currently open, update it to show the new hint automatically
-            const modalOpen = document.getElementById('hint-overlay').classList.contains('active');
-            if (modalOpen) {
-              activeHintIdx = maxUnlockedHint - 1; // focus on the new hint
-              renderHintModal();
-            }
+            maxUnlockedHint++; hintTimer = 30; showToast('💡 New strategy hint unlocked!');
+            var modalOpen = document.getElementById('hint-overlay').classList.contains('active');
+            if (modalOpen) { activeHintIdx = maxUnlockedHint - 1; renderHintModal(); }
           }
-        } else {
-          // All hints unlocked
-          clearInterval(hintInterval);
-          hintInterval = null;
-          const infoEl = document.getElementById('hint-next-info-box');
-          if (infoEl) infoEl.style.display = 'none'; // hide countdown if all unlocked
-        }
+        } else { clearInterval(hintInterval); hintInterval = null; var iEl = document.getElementById('hint-next-info-box'); if(iEl) iEl.style.display='none'; }
         updateHintButtonText();
       }, 1000);
     }
 
     function updateHintButtonText() {
-      const btn = document.getElementById('hint-btn-el');
-      if (!btn) return;
-      if (maxUnlockedHint < HINTS.length) {
-        btn.innerHTML = `💡 Hint (${hintTimer}s)`;
-      } else {
-        btn.innerHTML = `💡 Hint`;
-      }
+      var btn = document.getElementById('hint-btn-el'); if (!btn) return;
+      btn.innerHTML = maxUnlockedHint < HINTS.length ? '💡 Hint (' + hintTimer + 's)' : '💡 Hint';
     }
 
-    function renderHintModal() {
-      const h = HINTS[activeHintIdx];
-      const emojiEl = document.getElementById('hint-emoji');
-      const textEl = document.getElementById('hint-text');
-      const counterEl = document.getElementById('hint-counter');
-      
-      if (emojiEl) emojiEl.innerText = h.emoji;
-      if (textEl) textEl.innerText = h.text;
-      if (counterEl) counterEl.innerText = `${activeHintIdx + 1} / ${maxUnlockedHint}`;
-      
-      // Enable/disable buttons
-      const prevBtn = document.getElementById('hint-prev-btn');
-      const nextBtn = document.getElementById('hint-next-btn');
-      
-      if (prevBtn) {
-        prevBtn.disabled = activeHintIdx === 0;
-        prevBtn.style.opacity = activeHintIdx === 0 ? '0.3' : '1';
-        prevBtn.style.cursor = activeHintIdx === 0 ? 'not-allowed' : 'pointer';
-      }
-      
-      if (nextBtn) {
-        const canGoNext = activeHintIdx < maxUnlockedHint - 1;
-        nextBtn.disabled = !canGoNext;
-        nextBtn.style.opacity = !canGoNext ? '0.3' : '1';
-        nextBtn.style.cursor = !canGoNext ? 'not-allowed' : 'pointer';
-      }
-      
-      // Show or hide countdown box
-      const infoEl = document.getElementById('hint-next-info-box');
-      if (infoEl) {
-        if (maxUnlockedHint >= HINTS.length) {
-          infoEl.style.display = 'none';
-        } else {
-          infoEl.style.display = 'block';
-          const cdEl = document.getElementById('hint-countdown');
-          if (cdEl) cdEl.innerText = hintTimer;
-        }
-      }
-    }
+    function resetHints() { maxUnlockedHint = 1; activeHintIdx = 0; hintTimer = 30; startHintTimer(); }
 
-    function resetHints() {
-      maxUnlockedHint = 1;
-      activeHintIdx = 0;
-      hintTimer = 30;
-      startHintTimer();
-    }
+    // ============================================================
+    // FILTER
+    // ============================================================
+    window.filterItems = function(cat, btn) {
+      playSound('click'); activeFilter = cat;
+      var btns = document.querySelectorAll('.filter-btn'); for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+      btn.classList.add('active'); renderItems();
+    };
 
-    window.filterItems = function(cat, btn) { 
-      playSound('click');
-      activeFilter = cat; 
-      const filterBtns = document.querySelectorAll('.filter-btn');
-      for (let i = 0; i < filterBtns.length; i++) {
-        filterBtns[i].classList.remove('active');
-      }
-      btn.classList.add('active'); 
-      renderItems(); 
-    }; 
-
+    // ============================================================
+    // QTY CONTROLS
+    // ============================================================
     window.changeQty = function(id, delta) {
-      const item = ITEMS.find(i => i.id === id);
-      let itemCap = Infinity;
-      if (selectedLevel === 1) itemCap = 13000000000;
-      else if (selectedLevel === 2) itemCap = 45000000000;
-      else if (selectedLevel === 3) itemCap = 121000000000;
-      if (item && item.price > itemCap) return;
-
+      var item = null; for (var i = 0; i < ITEMS.length; i++) { if (ITEMS[i].id === id) { item = ITEMS[i]; break; } }
+      var cap = selectedLevel === 1 ? 13000000000 : selectedLevel === 2 ? 45000000000 : selectedLevel === 3 ? 121000000000 : Infinity;
+      if (item && item.price > cap) return;
       playSound('click');
-      let currentVal = parseInt(document.getElementById('qty-val-' + id).value) || 1;
-      currentVal += delta;
-      if (currentVal < 1) currentVal = 1;
-      document.getElementById('qty-val-' + id).value = currentVal;
-      window.setQty(id, currentVal);
+      var inp = document.getElementById('qty-val-' + id); var val = (inp ? parseInt(inp.value) : 1) || 1;
+      val += delta; if (val < 1) val = 1; if (inp) inp.value = val; window.setQty(id, val);
     };
 
     window.setQty = function(id, value) {
-      let qty = parseInt(value);
-      if (isNaN(qty) || qty < 1) qty = 1;
-      qtyState[id] = qty;
-      const item = ITEMS.find(i => i.id === id);
-      let price = item.invest ? investPrices[id] : item.price;
-      const totalCost = price * qty;
-      const buyBtn = document.getElementById('buy-btn-' + id);
-      if (buyBtn) {
-        buyBtn.innerText = `BUY (${fmt(totalCost)})`;
-        
-        // Check affordability against total Net Worth (Cash + Portfolio Value)
-        let totalPortfolio = 0;
-        for (let pid in purchases) {
-          if (purchases[pid].item.invest) {
-            totalPortfolio += purchases[pid].qty * investPrices[pid];
-          }
-        }
-        if (cash + totalPortfolio < totalCost) buyBtn.classList.add('disabled-btn');
-        else buyBtn.classList.remove('disabled-btn');
+      var qty = parseInt(value); if (isNaN(qty) || qty < 1) qty = 1; qtyState[id] = qty;
+      var item = null; for (var i = 0; i < ITEMS.length; i++) { if (ITEMS[i].id === id) { item = ITEMS[i]; break; } }
+      var price = item.invest ? investPrices[id] : item.price;
+      var totalCost = price * qty;
+      var btn = document.getElementById('buy-btn-' + id);
+      if (btn) {
+        btn.innerText = 'BUY (' + fmt(totalCost) + ')';
+        var pv = 0; for (var pid in purchases) { if (purchases[pid].item.invest) pv += purchases[pid].qty * investPrices[pid]; }
+        if (cash + pv < totalCost) btn.classList.add('disabled-btn'); else btn.classList.remove('disabled-btn');
       }
     };
 
     window.sanitizeInput = function(id, value) {
-      let qty = parseInt(value);
-      if (isNaN(qty) || qty < 1) qty = 1;
-      const inputEl = document.getElementById('qty-val-' + id);
-      if (inputEl) {
-        inputEl.value = qty;
-      }
-      window.setQty(id, qty);
+      var qty = parseInt(value); if (isNaN(qty) || qty < 1) qty = 1;
+      var inp = document.getElementById('qty-val-' + id); if (inp) inp.value = qty; window.setQty(id, qty);
     };
 
-    // Auto-liquidate investments if liquid cash is low
-    function autoLiquidate(amount) {
-      let needed = amount - cash;
-      if (needed <= 0) return true; // Already have enough cash
-      
-      // Calculate total portfolio value
-      let portfolioValue = 0;
-      for (let id in purchases) {
-        if (purchases[id].item.invest) {
-          portfolioValue += purchases[id].qty * investPrices[id];
-        }
-      }
-      
-      if (cash + portfolioValue < amount) {
-        return false; // Total net worth is too low
-      }
-      
-      // Liquidate (sell) assets to cover the difference
-      for (let id in purchases) {
-        if (purchases[id].item.invest) {
-          let price = investPrices[id];
-          let ownedQty = purchases[id].qty;
-          let assetValue = ownedQty * price;
-          
-          if (assetValue >= needed) {
-            let qtyToSell = Math.ceil(needed / price);
-            if (qtyToSell > ownedQty) qtyToSell = ownedQty;
-            let revenue = qtyToSell * price;
-            cash += revenue;
-            purchases[id].qty -= qtyToSell;
-            purchases[id].total -= (purchases[id].total / (purchases[id].qty + qtyToSell)) * qtyToSell;
-            
-            if (purchases[id].qty === 0) {
-              delete purchases[id];
-            }
-            needed -= revenue;
-          } else {
-            cash += assetValue;
-            delete purchases[id];
-            needed -= assetValue;
-          }
-          if (needed <= 0) break;
-        }
-      }
-      return true;
-    }
-
-    window.buyItem = function(id) { 
-      const item = ITEMS.find(i => i.id === id);
-      let itemCap = Infinity;
-      if (selectedLevel === 1) itemCap = 13000000000;
-      else if (selectedLevel === 2) itemCap = 45000000000;
-      else if (selectedLevel === 3) itemCap = 121000000000;
-      if (item && item.price > itemCap) {
-        showToast("This item is locked on this level!");
-        return;
-      }
-
+    // ============================================================
+    // BUY / SELL
+    // ============================================================
+    window.buyItem = function(id) {
+      var item = null; for (var i = 0; i < ITEMS.length; i++) { if (ITEMS[i].id === id) { item = ITEMS[i]; break; } }
+      var cap = selectedLevel === 1 ? 13000000000 : selectedLevel === 2 ? 45000000000 : selectedLevel === 3 ? 121000000000 : Infinity;
+      if (item && item.price > cap) { showToast('This item is locked on this level!'); return; }
       playSound('buy');
-      const inputEl = document.getElementById('qty-val-' + id);
-      let qty = 1;
-      if (inputEl) {
-        qty = parseInt(inputEl.value);
-        if (isNaN(qty) || qty < 1) {
-          qty = 1;
-          inputEl.value = 1;
-        }
-      }
-      qtyState[id] = qty;
-      let price = item.invest ? investPrices[id] : item.price;
-      const totalCost = price * qty;
-      
+      var inp = document.getElementById('qty-val-' + id); var qty = 1;
+      if (inp) { qty = parseInt(inp.value); if (isNaN(qty) || qty < 1) { qty = 1; inp.value = 1; } }
+      var price = item.invest ? investPrices[id] : item.price; var totalCost = price * qty;
       startTimer();
-      // Try to liquidate assets if short on cash
-      if (!autoLiquidate(totalCost)) { 
-        showToast("Insufficient Funds!"); 
-        return; 
-      } 
-      
-      cash -= totalCost; 
-      spent += totalCost; 
-      if (purchases[id]) { 
-        purchases[id].qty += qty; 
-        purchases[id].total += totalCost; 
-      } else { 
-        purchases[id] = { item, qty: qty, total: totalCost }; 
-      } 
-      qtyState[id] = 1; 
-      updateWallet(); 
-      renderItems(); 
-      renderReceipt(); 
-      showToast(`Purchased ${qty}x ${item.name}!`); 
+      if (!autoLiquidate(totalCost)) { showToast('Insufficient Funds!'); return; }
+      cash -= totalCost; spent += totalCost;
+      if (purchases[id]) { purchases[id].qty += qty; purchases[id].total += totalCost; }
+      else purchases[id] = { item:item, qty:qty, total:totalCost };
+      qtyState[id] = 1;
+      updateWallet(); renderItems(); renderReceipt();
+      showToast('Purchased ' + qty + 'x ' + item.name + '!');
       if (balance <= 0) window.triggerCelebration();
-    }; 
+    };
 
     window.sellItem = function(id) {
-      const item = ITEMS.find(i => i.id === id);
-      let itemCap = Infinity;
-      if (selectedLevel === 1) itemCap = 13000000000;
-      else if (selectedLevel === 2) itemCap = 45000000000;
-      else if (selectedLevel === 3) itemCap = 121000000000;
-      if (item && item.price > itemCap) {
-        showToast("This item is locked on this level!");
-        return;
-      }
-
+      var item = null; for (var i = 0; i < ITEMS.length; i++) { if (ITEMS[i].id === id) { item = ITEMS[i]; break; } }
+      var cap = selectedLevel === 1 ? 13000000000 : selectedLevel === 2 ? 45000000000 : selectedLevel === 3 ? 121000000000 : Infinity;
+      if (item && item.price > cap) { showToast('This item is locked on this level!'); return; }
       playSound('click');
-      if (!purchases[id] || purchases[id].qty <= 0) {
-        showToast("You don't own any shares of this asset!");
-        return;
-      }
-      const inputEl = document.getElementById('qty-val-' + id);
-      let qtyToSell = 1;
-      if (inputEl) {
-        qtyToSell = parseInt(inputEl.value);
-        if (isNaN(qtyToSell) || qtyToSell < 1) qtyToSell = 1;
-      }
-      if (qtyToSell > purchases[id].qty) {
-        qtyToSell = purchases[id].qty;
-      }
-      
-      let price = investPrices[id];
-      let revenue = price * qtyToSell;
-      
-      cash += revenue;
-      purchases[id].qty -= qtyToSell;
-      purchases[id].total -= (purchases[id].total / (purchases[id].qty + qtyToSell)) * qtyToSell;
-      
-      if (purchases[id].qty === 0) {
-        delete purchases[id];
-      }
-      
-      qtyState[id] = 1;
-      updateWallet();
-      renderItems();
-      renderReceipt();
-      showToast(`Sold ${qtyToSell}x ${item.name} for ${fmt(revenue)}!`);
+      if (!purchases[id] || purchases[id].qty <= 0) { showToast("You don't own any shares of this asset!"); return; }
+      var inp = document.getElementById('qty-val-' + id); var qty = 1;
+      if (inp) { qty = parseInt(inp.value); if (isNaN(qty) || qty < 1) qty = 1; }
+      if (qty > purchases[id].qty) qty = purchases[id].qty;
+      var rev = investPrices[id] * qty; cash += rev;
+      purchases[id].qty -= qty; purchases[id].total -= (purchases[id].total / (purchases[id].qty + qty)) * qty;
+      if (purchases[id].qty === 0) delete purchases[id];
+      qtyState[id] = 1; updateWallet(); renderItems(); renderReceipt();
+      showToast('Sold ' + qty + 'x ' + item.name + ' for ' + fmt(rev) + '!');
     };
 
-    function renderItems() { 
-      const section = document.getElementById('items-section'); 
-      const filtered = activeFilter === 'all' ? ITEMS : ITEMS.filter(i => i.cat === activeFilter); 
-      section.innerHTML = ''; 
-      const grid = document.createElement('div'); 
-      grid.className = 'items-grid'; 
-      
-      function getUnlockLevel(itemPrice) {
-        if (itemPrice <= 13000000000) return 1;
-        if (itemPrice <= 45000000000) return 2;
-        if (itemPrice <= 121000000000) return 3;
-        return 4;
-      }
+    // ============================================================
+    // RENDER ITEMS
+    // ============================================================
+    function getUnlockLevel(p) { return p <= 13e9 ? 1 : p <= 45e9 ? 2 : p <= 121e9 ? 3 : 4; }
 
-      filtered.forEach(item => { 
-        const currentQty = qtyState[item.id] || 1;
-        let price = item.invest ? investPrices[item.id] : item.price;
-        const currentCost = price * currentQty;
-        
-        // Check item level limits
-        let itemCap = Infinity;
-        if (selectedLevel === 1) itemCap = 13000000000;
-        else if (selectedLevel === 2) itemCap = 45000000000;
-        else if (selectedLevel === 3) itemCap = 121000000000;
-        
-        let isLockedOnLevel = item.price > itemCap;
+    function renderItems() {
+      var section = document.getElementById('items-section'); if (!section) return;
+      var filtered = activeFilter === 'all' ? ITEMS : ITEMS.filter(function(i) { return i.cat === activeFilter; });
+      section.innerHTML = '';
+      var grid = document.createElement('div'); grid.className = 'items-grid';
+      var cap = selectedLevel === 1 ? 13e9 : selectedLevel === 2 ? 45e9 : selectedLevel === 3 ? 121e9 : Infinity;
+      var pv = 0; for (var pid in purchases) { if (purchases[pid].item.invest) pv += purchases[pid].qty * investPrices[pid]; }
 
-        // Check affordability using total net worth (cash + portfolio)
-        let totalPortfolio = 0;
-        for (let pid in purchases) {
-          if (purchases[pid].item.invest) {
-            totalPortfolio += purchases[pid].qty * investPrices[pid];
-          }
-        }
-        const cantAfford = (cash + totalPortfolio) < currentCost; 
-        
-        let trendHtml = '';
-        let sellBtnHtml = '';
-        let ownedHtml = '';
-        
+      for (var fi = 0; fi < filtered.length; fi++) {
+        var item = filtered[fi];
+        var qty = qtyState[item.id] || 1;
+        var price = item.invest ? investPrices[item.id] : item.price;
+        var cost = price * qty; var locked = item.price > cap; var cantAfford = (cash + pv) < cost;
+        var trendHtml = ''; var sellHtml = ''; var ownedHtml = '';
+
         if (item.invest) {
-          let trend = investTrends[item.id] || 0;
-          let trendClass = trend >= 0 ? 'trend-up' : 'trend-down';
-          let trendSign = trend >= 0 ? '▲' : '▼';
-          trendHtml = `<span class="trend-badge ${trendClass}" id="item-trend-${item.id}">${trendSign} ${Math.abs(trend).toFixed(1)}%</span>`;
-          
-          let ownedQty = purchases[item.id] ? purchases[item.id].qty : 0;
-          if (ownedQty > 0) {
-            ownedHtml = `<div class="owned-badge">OWNED: ${ownedQty}</div>`;
-            sellBtnHtml = `<button class="sell-btn" onclick="window.sellItem('${item.id}')">SELL</button>`;
+          var trend = investTrends[item.id] || 0; var tc = trend >= 0 ? 'trend-up' : 'trend-down'; var ts = trend >= 0 ? '▲' : '▼';
+          trendHtml = '<span class="trend-badge ' + tc + '" id="item-trend-' + item.id + '">' + ts + ' ' + Math.abs(trend).toFixed(1) + '%</span>';
+          var ownedQ = purchases[item.id] ? purchases[item.id].qty : 0;
+          if (ownedQ > 0) {
+            ownedHtml = '<div class="owned-badge">OWNED: ' + ownedQ + '</div>';
+            sellHtml = '<button class="sell-btn" onclick="window.sellItem(\'' + item.id + '\')">SELL</button>';
           }
         }
 
-        let actionHtml = '';
-        if (isLockedOnLevel) {
-          actionHtml = `
-            <div style="text-align: center; color: var(--accent1); font-size: 0.72rem; font-weight: 800; text-transform: uppercase; border: 1px dashed rgba(255, 0, 60, 0.25); padding: 10px; border-radius: 8px; width: 100%; letter-spacing: 0.5px; background: rgba(255, 0, 60, 0.02); margin-top: 8px;">
-              🔒 Unlocks at Level ${getUnlockLevel(item.price)}
-            </div>
-          `;
-        } else {
-          actionHtml = `
-            <div class="qty-controls">
-              <button class="qty-btn" onclick="window.changeQty('${item.id}', -1)">-</button>
-              <input type="number" class="qty-input" id="qty-val-${item.id}" value="${currentQty}" oninput="window.setQty('${item.id}', this.value)" onblur="window.sanitizeInput('${item.id}', this.value)">
-              <button class="qty-btn" onclick="window.changeQty('${item.id}', 1)">+</button>
-            </div>
-            <div class="card-actions" style="display: flex; gap: 6px; width: 100%;">
-              <button class="buy-btn ${cantAfford ? 'disabled-btn' : ''}" style="flex: 1;" id="buy-btn-${item.id}" onclick="window.buyItem('${item.id}')">
-                BUY (${fmt(currentCost)})
-              </button>
-              ${sellBtnHtml}
-            </div>
-          `;
-        }
+        var actionHtml = locked
+          ? '<div style="text-align:center;color:var(--accent1);font-size:0.72rem;font-weight:800;text-transform:uppercase;border:1px dashed rgba(255,0,60,0.25);padding:10px;border-radius:8px;width:100%;background:rgba(255,0,60,0.02);margin-top:8px;">🔒 Unlocks at Level ' + getUnlockLevel(item.price) + '</div>'
+          : '<div class="qty-controls"><button class="qty-btn" onclick="window.changeQty(\'' + item.id + '\',-1)">-</button><input type="number" class="qty-input" id="qty-val-' + item.id + '" value="' + qty + '" oninput="window.setQty(\'' + item.id + '\',this.value)" onblur="window.sanitizeInput(\'' + item.id + '\',this.value)"><button class="qty-btn" onclick="window.changeQty(\'' + item.id + '\',1)">+</button></div><div class="card-actions" style="display:flex;gap:6px;width:100%;"><button class="buy-btn ' + (cantAfford?'disabled-btn':'') + '" style="flex:1;" id="buy-btn-' + item.id + '" onclick="window.buyItem(\'' + item.id + '\')">BUY (' + fmt(cost) + ')</button>' + sellHtml + '</div>';
 
-        const card = document.createElement('div'); 
-        card.className = `item-card ${item.invest ? 'invest-card' : ''} ${isLockedOnLevel ? 'locked-item' : ''}`;
-        card.innerHTML = `
-          ${trendHtml}
-          <div class="item-emoji">${item.emoji}</div>
-          <div class="item-name">${item.name}</div>
-          <div class="item-price" id="item-price-${item.id}">${fmt(price)}</div>
-          ${ownedHtml}
-          ${actionHtml}
-        `;
+        var card = document.createElement('div');
+        card.className = 'item-card' + (item.invest?' invest-card':'') + (locked?' locked-item':'');
+        card.innerHTML = trendHtml + '<div class="item-emoji">' + item.emoji + '</div><div class="item-name">' + item.name + '</div><div class="item-price" id="item-price-' + item.id + '">' + fmt(price) + '</div>' + ownedHtml + actionHtml;
         grid.appendChild(card);
-      });
+      }
       section.appendChild(grid);
     }
 
-    function calculateNetWorth() {
-      let portfolioValue = 0;
-      for (let id in purchases) {
-        if (purchases[id].item.invest) {
-          portfolioValue += purchases[id].qty * investPrices[id];
-        }
-      }
-      balance = cash + portfolioValue;
-    }
-
-    // Fully updates and synchronizes all BUY button states across the entire page
+    // ============================================================
+    // WALLET
+    // ============================================================
     function updateAllBuyButtons() {
-      // Calculate net worth
-      let totalPortfolio = 0;
-      for (let pid in purchases) {
-        if (purchases[pid].item.invest) {
-          totalPortfolio += purchases[pid].qty * investPrices[pid];
+      var pv = 0; for (var pid in purchases) { if (purchases[pid].item.invest) pv += purchases[pid].qty * investPrices[pid]; }
+      var nw = cash + pv;
+      for (var i = 0; i < ITEMS.length; i++) {
+        var btn = document.getElementById('buy-btn-' + ITEMS[i].id); var inp = document.getElementById('qty-val-' + ITEMS[i].id);
+        if (btn && inp) {
+          var qty = parseInt(inp.value) || 1; var price = ITEMS[i].invest ? investPrices[ITEMS[i].id] : ITEMS[i].price; var cost = price * qty;
+          btn.innerText = 'BUY (' + fmt(cost) + ')';
+          if (nw < cost) btn.classList.add('disabled-btn'); else btn.classList.remove('disabled-btn');
         }
       }
-      let netWorth = cash + totalPortfolio;
-      
-      ITEMS.forEach(item => {
-        const buyBtn = document.getElementById(`buy-btn-${item.id}`);
-        const inputEl = document.getElementById(`qty-val-${item.id}`);
-        if (buyBtn && inputEl) {
-          let qty = parseInt(inputEl.value) || 1;
-          let price = item.invest ? investPrices[item.id] : item.price;
-          let currentCost = price * qty;
-          
-          buyBtn.innerText = `BUY (${fmt(currentCost)})`;
-          if (netWorth < currentCost) {
-            buyBtn.classList.add('disabled-btn');
-          } else {
-            buyBtn.classList.remove('disabled-btn');
-          }
-        }
-      });
     }
 
     function updateWallet() {
       calculateNetWorth();
-      const balEl = document.getElementById('balance');
-      balEl.innerText = fmt(balance);
-      if(balance === 0) balEl.classList.add('empty');
-      else balEl.classList.remove('empty');
-      
-      const cashLabel = document.getElementById('receipt-cash');
-      const portfolioLabel = document.getElementById('receipt-portfolio');
-      if (cashLabel) cashLabel.innerText = fmt(cash);
-      if (portfolioLabel) {
-        let pVal = balance - cash;
-        portfolioLabel.innerText = fmt(pVal);
-      }
-      
-      const totalLabel = document.getElementById('receipt-total');
-      if (totalLabel) totalLabel.innerText = fmt(balance);
-      
-      // Update all disabled button states dynamically
+      var balEl = document.getElementById('balance');
+      if (balEl) { balEl.innerText = fmt(balance); if (balance===0) balEl.classList.add('empty'); else balEl.classList.remove('empty'); }
+      var cEl = document.getElementById('receipt-cash'); var pEl = document.getElementById('receipt-portfolio'); var tEl = document.getElementById('receipt-total');
+      if (cEl) cEl.innerText = fmt(cash); if (pEl) pEl.innerText = fmt(balance-cash); if (tEl) tEl.innerText = fmt(balance);
       updateAllBuyButtons();
-      
-      // Win detection
-      if (balance <= 0 && timerStarted && !timerStopped) {
-        window.triggerCelebration();
-      }
+      if (balance <= 0 && timerStarted && !timerStopped) window.triggerCelebration();
     }
 
+    // ============================================================
+    // RECEIPT
+    // ============================================================
     function renderReceipt() {
-      const body = document.getElementById('receipt-body');
-      body.innerHTML = '';
-      const hasPurchases = Object.keys(purchases).length > 0;
-      const hasEvents = transactionLog.length > 0;
-      if (!hasPurchases && !hasEvents) {
-        body.innerHTML = '<div class="receipt-empty-state">No transactions recorded yet. Empty the vault!</div>';
-        return;
+      var body = document.getElementById('receipt-body'); if (!body) return;
+      var hasPurchases = Object.keys(purchases).length > 0; var hasEvents = transactionLog.length > 0;
+      if (!hasPurchases && !hasEvents) { body.innerHTML = '<div class="receipt-empty-state">No transactions recorded yet. Empty the vault!</div>'; return; }
+      var html = '<div class="receipt-list">';
+      for (var id in purchases) {
+        var p = purchases[id]; var price = p.item.invest ? investPrices[id] : p.item.price;
+        html += '<div class="receipt-item"><div class="receipt-item-emoji">' + p.item.emoji + '</div><div class="receipt-item-name">' + p.item.name + (p.item.invest ? ' <span style="color:var(--accent2);font-size:0.75rem;font-weight:800;">[ASSET]</span>' : '') + '</div><div class="receipt-item-qty">x' + p.qty + '</div><div class="receipt-item-cost">' + fmt(price*p.qty) + '</div></div>';
       }
-      let html = '<div class="receipt-list">';
-      
-      // --- Purchases ---
-      for(let id in purchases) {
-        let p = purchases[id];
-        let price = p.item.invest ? investPrices[id] : p.item.price;
-        let currentTotal = price * p.qty;
-        html += `
-          <div class="receipt-item">
-            <div class="receipt-item-emoji">${p.item.emoji}</div>
-            <div class="receipt-item-name">${p.item.name} ${p.item.invest ? '<span style="color:var(--accent2); font-size:0.75rem; font-weight:800;">[ASSET]</span>' : ''}</div>
-            <div class="receipt-item-qty">x${p.qty}</div>
-            <div class="receipt-item-cost">${fmt(currentTotal)}</div>
-          </div>
-        `;
-      }
-      
-      // --- Random Events Log ---
       if (hasEvents) {
-        html += `<div style="display:flex;align-items:center;gap:8px;padding:12px 0 4px;">
-          <div style="flex:1;height:1px;background:var(--border);"></div>
-          <span style="font-size:0.62rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;font-family:monospace;">⚡ Random Events</span>
-          <div style="flex:1;height:1px;background:var(--border);"></div>
-        </div>`;
-        transactionLog.forEach(entry => {
-          const isGain = entry.amount >= 0;
-          const amountColor = isGain ? 'var(--green)' : 'var(--accent1)';
-          const sign = isGain ? '+' : '-';
-          const displayAmt = entry.amount === 0 ? 'Portfolio Hit' : `${sign}${fmt(Math.abs(entry.amount))}`;
-          html += `
-            <div class="receipt-item" style="border-bottom:1px dashed #111120;">
-              <div class="receipt-item-emoji">${entry.emoji}</div>
-              <div class="receipt-item-name" style="color:#aaa;font-weight:600;font-size:0.8rem;">${entry.name}</div>
-              <div class="receipt-item-cost" style="color:${amountColor};font-size:1rem;">${displayAmt}</div>
-            </div>
-          `;
-        });
+        html += '<div style="display:flex;align-items:center;gap:8px;padding:12px 0 4px;"><div style="flex:1;height:1px;background:var(--border);"></div><span style="font-size:0.62rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;font-family:monospace;">⚡ Random Events</span><div style="flex:1;height:1px;background:var(--border);"></div></div>';
+        for (var ei = 0; ei < transactionLog.length; ei++) {
+          var e = transactionLog[ei]; var isGain = e.amount >= 0; var sign = isGain ? '+' : '-';
+          var amtColor = isGain ? 'var(--green)' : 'var(--accent1)';
+          var display = e.amount === 0 ? 'Portfolio Hit' : sign + fmt(Math.abs(e.amount));
+          html += '<div class="receipt-item" style="border-bottom:1px dashed #111120;"><div class="receipt-item-emoji">' + e.emoji + '</div><div class="receipt-item-name" style="color:#aaa;font-weight:600;font-size:0.8rem;">' + e.name + '</div><div class="receipt-item-cost" style="color:' + amtColor + ';font-size:1rem;">' + display + '</div></div>';
+        }
       }
-      
-      html += '</div>';
-      body.innerHTML = html;
+      html += '</div>'; body.innerHTML = html;
     }
 
+    // ============================================================
+    // MARKET & EVENTS
+    // ============================================================
     function isGamePaused() {
-      const overlay = document.getElementById('level-overlay');
-      return !overlay || !overlay.classList.contains('hide') || !timerStarted || timerStopped;
+      var ol = document.getElementById('level-overlay');
+      return !ol || !ol.classList.contains('hide') || !timerStarted || timerStopped;
     }
 
     function updateMarket() {
       if (isGamePaused()) return;
-      ITEMS.forEach(item => {
-        if (item.invest) {
-          // Average fluctuation is negative so it's easier to win
-          let changePct = (Math.random() * 11 - 7); 
-          investTrends[item.id] = changePct;
-          let oldPrice = investPrices[item.id];
-          let newPrice = Math.round(oldPrice * (1 + changePct / 100));
-          if (newPrice < 1) newPrice = 1;
-          investPrices[item.id] = newPrice;
-          
-          // Update DOM directly to preserve keyboard focus
-          const priceEl = document.getElementById(`item-price-${item.id}`);
-          if (priceEl) {
-            priceEl.innerText = fmt(newPrice);
-          }
-          
-          const trendEl = document.getElementById(`item-trend-${item.id}`);
-          if (trendEl) {
-            let trendClass = changePct >= 0 ? 'trend-up' : 'trend-down';
-            let trendSign = changePct >= 0 ? '▲' : '▼';
-            trendEl.className = `trend-badge ${trendClass}`;
-            trendEl.innerHTML = `${trendSign} ${Math.abs(changePct).toFixed(1)}%`;
-          }
-        }
-      });
-      updateWallet();
-      renderReceipt();
+      for (var i = 0; i < ITEMS.length; i++) {
+        var item = ITEMS[i]; if (!item.invest) continue;
+        var chg = Math.random() * 11 - 7; investTrends[item.id] = chg;
+        var newP = Math.round(investPrices[item.id] * (1 + chg/100)); if (newP < 1) newP = 1;
+        investPrices[item.id] = newP;
+        var pEl = document.getElementById('item-price-' + item.id); if (pEl) pEl.innerText = fmt(newP);
+        var tEl = document.getElementById('item-trend-' + item.id);
+        if (tEl) { var tc = chg>=0?'trend-up':'trend-down'; var ts = chg>=0?'▲':'▼'; tEl.className='trend-badge '+tc; tEl.innerHTML=ts+' '+Math.abs(chg).toFixed(1)+'%'; }
+      }
+      updateWallet(); renderReceipt();
     }
 
     function initTicker() {
-      const tickerText = document.getElementById('ticker-text');
-      if (tickerText) {
-        let headlines = [...TICKER_HEADLINES];
-        headlines.sort(() => Math.random() - 0.5);
-        tickerText.innerText = headlines.join(" --- ") + " --- ";
-      }
+      var el = document.getElementById('ticker-text');
+      if (el) { var h = TICKER_HEADLINES.slice().sort(function() { return Math.random()-0.5; }); el.innerText = h.join(' --- ') + ' --- '; }
     }
 
-    function triggerRandomEvent() {
-      if (isGamePaused()) return;
-      let eventIdx = Math.floor(Math.random() * EVENTS.length);
-      EVENTS[eventIdx].effect();
-    }
+    function triggerRandomEvent() { if (!isGamePaused()) EVENTS[Math.floor(Math.random() * EVENTS.length)].effect(); }
 
     function showEventAlert(title, message, isGain) {
-      const container = document.getElementById('event-alert-container') || createAlertContainer();
-      const alert = document.createElement('div');
-      alert.className = `event-alert ${isGain ? 'gain' : 'loss'}`;
-      alert.innerHTML = `
-        <div class="event-title ${isGain ? 'gain' : 'loss'}">${title}</div>
-        <div class="event-desc">${message}</div>
-      `;
+      var container = document.getElementById('event-alert-container');
+      if (!container) { container = document.createElement('div'); container.id = 'event-alert-container'; container.className = 'event-alert-container'; document.body.appendChild(container); }
+      var alert = document.createElement('div'); alert.className = 'event-alert ' + (isGain?'gain':'loss');
+      alert.innerHTML = '<div class="event-title ' + (isGain?'gain':'loss') + '">' + title + '</div><div class="event-desc">' + message + '</div>';
       container.appendChild(alert);
-      
-      setTimeout(() => {
-        alert.remove();
-      }, 7000);
-      
-      const tickerText = document.getElementById('ticker-text');
-      if (tickerText) {
-        tickerText.innerText = `[ALERT] ${title.toUpperCase()}: ${message.toUpperCase()} --- ${tickerText.innerText}`;
-      }
-      
-      const balEl = document.getElementById('balance');
-      const walletEl = document.querySelector('.wallet');
-      if (balEl && walletEl) {
-        walletEl.classList.add('shake-wallet');
-        balEl.classList.add(isGain ? 'flash-green' : 'flash-red');
-        
-        setTimeout(() => {
-          walletEl.classList.remove('shake-wallet');
-          balEl.classList.remove('flash-green', 'flash-red');
-        }, 1200);
-      }
-      
-      updateWallet();
-      renderItems();
+      setTimeout(function() { if (alert.parentNode) alert.parentNode.removeChild(alert); }, 7000);
+      var ticker = document.getElementById('ticker-text'); if (ticker) ticker.innerText = '[ALERT] ' + title.toUpperCase() + ': ' + message.toUpperCase() + ' --- ' + ticker.innerText;
+      var balEl = document.getElementById('balance'); var walletEl = document.querySelector('.wallet');
+      if (balEl && walletEl) { walletEl.classList.add('shake-wallet'); balEl.classList.add(isGain?'flash-green':'flash-red'); setTimeout(function() { walletEl.classList.remove('shake-wallet'); balEl.classList.remove('flash-green','flash-red'); }, 1200); }
+      updateWallet(); renderItems();
     }
 
-    function createAlertContainer() {
-      const container = document.createElement('div');
-      container.id = 'event-alert-container';
-      container.className = 'event-alert-container';
-      document.body.appendChild(container);
-      return container;
-    }
-
+    // ============================================================
+    // CLEAR ALL
+    // ============================================================
     window.clearAll = function() {
       playSound('click');
-      cash = TOTAL;
-      balance = TOTAL;
-      spent = 0;
-      purchases = {};
-      qtyState = {};
-      transactionLog = [];
-      resetTimer();
-      resetHints();
-      
-      // Reset casino UI elements
-      const resultBox = document.getElementById('decryptor-result-box');
-      if (resultBox) resultBox.style.display = 'none';
-      const progressWrap = document.getElementById('decryptor-progress');
-      if (progressWrap) progressWrap.style.display = 'none';
-      const inputEl = document.getElementById('casino-bet-val');
-      if (inputEl) inputEl.value = 1000000000; // default 1B
-      isHacking = false;
-      consecutiveBurns = 0;
-      const hackBtn = document.getElementById('decryptor-hack-btn');
-      if (hackBtn) {
-        hackBtn.classList.remove('hacking');
-        hackBtn.innerText = "Run Cyber-Hack ⚡";
-      }
-      
-      ITEMS.forEach(item => {
-        if (item.invest) {
-          investPrices[item.id] = item.price;
-          investTrends[item.id] = 0;
-        }
-      });
-
-      updateMetaTags();
-      updateWallet();
-      renderItems();
-      renderReceipt();
-      showToast("Wallet Reset!");
+      cash = TOTAL; balance = TOTAL; spent = 0; purchases = {}; qtyState = {}; transactionLog = [];
+      resetTimer(); resetHints();
+      var rBox = document.getElementById('decryptor-result-box'); if (rBox) rBox.style.display = 'none';
+      var pWrap = document.getElementById('decryptor-progress'); if (pWrap) pWrap.style.display = 'none';
+      var cInp = document.getElementById('casino-bet-val'); if (cInp) cInp.value = 1000000000;
+      isHacking = false; consecutiveBurns = 0;
+      var hackBtn = document.getElementById('decryptor-hack-btn'); if (hackBtn) { hackBtn.classList.remove('hacking'); hackBtn.innerText = 'Run Cyber-Hack ⚡'; }
+      for (var i = 0; i < ITEMS.length; i++) { if (ITEMS[i].invest) { investPrices[ITEMS[i].id] = ITEMS[i].price; investTrends[ITEMS[i].id] = 0; } }
+      updateMetaTags(); updateWallet(); renderItems(); renderReceipt(); showToast('Wallet Reset!');
     };
 
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.innerText = msg;
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2000);
-    }
-
-    // Fireworks particles and animation logic (lazily initialized to prevent load-time crashes)
-    let canvas = null;
-    let ctx = null;
-    let fireworksList = [];
-    let particlesList = [];
-    let animationId = null;
-
+    // ============================================================
+    // FIREWORKS
+    // ============================================================
     function initFireworks() {
-      if (!canvas) {
-        canvas = document.getElementById('fireworks');
-        if (canvas) {
-          try {
-            ctx = canvas.getContext('2d');
-          } catch (e) {
-            console.warn("Failed to get 2d context for fireworks canvas:", e);
-            ctx = null;
-          }
-        }
-      }
+      if (!canvas) { canvas = document.getElementById('fireworks'); if (canvas) { try { ctx = canvas.getContext('2d'); } catch(e) { ctx = null; } } }
     }
+    function resizeCanvas() { if (canvas) { canvas.width = window.innerWidth; canvas.height = window.innerHeight; } }
 
-    function resizeCanvas() {
-      if (canvas) {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
+    function Firework(sx, sy, tx, ty) {
+      playSound('firework_launch');
+      this.x=sx; this.y=sy; this.sx=sx; this.sy=sy; this.tx=tx; this.ty=ty;
+      this.distanceToTarget=Math.sqrt((tx-sx)*(tx-sx)+(ty-sy)*(ty-sy)); this.distanceTraveled=0;
+      this.coordinates=[[sx,sy],[sx,sy],[sx,sy]]; this.angle=Math.atan2(ty-sy,tx-sx);
+      this.speed=2.5; this.acceleration=1.04; this.brightness=Math.random()*20+50; this.hue=Math.random()*360;
     }
+    Firework.prototype.update = function(index) {
+      this.coordinates.pop(); this.coordinates.unshift([this.x,this.y]); this.speed*=this.acceleration;
+      var vx=Math.cos(this.angle)*this.speed; var vy=Math.sin(this.angle)*this.speed;
+      this.distanceTraveled=Math.sqrt((this.x+vx-this.sx)*(this.x+vx-this.sx)+(this.y+vy-this.sy)*(this.y+vy-this.sy));
+      if (this.distanceTraveled>=this.distanceToTarget) { playSound('firework_pop'); createParticles(this.tx,this.ty,this.hue); fireworksList.splice(index,1); }
+      else { this.x+=vx; this.y+=vy; }
+    };
+    Firework.prototype.draw = function() {
+      if (!ctx) return;
+      ctx.beginPath(); ctx.moveTo(this.coordinates[this.coordinates.length-1][0],this.coordinates[this.coordinates.length-1][1]);
+      ctx.lineTo(this.x,this.y); ctx.strokeStyle='hsl('+this.hue+',100%,'+this.brightness+'%)'; ctx.lineWidth=2; ctx.stroke();
+    };
 
-    class Firework {
-      constructor(sx, sy, tx, ty) {
-        playSound('firework_launch');
-        this.x = sx;
-        this.y = sy;
-        this.sx = sx;
-        this.sy = sy;
-        this.tx = tx;
-        this.ty = ty;
-        this.distanceToTarget = Math.sqrt((tx - sx)**2 + (ty - sy)**2);
-        this.distanceTraveled = 0;
-        this.coordinates = [[sx, sy], [sx, sy], [sx, sy]];
-        this.angle = Math.atan2(ty - sy, tx - sx);
-        this.speed = 2.5;
-        this.acceleration = 1.04;
-        this.brightness = Math.random() * 20 + 50;
-        this.hue = Math.random() * 360;
-      }
-      update(index) {
-        this.coordinates.pop();
-        this.coordinates.unshift([this.x, this.y]);
-        this.speed *= this.acceleration;
-        let vx = Math.cos(this.angle) * this.speed;
-        let vy = Math.sin(this.angle) * this.speed;
-        this.distanceTraveled = Math.sqrt((this.x + vx - this.sx)**2 + (this.y + vy - this.sy)**2);
-        if(this.distanceTraveled >= this.distanceToTarget) {
-          playSound('firework_pop');
-          createParticles(this.tx, this.ty, this.hue);
-          fireworksList.splice(index, 1);
-        } else {
-          this.x += vx;
-          this.y += vy;
-        }
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
-        ctx.lineTo(this.x, this.y);
-        ctx.strokeStyle = `hsl(${this.hue}, 100%, ${this.brightness}%)`;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
+    function FParticle(x, y, hue) {
+      this.x=x; this.y=y; this.coordinates=[[x,y],[x,y],[x,y],[x,y],[x,y]];
+      this.angle=Math.random()*Math.PI*2; this.speed=Math.random()*8+1; this.friction=0.95; this.gravity=0.8;
+      this.hue=hue+(Math.random()*40-20); this.brightness=Math.random()*20+60; this.alpha=1; this.decay=Math.random()*0.015+0.012;
     }
+    FParticle.prototype.update = function(index) {
+      this.coordinates.pop(); this.coordinates.unshift([this.x,this.y]);
+      this.speed*=this.friction; this.x+=Math.cos(this.angle)*this.speed; this.y+=Math.sin(this.angle)*this.speed+this.gravity;
+      this.alpha-=this.decay; if (this.alpha<=this.decay) particlesList.splice(index,1);
+    };
+    FParticle.prototype.draw = function() {
+      if (!ctx) return;
+      ctx.beginPath(); ctx.moveTo(this.coordinates[this.coordinates.length-1][0],this.coordinates[this.coordinates.length-1][1]);
+      ctx.lineTo(this.x,this.y); ctx.strokeStyle='hsla('+this.hue+',100%,'+this.brightness+'%,'+this.alpha+')'; ctx.lineWidth=2; ctx.stroke();
+    };
 
-    class Particle {
-      constructor(x, y, hue) {
-        this.x = x;
-        this.y = y;
-        this.coordinates = [[x, y], [x, y], [x, y], [x, y], [x, y]];
-        this.angle = Math.random() * Math.PI * 2;
-        this.speed = Math.random() * 8 + 1;
-        this.friction = 0.95;
-        this.gravity = 0.8;
-        this.hue = hue + (Math.random() * 40 - 20);
-        this.brightness = Math.random() * 20 + 60;
-        this.alpha = 1;
-        this.decay = Math.random() * 0.015 + 0.012;
-      }
-      update(index) {
-        this.coordinates.pop();
-        this.coordinates.unshift([this.x, this.y]);
-        this.speed *= this.friction;
-        this.x += Math.cos(this.angle) * this.speed;
-        this.y += Math.sin(this.angle) * this.speed + this.gravity;
-        this.alpha -= this.decay;
-        if(this.alpha <= this.decay) {
-          particlesList.splice(index, 1);
-        }
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
-        ctx.lineTo(this.x, this.y);
-        ctx.strokeStyle = `hsla(${this.hue}, 100%, ${this.brightness}%, ${this.alpha})`;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
-    }
-
-    function createParticles(x, y, hue) {
-      let count = 40;
-      while(count--) {
-        particlesList.push(new Particle(x, y, hue));
-      }
-    }
+    function createParticles(x,y,hue) { var c=40; while(c--) particlesList.push(new FParticle(x,y,hue)); }
 
     function fireworksLoop() {
-      if (!canvas || !ctx) return;
-      animationId = requestAnimationFrame(fireworksLoop);
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.globalCompositeOperation = 'lighter';
-      
-      let i = fireworksList.length;
-      while(i--) {
-        fireworksList[i].draw();
-        fireworksList[i].update(i);
-      }
-      let j = particlesList.length;
-      while(j--) {
-        particlesList[j].draw();
-        particlesList[j].update(j);
-      }
-      
-      if(Math.random() * 100 < 5) {
-        fireworksList.push(new Firework(canvas.width / 2, canvas.height, Math.random() * canvas.width, Math.random() * (canvas.height / 2)));
-      }
+      if (!canvas||!ctx) return;
+      animationId=requestAnimationFrame(fireworksLoop);
+      ctx.globalCompositeOperation='destination-out'; ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.globalCompositeOperation='lighter';
+      var i=fireworksList.length; while(i--) { fireworksList[i].draw(); fireworksList[i].update(i); }
+      var j=particlesList.length; while(j--) { particlesList[j].draw(); particlesList[j].update(j); }
+      if (Math.random()*100<5) fireworksList.push(new Firework(canvas.width/2,canvas.height,Math.random()*canvas.width,Math.random()*(canvas.height/2)));
     }
 
     window.triggerCelebration = function() {
-      playSound('win');
-      stopTimer();
-      const timeStr = formatTime(timerSeconds);
-      
-      // Level progression check
-      let unlockedNext = false;
-      if (selectedLevel === unlockedLevel && unlockedLevel < 4) {
-        unlockedLevel++;
-        try {
-          localStorage.setItem('unlockedLevel', unlockedLevel);
-        } catch (e) {
-          console.warn("Failed to save progress to localStorage:", e);
-        }
-        unlockedNext = true;
-      }
-      
-      const subEl = document.querySelector('.celebration-subtitle');
+      playSound('win'); stopTimer();
+      var timeStr = formatTime(timerSeconds); var unlockedNext = false;
+      if (selectedLevel===unlockedLevel && unlockedLevel<4) { unlockedLevel++; try { localStorage.setItem('unlockedLevel',unlockedLevel); } catch(e) {} unlockedNext=true; }
+      var subEl = document.querySelector('.celebration-subtitle');
       if (subEl) {
-        let msg = `You liquidated the entire <b>${fmt(TOTAL)}</b> in <b style="color:var(--accent3);">${timeStr}</b>!<br>Your billionaire status is legendary. 💸`;
-        if (unlockedNext) {
-          const nextLvlName = LEVEL_RULES[unlockedLevel].title;
-          msg += `<br><br><span style="color:var(--accent2); font-weight:800; font-size:1.15rem; text-shadow:0 0 15px rgba(252,238,10,0.5);">🎉 Level Unlocked: ${nextLvlName}!</span>`;
-        }
+        var msg = 'You liquidated the entire <b>' + fmt(TOTAL) + '</b> in <b style="color:var(--accent3);">' + timeStr + '</b>!<br>Your billionaire status is legendary. 💸';
+        if (unlockedNext) msg += '<br><br><span style="color:var(--accent2);font-weight:800;font-size:1.15rem;">🎉 Level Unlocked: ' + LEVEL_RULES[unlockedLevel].title + '!</span>';
         subEl.innerHTML = msg;
       }
-      
-      // Configure "Proceed to Next Level" button
-      const nextBtn = document.getElementById('cel-next-btn');
-      if (nextBtn) {
-        if (selectedLevel < 4) {
-          nextBtn.style.display = 'flex';
-          nextBtn.innerText = `Advance to Level ${selectedLevel + 1} 🚀`;
-        } else {
-          nextBtn.style.display = 'none';
-        }
-      }
-      
+      var nextBtn = document.getElementById('cel-next-btn');
+      if (nextBtn) { if (selectedLevel<4) { nextBtn.style.display='flex'; nextBtn.innerText='Advance to Level '+(selectedLevel+1)+' 🚀'; } else nextBtn.style.display='none'; }
       document.getElementById('celebration-screen').classList.add('active');
-      initFireworks();
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
-      if (!animationId) {
-        fireworksLoop();
-      }
+      initFireworks(); resizeCanvas(); window.addEventListener('resize',resizeCanvas); if (!animationId) fireworksLoop();
     };
 
     window.closeCelebration = function() {
-      playSound('click');
-      document.getElementById('celebration-screen').classList.remove('active');
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-      }
-      window.removeEventListener('resize', resizeCanvas);
-      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-      fireworksList = [];
-      particlesList = [];
-      window.clearAll();
+      playSound('click'); document.getElementById('celebration-screen').classList.remove('active');
+      if (animationId) { cancelAnimationFrame(animationId); animationId=null; }
+      window.removeEventListener('resize',resizeCanvas); if (ctx) ctx.clearRect(0,0,canvas.width,canvas.height);
+      fireworksList=[]; particlesList=[]; window.clearAll();
     };
 
     window.goToNextLevel = function() {
-      playSound('click');
-      document.getElementById('celebration-screen').classList.remove('active');
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-      }
-      window.removeEventListener('resize', resizeCanvas);
-      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-      fireworksList = [];
-      particlesList = [];
-      
-      const nextLvl = selectedLevel + 1;
-      if (nextLvl <= 4) {
-        selectedLevel = nextLvl;
-        if (selectedLevel === 1) selectedLevelCash = 100000000000;
-        else if (selectedLevel === 2) selectedLevelCash = 500000000000;
-        else if (selectedLevel === 3) selectedLevelCash = 1000000000000;
-        else if (selectedLevel === 4) selectedLevelCash = 5000000000000;
-      }
-      
+      playSound('click'); document.getElementById('celebration-screen').classList.remove('active');
+      if (animationId) { cancelAnimationFrame(animationId); animationId=null; }
+      window.removeEventListener('resize',resizeCanvas); if (ctx) ctx.clearRect(0,0,canvas.width,canvas.height);
+      fireworksList=[]; particlesList=[];
+      var next = selectedLevel + 1;
+      if (next<=4) { selectedLevel=next; selectedLevelCash=[0,100e9,500e9,1e12,5e12][next]; }
       window.openLevelSelector();
     };
 
+    // ============================================================
+    // DOWNLOAD RECEIPT
+    // ============================================================
     window.downloadReceipt = function() {
       playSound('click');
-      const hasPurchases = Object.keys(purchases).length > 0;
-      const hasEvents = transactionLog.length > 0;
-      if (!hasPurchases && !hasEvents) {
-        showToast("No transactions found!");
-        return;
-      }
-      const txCode = document.getElementById('receipt-tx-id').innerText;
-      const timeCode = document.getElementById('receipt-timestamp').innerText;
-      const now = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
-
-      // Build purchase rows
-      let purchaseRows = '';
-      for (let id in purchases) {
-        let p = purchases[id];
-        let price = p.item.invest ? investPrices[id] : p.item.price;
-        let currentTotal = price * p.qty;
-        purchaseRows += `<tr>
-          <td class="em">${p.item.emoji}</td>
-          <td class="nm">${p.item.name}${p.item.invest ? ' <span class="badge">ASSET</span>' : ''}</td>
-          <td class="qt">x${p.qty}</td>
-          <td class="am">${fmt(currentTotal)}</td>
-        </tr>`;
-      }
-
-      // Build event rows
-      let eventRows = '';
-      transactionLog.forEach(entry => {
-        const isGain = entry.amount >= 0;
-        const sign = isGain ? '+' : '-';
-        const color = isGain ? '#00ff66' : '#ff003c';
-        const displayAmt = entry.amount === 0 ? 'Portfolio Hit' : `${sign}${fmt(Math.abs(entry.amount))}`;
-        eventRows += `<tr>
-          <td class="em">${entry.emoji}</td>
-          <td class="nm" style="color:#aaa;">${entry.name}</td>
-          <td class="qt" style="color:#6b6b80;font-size:0.72rem;">EVENT</td>
-          <td class="am" style="color:${color};">${displayAmt}</td>
-        </tr>`;
-      });
-
-      const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Receipt ${txCode} — ${fmt(TOTAL)} Wealth Challenge</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{background:#030305;color:#fff;font-family:'Outfit',sans-serif;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:40px 15px;}
-    .receipt{background:#0e0e14;border:2px dashed #222230;border-radius:8px;max-width:580px;width:100%;padding:35px 30px;box-shadow:0 20px 60px rgba(0,0,0,0.95);}
-    .rh{text-align:center;border-bottom:2px dashed #222230;padding-bottom:22px;margin-bottom:20px;}
-    .rt{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#fcee0a;letter-spacing:3px;text-shadow:0 0 20px rgba(252,238,10,0.3);}
-    .rs{font-size:0.72rem;color:#6b6b80;letter-spacing:2px;margin-top:4px;text-transform:uppercase;font-family:monospace;}
-    .rm{display:flex;justify-content:space-between;font-size:0.68rem;color:#6b6b80;font-family:monospace;margin-top:10px;text-transform:uppercase;}
-    .divider{display:flex;align-items:center;gap:10px;padding:14px 0 6px;}
-    .dl{flex:1;height:1px;background:#222230;}
-    .dlb{font-size:0.62rem;color:#6b6b80;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;font-family:monospace;}
-    table{width:100%;border-collapse:collapse;}
-    td{padding:10px 4px;border-bottom:1px dashed #1a1a26;vertical-align:middle;}
-    .em{font-size:1.4rem;width:38px;}
-    .nm{font-size:0.88rem;font-weight:600;color:#e2e2e9;}
-    .qt{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:#00f3ff;text-align:center;width:65px;}
-    .am{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:#00ff66;text-align:right;width:110px;}
-    .badge{background:rgba(252,238,10,0.1);color:#fcee0a;border:1px solid rgba(252,238,10,0.3);border-radius:3px;font-size:0.62rem;padding:1px 5px;font-weight:800;letter-spacing:1px;}
-    .rf{border-top:2px dashed #222230;margin-top:22px;padding-top:20px;}
-    .rr{display:flex;justify-content:space-between;font-size:0.8rem;color:#6b6b80;margin-bottom:8px;}
-    .rrv{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:#e2e2e9;}
-    .rtot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;}
-    .rtl{font-size:0.9rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
-    .rtv{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;color:#ff003c;text-shadow:0 0 20px rgba(255,0,60,0.4);}
-    .bc{margin-top:28px;opacity:0.35;text-align:center;}
-    .bcl{width:100%;height:28px;background:repeating-linear-gradient(90deg,#fff,#fff 2px,transparent 2px,transparent 7px,#fff 7px,#fff 8px,transparent 8px,transparent 12px);}
-    .bct{font-family:monospace;font-size:0.58rem;color:#6b6b80;letter-spacing:3px;margin-top:5px;}
-    .stamp{text-align:center;margin-top:18px;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:#2a2a3a;letter-spacing:3px;}
-  </style>
-</head>
-<body>
-<div class="receipt">
-  <div class="rh">
-    <div class="rt">Transaction Statement</div>
-    <div class="rs">The ${fmt(TOTAL)} Wealth Challenge · Official Record</div>
-    <div class="rm"><span>${txCode}</span><span>${now} · ${timeCode}</span></div>
-  </div>
-  ${purchaseRows ? `<div class="divider"><div class="dl"></div><div class="dlb">🛒 Purchases</div><div class="dl"></div></div><table>${purchaseRows}</table>` : ''}
-  ${eventRows ? `<div class="divider"><div class="dl"></div><div class="dlb">⚡ Random Events</div><div class="dl"></div></div><table>${eventRows}</table>` : ''}
-  <div class="rf">
-    <div class="rr"><span>Liquid Cash Available</span><span class="rrv">${fmt(cash)}</span></div>
-    <div class="rr"><span>Investment Portfolio Value</span><span class="rrv">${fmt(balance - cash)}</span></div>
-    <div class="rtot"><div class="rtl">Total Net Worth</div><div class="rtv">${fmt(balance)}</div></div>
-  </div>
-  <div class="bc"><div class="bcl"></div><div class="bct">WEALTH-DIGITAL-VAULT · ${txCode}</div></div>
-  <div class="stamp">Thank you for emptying the vault</div>
-</div>
-</body>
-</html>`;
-
-      const blob = new Blob([html], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `Receipt_${txCode}.html`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      showToast("Beautiful Receipt Saved! 🎉");
+      if (!Object.keys(purchases).length && !transactionLog.length) { showToast('No transactions found!'); return; }
+      var txEl = document.getElementById('receipt-tx-id'); var tsEl = document.getElementById('receipt-timestamp');
+      var txCode = txEl ? txEl.innerText : 'TX-000000'; var timeCode = tsEl ? tsEl.innerText : '';
+      var now = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
+      var pRows = ''; for (var id in purchases) { var p=purchases[id]; var price=p.item.invest?investPrices[id]:p.item.price; pRows+='<tr><td>'+p.item.emoji+'</td><td>'+p.item.name+'</td><td>x'+p.qty+'</td><td>'+fmt(price*p.qty)+'</td></tr>'; }
+      var eRows = ''; for (var ei=0; ei<transactionLog.length; ei++) { var e=transactionLog[ei]; var sign=e.amount>=0?'+':'-'; var col=e.amount>=0?'#00ff66':'#ff003c'; var da=e.amount===0?'Portfolio Hit':sign+fmt(Math.abs(e.amount)); eRows+='<tr><td>'+e.emoji+'</td><td>'+e.name+'</td><td>EVENT</td><td style="color:'+col+'">'+da+'</td></tr>'; }
+      var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Receipt '+txCode+'</title><style>body{background:#030305;color:#fff;font-family:sans-serif;padding:40px 15px;}.r{background:#0e0e14;border:2px dashed #222230;border-radius:8px;max-width:580px;margin:0 auto;padding:35px 30px;}table{width:100%;border-collapse:collapse;}td{padding:10px 4px;border-bottom:1px dashed #1a1a26;}</style></head><body><div class="r"><h1 style="color:#fcee0a;font-size:2rem;">Transaction Statement</h1><p style="color:#6b6b80;">'+fmt(TOTAL)+' Wealth Challenge &middot; '+now+' &middot; '+timeCode+'</p>'+(pRows?'<table>'+pRows+'</table>':'')+(eRows?'<table>'+eRows+'</table>':'')+'<hr style="border-color:#222230;margin-top:20px;"><p style="font-size:1.5rem;color:#ff003c;font-weight:800;">Net Worth: '+fmt(balance)+'</p></div></body></html>';
+      var blob=new Blob([html],{type:'text/html'}); var url=URL.createObjectURL(blob);
+      var link=document.createElement('a'); link.href=url; link.download='Receipt_'+txCode+'.html';
+      document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
+      showToast('Receipt Saved! 🎉');
     };
 
+    // ============================================================
+    // SHARE
+    // ============================================================
     window.shareGame = function() {
       playSound('click');
-      let shareText;
-      if (timerStopped && timerSeconds > 0) {
-        shareText = `⚔️ Hey, I went broke in ${formatTime(timerSeconds)}! Can you beat me? Play here:`;
-      } else if (spent > 0) {
-        shareText = `I just spent ${fmt(spent)} in the Wealth Simulator! 💸 Can you spend it faster? Play here:`;
-      } else {
-        shareText = `Got a massive blank check and need to go broke! Let's see how fast you can spend it. Play here:`;
-      }
-      const shareUrl = window.location.href; 
-      if (navigator.share) {
-        navigator.share({
-          title: 'Spend One Trillion!',
-          text: shareText,
-          url: shareUrl
-        }).catch((error) => console.log('Error sharing', error));
-      } else {
-        const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + " " + shareUrl)}`;
-        window.open(waUrl, '_blank');
-      }
+      var text = timerStopped && timerSeconds>0 ? '⚔️ I went broke in '+formatTime(timerSeconds)+'! Can you beat me? Play: ' : spent>0 ? 'I just spent '+fmt(spent)+' in the Wealth Simulator! 💸 Play: ' : 'Can you spend a Trillion? Play: ';
+      var url = window.location.href;
+      if (navigator.share) { navigator.share({title:'Spend One Trillion!',text:text,url:url}).catch(function(e){console.log(e);}); }
+      else { window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(text+url),'_blank'); }
     };
 
-    // Review and Rating State
-    let selectedRating = 5;
-    let reviewsData = [];
-
-    // SUPABASE DATABASE CREDENTIALS (Paste yours here to enable global database saving)
-    const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
-    let supabase = null;
-
-    if (SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY_HERE') {
-      try {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      } catch (err) {
-        console.error("Failed to initialize Supabase client", err);
-      }
-    }
-
+    // ============================================================
+    // REVIEWS
+    // ============================================================
     window.setStarRating = function(rating) {
-      playSound('click');
-      selectedRating = rating;
-      const stars = document.querySelectorAll('.star-select-wrap .star-btn');
-      for (let i = 0; i < stars.length; i++) {
-        if (i < rating) {
-          stars[i].classList.add('selected');
-        } else {
-          stars[i].classList.remove('selected');
-        }
-      }
+      playSound('click'); selectedRating = rating;
+      var stars = document.querySelectorAll('.star-select-wrap .star-btn');
+      for (var i=0; i<stars.length; i++) { if (i<rating) stars[i].classList.add('selected'); else stars[i].classList.remove('selected'); }
     };
 
     window.submitReview = async function() {
-      const authorEl = document.getElementById('review-author');
-      const messageEl = document.getElementById('review-message');
-      
-      const author = authorEl.value.trim();
-      const message = messageEl.value.trim();
-      
-      if (!author || !message) {
-        showToast("Please fill in billionaire handle and description! ⚠️");
-        return;
-      }
-      
+      var aEl=document.getElementById('review-author'); var mEl=document.getElementById('review-message');
+      var author=aEl?aEl.value.trim():''; var message=mEl?mEl.value.trim():'';
+      if (!author||!message) { showToast('Please fill in both fields! ⚠️'); return; }
       playSound('buy');
-      
-      const newReview = {
-        name: author,
-        rating: selectedRating,
-        text: message,
-        date: new Date().toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })
-      };
-
-      if (supabase) {
-        try {
-          const { error } = await supabase
-            .from('reviews')
-            .insert([{
-              name: newReview.name,
-              rating: newReview.rating,
-              text: newReview.text,
-              date_str: newReview.date
-            }]);
-          
-          if (error) throw error;
-          
-          // Re-fetch global reviews
-          await fetchSupabaseReviews();
-        } catch (err) {
-          console.error("Supabase insert failed, falling back to local database.", err);
-          saveLocalReview(newReview);
-        }
-      } else {
-        saveLocalReview(newReview);
-      }
-      
-      // Clear form
-      authorEl.value = '';
-      messageEl.value = '';
-      window.setStarRating(5);
-      
-      // Update UI
-      renderReviews();
-      updateAggregateRatings();
-      showToast("Review transmitted successfully! 📡");
+      var review = { name:author, rating:selectedRating, text:message, date:new Date().toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) };
+      if (supabase) { try { var r=await supabase.from('reviews').insert([{name:review.name,rating:review.rating,text:review.text,date_str:review.date}]); if(r.error) throw r.error; await fetchSupabaseReviews(); } catch(err) { console.error('Supabase failed',err); saveLocalReview(review); } }
+      else saveLocalReview(review);
+      if (aEl) aEl.value=''; if (mEl) mEl.value=''; window.setStarRating(5);
+      renderReviews(); updateAggregateRatings(); showToast('Review transmitted! 📡');
     };
 
     function saveLocalReview(review) {
       reviewsData.unshift(review);
-      try {
-        localStorage.setItem('spend_1trillion_reviews', JSON.stringify(reviewsData));
-      } catch (e) {
-        console.warn("Failed to save review to localStorage:", e);
-      }
+      try { localStorage.setItem('spend_1trillion_reviews',JSON.stringify(reviewsData)); } catch(e) {}
     }
 
     async function fetchSupabaseReviews() {
       if (!supabase) return;
-      try {
-        const { data, error } = await supabase
-          .from('reviews')
-          .select('*')
-          .order('id', { ascending: false });
-        
-        if (error) throw error;
-        
-        if (data) {
-          reviewsData = data.map(r => ({
-            name: r.name,
-            rating: r.rating,
-            text: r.text,
-            date: r.date_str || new Date(r.created_at).toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })
-          }));
-        }
-      } catch (err) {
-        console.error("Supabase fetch failed", err);
-      }
+      try { var r=await supabase.from('reviews').select('*').order('id',{ascending:false}); if(r.error) throw r.error; if(r.data) { reviewsData=r.data.map(function(x){return{name:x.name,rating:x.rating,text:x.text,date:x.date_str||new Date(x.created_at).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})};});} } catch(err) { console.error('Supabase fetch failed',err); }
     }
 
     function renderReviews() {
-      const listEl = document.getElementById('reviews-list');
-      if (!listEl) return;
-      
-      let html = '';
+      var listEl=document.getElementById('reviews-list'); if(!listEl) return;
+      var html='';
       if (Array.isArray(reviewsData)) {
-        reviewsData.forEach(r => {
-          if (!r) return;
-          const rating = parseInt(r.rating) || 5;
-          const validRating = Math.max(1, Math.min(5, rating));
-          let starsStr = '★'.repeat(validRating) + '☆'.repeat(5 - validRating);
-          html += `
-            <div class="review-card">
-              <div class="review-card-header">
-                <span class="review-card-author">${escapeHTML(r.name)}</span>
-                <span class="review-card-stars">${starsStr}</span>
-              </div>
-              <div class="review-card-text">"${escapeHTML(r.text)}"</div>
-              <div class="review-card-date">${escapeHTML(r.date)}</div>
-            </div>
-          `;
-        });
+        for (var i=0;i<reviewsData.length;i++) {
+          var r=reviewsData[i]; if(!r) continue;
+          var rating=Math.max(1,Math.min(5,parseInt(r.rating)||5)); var stars='';
+          for (var s=0;s<5;s++) stars+=s<rating?'★':'☆';
+          html+='<div class="review-card"><div class="review-card-header"><span class="review-card-author">'+escapeHTML(r.name)+'</span><span class="review-card-stars">'+stars+'</span></div><div class="review-card-text">"'+escapeHTML(r.text)+'"</div><div class="review-card-date">'+escapeHTML(r.date)+'</div></div>';
+        }
       }
-      listEl.innerHTML = html || '<div class="receipt-empty-state">No transmissions yet. Be the first!</div>';
+      listEl.innerHTML=html||'<div class="receipt-empty-state">No transmissions yet. Be the first!</div>';
     }
 
     function updateAggregateRatings() {
-      const totalRatings = (Array.isArray(reviewsData) ? reviewsData.length : 0) + 145; 
-      let sum = 145 * 4.9; 
-      if (Array.isArray(reviewsData)) {
-        reviewsData.forEach(r => {
-          if (r && r.rating) {
-            const rating = parseInt(r.rating) || 5;
-            sum += Math.max(1, Math.min(5, rating));
-          }
-        });
-      }
-      const avgNum = sum / totalRatings;
-      const avg = isNaN(avgNum) ? '4.9' : avgNum.toFixed(1);
-      const roundedAvg = Math.max(1, Math.min(5, Math.round(parseFloat(avg) || 4.9)));
-      
-      const valEl = document.getElementById('avg-rating-value');
-      const starsEl = document.getElementById('avg-rating-stars');
-      const countEl = document.getElementById('total-ratings-count');
-      
-      if (valEl) valEl.innerText = avg;
-      if (starsEl) starsEl.innerText = '★'.repeat(roundedAvg) + '☆'.repeat(5 - roundedAvg);
-      if (countEl) countEl.innerText = `Based on ${totalRatings} ratings`;
-    }
-
-    function escapeHTML(str) {
-      if (str === null || str === undefined) return '';
-      return String(str).replace(/[&<>'"]/g, 
-        tag => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          "'": '&#39;',
-          '"': '&quot;'
-        }[tag] || tag)
-      );
+      var total=(Array.isArray(reviewsData)?reviewsData.length:0)+145; var sum=145*4.9;
+      if (Array.isArray(reviewsData)) { for(var i=0;i<reviewsData.length;i++){if(reviewsData[i]&&reviewsData[i].rating) sum+=Math.max(1,Math.min(5,parseInt(reviewsData[i].rating)||5));} }
+      var avg=isNaN(sum/total)?'4.9':(sum/total).toFixed(1); var ra=Math.max(1,Math.min(5,Math.round(parseFloat(avg)||4.9)));
+      var vEl=document.getElementById('avg-rating-value'); var sEl=document.getElementById('avg-rating-stars'); var cEl=document.getElementById('total-ratings-count');
+      if(vEl) vEl.innerText=avg; if(sEl){var s='';for(var i=0;i<5;i++) s+=i<ra?'★':'☆';sEl.innerText=s;} if(cEl) cEl.innerText='Based on '+total+' ratings';
     }
 
     async function initReviews() {
       try {
-        const saved = localStorage.getItem('spend_1trillion_reviews');
-        if (saved && saved !== 'undefined') {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed)) {
-            reviewsData = parsed;
-          } else {
-            throw new Error("Reviews data in localStorage is not an array");
-          }
-        } else {
-          // Prepopulate
-          reviewsData = [
-            {
-              name: "Satoshi_99",
-              rating: 5,
-              text: "This simulator is wild. Spending $1T is way harder than I thought! The Decryptor Casino pity system is a lifesaver when you want to burn money.",
-              date: "08 Jun 2026, 12:45"
-            },
-            {
-              name: "CyberShopper",
-              rating: 5,
-              text: "Extremely polished UI and the synthesized audio is clean. Love the career levels! Unlocking Dyson Swarms at level 4 feels like a true achievement.",
-              date: "07 Jun 2026, 18:20"
-            },
-            {
-              name: "Neona",
-              rating: 5,
-              text: "Awesome work by Abhinav and Ansh. The market trend fluctuations keep the gameplay engaging. Can't stop playing until I go broke.",
-              date: "05 Jun 2026, 09:12"
-            }
+        var saved=localStorage.getItem('spend_1trillion_reviews');
+        if (saved&&saved!=='undefined') { var parsed=JSON.parse(saved); if(Array.isArray(parsed)) reviewsData=parsed; else throw new Error('Not array'); }
+        else {
+          reviewsData=[
+            {name:'Satoshi_99',   rating:5,text:'This simulator is wild. Spending $1T is way harder than I thought! The Casino pity system is a lifesaver.',date:'08 Jun 2026, 12:45'},
+            {name:'CyberShopper', rating:5,text:'Extremely polished UI and the synthesized audio is clean. Love the career levels!',date:'07 Jun 2026, 18:20'},
+            {name:'Neona',        rating:5,text:"Awesome work by Abhinav and Ansh. The market fluctuations keep gameplay engaging. Can't stop playing!",date:'05 Jun 2026, 09:12'}
           ];
-          localStorage.setItem('spend_1trillion_reviews', JSON.stringify(reviewsData));
+          try { localStorage.setItem('spend_1trillion_reviews',JSON.stringify(reviewsData)); } catch(e) {}
         }
-
-        if (supabase) {
-          await fetchSupabaseReviews();
-        }
-
-        renderReviews();
-        updateAggregateRatings();
-      } catch (err) {
-        console.error("Failed to initialize reviews, falling back to default:", err);
-        reviewsData = [
-          {
-            name: "Satoshi_99",
-            rating: 5,
-            text: "This simulator is wild. Spending $1T is way harder than I thought! The Decryptor Casino pity system is a lifesaver when you want to burn money.",
-            date: "08 Jun 2026, 12:45"
-          },
-          {
-            name: "CyberShopper",
-            rating: 5,
-            text: "Extremely polished UI and the synthesized audio is clean. Love the career levels! Unlocking Dyson Swarms at level 4 feels like a true achievement.",
-            date: "07 Jun 2026, 18:20"
-          },
-          {
-            name: "Neona",
-            rating: 5,
-            text: "Awesome work by Abhinav and Ansh. The market trend fluctuations keep the gameplay engaging. Can't stop playing until I go broke.",
-            date: "05 Jun 2026, 09:12"
-          }
-        ];
-        renderReviews();
-        updateAggregateRatings();
+        if (supabase) await fetchSupabaseReviews();
+        renderReviews(); updateAggregateRatings();
+      } catch(err) {
+        console.error('Reviews init failed, using defaults',err);
+        reviewsData=[{name:'Satoshi_99',rating:5,text:'Awesome simulator!',date:'08 Jun 2026, 12:45'}];
+        renderReviews(); updateAggregateRatings();
       }
     }
 
+    // ============================================================
+    // INIT GAME
+    // ============================================================
     function initGame() {
-      // Load progress
-      try {
-        let val = parseInt(localStorage.getItem('unlockedLevel'));
-        if (isNaN(val) || val < 1 || val > 4) {
-          val = 1;
-        }
-        unlockedLevel = val;
-      } catch (e) {
-        console.warn("Failed to read progress from localStorage, defaulting to level 1:", e);
-        unlockedLevel = 1;
-      }
-      selectedLevel = unlockedLevel;
-      if (selectedLevel === 1) selectedLevelCash = 100000000000;
-      else if (selectedLevel === 2) selectedLevelCash = 500000000000;
-      else if (selectedLevel === 3) selectedLevelCash = 1000000000000;
-      else if (selectedLevel === 4) selectedLevelCash = 5000000000000;
-      else {
-        selectedLevel = 1;
-        selectedLevelCash = 100000000000;
-      }
-
-      ITEMS.forEach(item => {
-        if (item.invest) {
-          investPrices[item.id] = item.price;
-          investTrends[item.id] = 0;
-        }
-      });
-
+      try { var v=parseInt(localStorage.getItem('unlockedLevel')); unlockedLevel=(!isNaN(v)&&v>=1&&v<=4)?v:1; } catch(e) { unlockedLevel=1; }
+      selectedLevel=unlockedLevel;
+      selectedLevelCash=[0,100e9,500e9,1e12,5e12][selectedLevel]||100e9;
+      TOTAL=selectedLevelCash; cash=TOTAL; balance=TOTAL;
+      for (var i=0;i<ITEMS.length;i++) { if(ITEMS[i].invest){investPrices[ITEMS[i].id]=ITEMS[i].price;investTrends[ITEMS[i].id]=0;} }
       updateLevelSelectorUI();
-
-      // Show rules description for default level
       window.selectLevelCard(selectedLevel, selectedLevelCash, true);
-
-      updateMetaTags();
-      updateWallet();
-      renderItems();
-      renderReceipt();
-      initTicker();
-      initReviews();
-      
-      // Auto-fluctuate investments every 3s
+      updateMetaTags(); updateWallet(); renderItems(); renderReceipt();
+      initTicker(); initReviews();
       setInterval(updateMarket, 3000);
-      
-      // Auto-trigger random news events every 35s
       setInterval(triggerRandomEvent, 35000);
-    };
-
-    // ---- BOOT THE GAME ----
-    // The script is at the bottom of <body>, so DOM is already ready — call directly.
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initGame);
-    } else {
-      initGame();
     }
-  </script> 
+
+    // ============================================================
+    // BOOT — DOM is already ready (script is at bottom of <body>)
+    // ============================================================
+    initGame();
+
+  </script>
+ 
 </body> 
 </html>
+
