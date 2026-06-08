@@ -1,0 +1,2944 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Spend 1 Trillion Dollars Game - The Ultimate Wealth Simulator</title> 
+  <meta name="description" content="Got 1 Trillion Dollars? Prove you can spend it! From a premium coffee to launching a global saree empire, try the most addictive cyberpunk billionaire simulator. Can you go broke?">
+  <meta name="keywords" content="spend 1 trillion dollars, spend bill gates money, billionaire simulator game, cyberpunk shopping game, spend money game web app, wealth simulator, abhinav gupta, ansh vaish">
+  
+  <!-- SEO Canonical URL (Important for subdomains to pass authority correctly) -->
+  <link rel="canonical" href="https://spend1trillion.com"> 
+  <!-- Note: Replace the href above with your actual subdomain or domain URL, e.g. https://spend.yourdomain.com -->
+
+  <!-- Google Search Console Site Verification (Paste your custom verification code in the content attribute below) -->
+  <meta name="google-site-verification" content="YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_CODE_HERE">
+
+  <!-- Google Analytics (GA4) Tag Placeholder -->
+  <!-- 
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+  -->
+
+  <!-- Social Sharing Meta Tags (Open Graph / Facebook) -->
+  <meta property="og:title" content="Spend 1 Trillion Dollars Game - Ultimate Billionaire Simulator">
+  <meta property="og:description" content="I am attempting to spend $1 Trillion Dollars. Can you go broke faster? Play the ultimate cyberpunk billionaire simulator.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1200&auto=format&fit=crop">
+  <meta property="og:url" content="https://spend1trillion.com">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Spend 1 Trillion Dollars Game - Ultimate Billionaire Simulator">
+  <meta name="twitter:description" content="Can you spend $1 Trillion before time runs out? Play the fast, addictive wealth simulator.">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1200&auto=format&fit=crop">
+
+  <!-- VideoGame Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "Spend 1 Trillion Dollars Game",
+    "description": "A cyberpunk web-based simulation game where players are challenged to spend a virtual fortune of 1 trillion dollars on various everyday, luxury, and mega items.",
+    "genre": "Simulation Game",
+    "playMode": "SinglePlayer",
+    "applicationCategory": "BrowserGame",
+    "operatingSystem": "Any",
+    "author": {
+      "@type": "Person",
+      "name": "Abhinav Gupta"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Abhinav Gupta"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
+  <!-- FAQPage Structured Data (JSON-LD) for Search Engine Rich Snippets -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do you play the Spend 1 Trillion Dollars Game?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The goal is simple: start with a balance of $1 Trillion (or choose from Level 1-4 budgets) and spend it all until you reach zero. Buy items from various categories like everyday goods, luxury, property, transport, and mega items, or risk your cash at the reverse-casino terminal where losing the bet burns your money (bringing you closer to victory) and winning doubles your cash."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can you actually spend a trillion dollars in this simulator?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, but it takes strategic planning! Low-tier items cost very little, while high-tier mega items like skyscrapers, space stations, and buying out companies consume billions. Use the multi-buy features, invest in fluctuating markets, and leverage the Decryptor Casino to accelerate your spending."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who created the Spend 1 Trillion Dollars Game?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The game was designed and created by Abhinav Gupta, a developer focusing on clean web experiences, with professional assistance from his brother Ansh Vaish for system balancing and core mechanics optimization."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What other web tools has the developer built?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In addition to this game, the developer has built a live mutual fund SIP Calculator (Systematic Investment Plan) and Space Shooter X, showing a range of mathematical simulators and HTML5 game projects."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Supabase CDN Client Library for Global Cloud Reviews -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet"> 
+  <style> 
+    :root { 
+      --bg: #030305; 
+      --bg2: #0a0a0f; 
+      --panel: #111118; 
+      --border: #2a2a35; 
+      --text: #ffffff; 
+      --muted: #6b6b80; 
+      --accent1: #ff003c; 
+      --accent2: #fcee0a; 
+      --accent3: #00f3ff; 
+      --green: #00ff66; 
+    } 
+    
+    * { margin:0; padding:0; box-sizing:border-box; } 
+    body { 
+      background: var(--bg); 
+      color: var(--text); 
+      font-family: 'Outfit', sans-serif; 
+      min-height: 100vh; 
+      overflow-x: hidden; 
+    } 
+    
+    .hero { text-align:center; padding:30px 15px; border-bottom:1px solid var(--border); background: var(--bg2); } 
+    .hero-title { font-family:'Bebas Neue', sans-serif; font-size:clamp(2.5rem, 8vw, 5rem); line-height:0.9; margin-bottom:10px; text-transform: uppercase; } 
+    .hero-title span { color: var(--accent3); text-shadow: 0 0 20px rgba(0, 243, 255, 0.5); } 
+    
+    .wallet { display:inline-flex; flex-direction:column; align-items:center; background:var(--panel); border:2px solid var(--border); border-radius:14px; padding:15px 30px; margin-top: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 100%; max-width: 440px; transition: transform 0.1s; } 
+    .wallet-label { font-size:0.7rem; letter-spacing:3px; color:var(--accent2); text-transform:uppercase; margin-bottom:6px; font-weight: 800; } 
+    .wallet-amount { font-family:'Bebas Neue', sans-serif; font-size:clamp(2rem, 5.5vw, 3.5rem); color:var(--green); letter-spacing:1px; line-height:1; text-shadow: 0 0 20px rgba(0,255,102,0.4); text-align: center; width: 100%; } 
+    .wallet-amount.empty { color: var(--accent1); text-shadow: 0 0 20px rgba(255,0,60,0.5); } 
+
+    .shake-wallet { animation: shake 0.5s ease-in-out; }
+    .wallet-amount.flash-green { color: var(--green) !important; text-shadow: 0 0 25px var(--green) !important; }
+    .wallet-amount.flash-red { color: var(--accent1) !important; text-shadow: 0 0 25px var(--accent1) !important; }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+      20%, 40%, 60%, 80% { transform: translateX(6px); }
+    }
+
+    .challenge-btn { margin-top: 20px; padding: 10px 24px; background: transparent; border: 1px solid var(--accent3); border-radius: 8px; color: var(--accent3); font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 800; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 8px; }
+    .challenge-btn:hover { background: var(--accent3); color: #000; box-shadow: 0 0 15px rgba(0,243,255,0.4); }
+    
+    /* News Ticker styling */
+    .news-ticker-wrap { 
+      display: flex; 
+      align-items: center; 
+      background: #09090e; 
+      border-bottom: 1px solid var(--border); 
+      height: 38px; 
+      overflow: hidden; 
+      font-family: monospace; 
+      font-size: 0.8rem; 
+      position: relative;
+    }
+    .ticker-label { 
+      background: var(--accent1); 
+      color: #fff; 
+      padding: 0 14px; 
+      height: 100%; 
+      display: flex; 
+      align-items: center; 
+      font-weight: 800; 
+      letter-spacing: 1.5px; 
+      z-index: 10; 
+      box-shadow: 4px 0 15px rgba(255, 0, 61, 0.4); 
+      text-transform: uppercase; 
+      font-size: 0.75rem;
+    }
+    .ticker-content { 
+      flex: 1; 
+      overflow: hidden; 
+      display: flex; 
+      align-items: center; 
+    }
+    .ticker-text { 
+      display: inline-block; 
+      white-space: nowrap; 
+      padding-left: 100%; 
+      animation: ticker-animation 30s linear infinite; 
+      color: var(--accent3); 
+      font-weight: bold;
+    }
+    @keyframes ticker-animation {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-100%, 0, 0); }
+    }
+
+    .filter-row { display:flex; gap:10px; padding:15px; overflow-x:auto; justify-content: flex-start; background: var(--bg); border-bottom: 1px solid var(--border); scrollbar-width: none; } 
+    .filter-row::-webkit-scrollbar { display: none; } 
+    @media (min-width: 768px) { .filter-row { justify-content: center; } } 
+    
+    .filter-btn { padding:8px 18px; border:1px solid var(--border); border-radius:6px; background:var(--panel); color:var(--muted); font-family:'Outfit', sans-serif; font-size:0.75rem; font-weight:600; cursor:pointer; transition:0.2s; white-space:nowrap; text-transform: uppercase; letter-spacing: 1px; } 
+    .filter-btn:hover { border-color:var(--accent3); color:var(--accent3); } 
+    .filter-btn.active { background:var(--accent3); color:#000; border-color:var(--accent3); box-shadow: 0 0 15px rgba(0,243,255,0.4); } 
+    
+    .section { padding:15px; max-width: 1200px; margin: 0 auto; } 
+    .items-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; } 
+    @media (min-width: 600px) { .items-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } } 
+    @media (min-width: 900px) { .items-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } } 
+    @media (min-width: 1200px) { .items-grid { grid-template-columns: repeat(5, 1fr); } } 
+    
+    .item-card { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:10px; transition:0.3s; position: relative; justify-content: space-between; } 
+    .item-card:hover { border-color:var(--accent3); transform:translateY(-3px); box-shadow: 0 8px 20px rgba(0,243,255,0.15); } 
+    
+    /* Investment styling */
+    .invest-card { border: 1px solid rgba(0, 243, 255, 0.25); background: linear-gradient(180deg, #111118 0%, #0d1e25 100%); }
+    .trend-badge { position: absolute; top: 8px; right: 8px; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 2px; }
+    .trend-badge.trend-up { background: rgba(0, 255, 102, 0.15); color: var(--green); border: 1px solid rgba(0, 255, 102, 0.3); }
+    .trend-badge.trend-down { background: rgba(255, 0, 60, 0.15); color: var(--accent1); border: 1px solid rgba(255, 0, 60, 0.3); }
+    .owned-badge { font-size: 0.65rem; font-weight: 800; color: var(--accent2); text-align: center; border: 1px dashed var(--accent2); padding: 2px; border-radius: 4px; background: rgba(252, 238, 10, 0.05); text-transform: uppercase; margin-top: -4px; margin-bottom: 2px; }
+    .sell-btn { padding: 10px; background: transparent; border: 1px solid var(--accent1); border-radius: 8px; color: var(--accent1); font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 800; cursor: pointer; transition: 0.15s; text-transform: uppercase; letter-spacing: 0.5px; width: 35%; text-align: center; }
+    .sell-btn:hover { background: var(--accent1); color: #fff; box-shadow: 0 0 10px rgba(255, 0, 60, 0.3); }
+
+    .item-emoji { font-size:2.4rem; text-align: center; } 
+    .item-name { font-size:0.85rem; font-weight:800; color:var(--text); text-align: center; min-height: 34px; display: flex; align-items: center; justify-content: center; } 
+    .item-price { font-family:'Bebas Neue', sans-serif; font-size:1.4rem; color:var(--green); text-align: center; margin-bottom: 2px;} 
+    
+    .qty-controls { display: flex; justify-content: space-between; align-items: center; background: var(--bg2); border-radius: 8px; padding: 4px; border: 1px solid var(--border); margin-bottom: 4px; } 
+    .qty-btn { background: var(--panel); color: var(--text); border: 1px solid var(--border); width: 34px; height: 34px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; user-select: none; } 
+    .qty-btn:hover { background: var(--accent3); color: #000; border-color: var(--accent3); } 
+    .qty-input { background: transparent; border: none; color: var(--accent2); font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; width: 50px; text-align: center; outline: none; } 
+    .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; } 
+    .qty-input[type=number] { -moz-appearance: textfield; } 
+
+    .buy-btn { padding:10px; background:var(--accent3); border:none; border-radius:8px; color:#000; font-family:'Outfit', sans-serif; font-size:0.75rem; font-weight:800; cursor:pointer; transition:0.15s; text-transform: uppercase; letter-spacing: 0.5px; width: 100%; box-shadow: 0 4px 12px rgba(0,243,255,0.25); text-align: center; } 
+    .buy-btn:hover { background: var(--text); box-shadow: 0 6px 16px rgba(255,255,255,0.4); } 
+    .buy-btn:active { transform:scale(0.95); } 
+    .buy-btn.disabled-btn { background: var(--bg2); color: var(--muted); border: 1px solid var(--border); cursor:not-allowed; box-shadow: none; } 
+    .buy-btn.disabled-btn:hover { background: var(--bg2); transform: none; } 
+    
+    .receipt-wrap { padding:40px 15px 50px; max-width: 520px; margin: 0 auto; } 
+    .receipt { background: #0e0e14; border: 2px dashed #222230; border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.9); position: relative; padding: 25px 20px; } 
+    .receipt-header { border-bottom: 2px dashed #222230; padding-bottom: 18px; margin-bottom: 15px; text-align: center; display: block; } 
+    .receipt-title { font-family:'Bebas Neue', sans-serif; font-size:2.2rem; color:var(--accent2); letter-spacing: 2px; margin-bottom: 4px; text-shadow: 0 0 10px rgba(252,238,10,0.2); } 
+    .receipt-meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); font-family: monospace; text-transform: uppercase; margin-top: 5px; }
+    .receipt-list { max-height:350px; overflow-y:auto; padding-right: 4px; } 
+    .receipt-list::-webkit-scrollbar { width: 4px; }
+    .receipt-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .receipt-item { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom: 1px dashed #1a1a26; } 
+    .receipt-item-emoji { font-size:1.3rem; } 
+    .receipt-item-name { flex:1; font-size:0.85rem; font-weight: 600; color: #e2e2e9; } 
+    .receipt-item-qty { font-family:'Bebas Neue', sans-serif; font-size:1.1rem; color:var(--accent3); margin-right: 15px; } 
+    .receipt-item-cost { font-family:'Bebas Neue', sans-serif; font-size:1.2rem; color:var(--green); min-width: 80px; text-align: right; } 
+    .receipt-empty-state { text-align: center; color: var(--muted); padding: 30px 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; font-style: italic; }
+    .receipt-footer { padding-top: 20px; margin-top: 10px; border-top: 2px dashed #222230; } 
+    .receipt-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .receipt-total-label { font-size:0.85rem; font-weight:800; letter-spacing:1px; color:var(--text); text-transform:uppercase; } 
+    .receipt-total-val { font-family:'Bebas Neue', sans-serif; font-size:2.4rem; color:var(--accent1); text-shadow: 0 0 15px rgba(255,0,60,0.4); } 
+    .receipt-actions { display: flex; gap: 10px; margin-top: 15px; }
+    .receipt-btn-action { flex: 1; padding: 12px; font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; text-align: center; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+    .receipt-btn-download { background: transparent; border: 1px solid var(--accent2); color: var(--accent2); }
+    .receipt-btn-download:hover { background: var(--accent2); color: #000; box-shadow: 0 0 15px rgba(252,238,10,0.3); }
+    .receipt-btn-reset { background: transparent; border: 1px solid var(--accent1); color: var(--accent1); }
+    .receipt-btn-reset:hover { background: var(--accent1); color: #fff; }
+    .receipt-barcode { margin-top: 25px; display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.5; }
+    .barcode-lines { width: 100%; height: 30px; background: repeating-linear-gradient(90deg, #fff, #fff 2px, transparent 2px, transparent 7px, #fff 7px, #fff 8px, transparent 8px, transparent 12px); }
+    .barcode-text { font-family: monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 3px; }
+    
+    /* Random Event alert styling */
+    .event-alert-container { position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+    .event-alert { background: rgba(17, 17, 24, 0.95); border: 2px solid var(--accent3); border-radius: 12px; padding: 18px 24px; min-width: 300px; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); pointer-events: auto; animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.5s 6.5s forwards; display: flex; flex-direction: column; gap: 6px; }
+    .event-alert.gain { border-color: var(--green); box-shadow: 0 0 15px rgba(0, 255, 102, 0.2); }
+    .event-alert.loss { border-color: var(--accent1); box-shadow: 0 0 15px rgba(255, 0, 60, 0.2); }
+    .event-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+    .event-title.gain { color: var(--green); }
+    .event-title.loss { color: var(--accent1); }
+    .event-desc { font-size: 0.8rem; line-height: 1.4; color: #e2e2e9; }
+    
+    @keyframes slideIn {
+      0% { transform: translateX(120%); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes fadeOut {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0; pointer-events: none; }
+    }
+
+    .seo-footer { background: var(--panel); border-top: 1px solid var(--border); padding: 50px 15px 40px; margin-top: 50px; }
+    .seo-content { max-width: 800px; margin: 0 auto; color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+    .seo-content h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--accent2); margin-bottom: 12px; letter-spacing: 1px; }
+    .seo-content h3 { font-size: 1rem; color: var(--text); margin: 22px 0 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+    .seo-content p { margin-bottom: 14px; }
+    .seo-content ul { margin-bottom: 20px; padding-left: 20px; list-style-type: square; }
+    .seo-content li { margin-bottom: 8px; }
+    .seo-content strong { color: var(--text); }
+    .creations-plug { margin-top: 35px; padding-top: 25px; border-top: 1px solid var(--border); text-align: center; color: var(--text); font-size: 1rem; font-weight: 600; }
+    .seo-link { color: var(--accent3); text-decoration: none; font-weight: 800; border-bottom: 2px dashed var(--accent3); transition: 0.2s; padding-bottom: 2px; }
+    .seo-link:hover { color: var(--green); border-color: var(--green); text-shadow: 0 0 10px rgba(0,255,102,0.5); }
+
+    .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--text); color:#000; padding:12px 24px; font-size:0.85rem; font-weight:800; border-radius:50px; z-index:999; transition:0.3s; opacity:0; pointer-events:none; box-shadow: 0 10px 25px rgba(255,255,255,0.2); white-space: nowrap; } 
+    .toast.show { transform:translateX(-50%) translateY(0); opacity:1; } 
+
+    .celebration-screen { position: fixed; inset: 0; background: rgba(3,3,5,0.92); backdrop-filter: blur(12px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 20px; text-align: center; }
+    .celebration-screen.active { opacity: 1; pointer-events: auto; }
+    .celebration-box { background: rgba(17, 17, 24, 0.95); border: 2px solid var(--accent3); border-radius: 24px; padding: 45px 30px; max-width: 480px; width: 100%; box-shadow: 0 0 40px rgba(0, 243, 255, 0.4); z-index: 2; transform: scale(0.9); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .celebration-screen.active .celebration-box { transform: scale(1); }
+    .celebration-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3.5rem, 9vw, 4.5rem); color: var(--accent2); line-height: 1; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 25px rgba(252,238,10,0.5); }
+    .celebration-subtitle { font-size: 1.05rem; color: var(--text); margin-bottom: 30px; line-height: 1.6; font-weight: 400; color: #e2e2e9; }
+    .celebration-subtitle b { color: var(--green); text-shadow: 0 0 10px rgba(0,255,102,0.3); }
+    .cel-btn-stack { display: flex; flex-direction: column; gap: 14px; max-width: 320px; margin: 0 auto; }
+    .cel-btn { padding: 14px 24px; font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border: none; border-radius: 10px; cursor: pointer; transition: all 0.25s ease; text-align: center; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .cel-btn-challenge { background: var(--accent3); color: #000; box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+    .cel-btn-challenge:hover { background: #fff; box-shadow: 0 0 30px rgba(255,255,255,0.6); transform: translateY(-2px); }
+    .cel-btn-receipt { background: transparent; border: 2px solid var(--accent2); color: var(--accent2); box-shadow: 0 0 10px rgba(252,238,10,0.1); }
+    .cel-btn-receipt:hover { background: var(--accent2); color: #000; box-shadow: 0 0 25px rgba(252,238,10,0.5); transform: translateY(-2px); }
+    .cel-btn-replay { background: transparent; border: 1px solid var(--border); color: var(--muted); font-weight: 600; box-shadow: none; }
+    .cel-btn-replay:hover { border-color: var(--text); color: var(--text); transform: translateY(-1px); }
+    .cel-btn-next-level { background: var(--green); color: #000; box-shadow: 0 0 20px rgba(0, 255, 102, 0.4); }
+    .cel-btn-next-level:hover { background: #fff; box-shadow: 0 0 30px rgba(255,255,255,0.6); transform: translateY(-2px); }
+    #fireworks { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+    /* Timer */
+    .timer-row { display: inline-flex; align-items: center; gap: 14px; margin-top: 14px; flex-wrap: wrap; justify-content: center; }
+    .timer-wrap { display: inline-flex; flex-direction: column; align-items: center; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 8px 22px; min-width: 100px; }
+    .timer-label { font-size: 0.6rem; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 3px; font-weight: 800; font-family: monospace; }
+    .timer-val { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--accent2); letter-spacing: 2px; line-height: 1; transition: color 0.4s, text-shadow 0.4s; }
+    .timer-val.running { color: var(--accent3); text-shadow: 0 0 12px rgba(0,243,255,0.5); animation: pulse-timer 1s ease-in-out infinite; }
+    .timer-val.finished { color: var(--green); text-shadow: 0 0 15px rgba(0,255,102,0.6); }
+    @keyframes pulse-timer { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+    .hint-btn { padding: 10px 20px; background: transparent; border: 1px solid var(--accent2); border-radius: 8px; color: var(--accent2); font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 800; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 6px; }
+    .hint-btn:hover { background: var(--accent2); color: #000; box-shadow: 0 0 18px rgba(252,238,10,0.4); transform: translateY(-1px); }
+    /* Hint Modal */
+    .hint-overlay { position: fixed; inset: 0; background: rgba(3,3,5,0.88); backdrop-filter: blur(12px); z-index: 9998; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .hint-overlay.active { opacity: 1; pointer-events: auto; }
+    .hint-box { background: linear-gradient(160deg, #0e0e18 0%, #12121e 100%); border: 2px solid var(--accent2); border-radius: 20px; padding: 38px 28px 28px; max-width: 420px; width: 100%; text-align: center; position: relative; box-shadow: 0 0 50px rgba(252,238,10,0.15), 0 20px 60px rgba(0,0,0,0.9); transform: scale(0.88) translateY(20px); transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .hint-overlay.active .hint-box { transform: scale(1) translateY(0); }
+    .hint-close-btn { position: absolute; top: 14px; right: 16px; background: transparent; border: none; color: var(--muted); font-size: 1.1rem; cursor: pointer; transition: all 0.2s; line-height: 1; padding: 4px; }
+    .hint-close-btn:hover { color: var(--text); transform: rotate(90deg); }
+    .hint-tag { font-size: 0.62rem; letter-spacing: 3px; color: var(--accent2); text-transform: uppercase; font-weight: 800; margin-bottom: 14px; font-family: monospace; text-shadow: 0 0 8px rgba(252,238,10,0.3); }
+    .hint-big-emoji { font-size: 3.8rem; margin-bottom: 12px; display: block; line-height: 1; }
+    .hint-text-main { font-size: 1rem; line-height: 1.72; color: #dde0e8; font-weight: 400; margin-bottom: 26px; min-height: 70px; }
+    .hint-nav { display: flex; align-items: center; justify-content: center; gap: 14px; }
+    .hint-nav-btn { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'Outfit', sans-serif; font-size: 0.72rem; font-weight: 800; padding: 8px 14px; border-radius: 6px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+    .hint-nav-btn:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(252,238,10,0.05); }
+    .hint-counter-text { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--muted); min-width: 36px; text-align: center; }
+    /* Spacious Hero Timer Layout */
+    .hero-timer-wrap { margin-top: 22px; margin-bottom: 6px; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .hero-timer-label { font-size: 0.6rem; letter-spacing: 4px; color: var(--muted); text-transform: uppercase; font-weight: 800; font-family: monospace; }
+    .hero-timer-wrap .timer-val { font-size: 3rem; letter-spacing: 3px; }
+    .hero-timer-status { font-size: 0.72rem; color: var(--muted); font-style: italic; margin-top: 2px; min-height: 18px; }
+    .hero-btns { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+    .hero-btns .challenge-btn { margin-top: 0; }
+    /* Hint modal bottom elements */
+    .hint-next-info { font-size: 0.76rem; color: var(--muted); margin-bottom: 18px; font-family: monospace; letter-spacing: 1px; }
+    .hint-next-info b { color: var(--accent3); font-size: 0.88rem; }
+    .hint-got-it { background: var(--accent2); color: #000; border: none; border-radius: 8px; padding: 11px 32px; font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 800; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+    .hint-got-it:hover { background: #fff; box-shadow: 0 0 20px rgba(252,238,10,0.4); transform: translateY(-1px); }
+
+    /* Level Selector Overlay */
+    .level-overlay { 
+      position: fixed; 
+      inset: 0; 
+      background: radial-gradient(circle at center, #0a0a16 0%, #030305 100%); 
+      backdrop-filter: blur(12px); 
+      z-index: 10000; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 20px; 
+      transition: opacity 0.5s ease; 
+      opacity: 1; 
+      pointer-events: auto; 
+      overflow-y: auto;
+    }
+    .level-overlay.hide { opacity: 0; pointer-events: none; }
+    .glow-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      z-index: -1;
+      pointer-events: none;
+      animation: float-orb 10s ease-in-out infinite alternate;
+    }
+    .orb-1 {
+      width: 300px;
+      height: 300px;
+      background: var(--accent3);
+      top: 10%;
+      left: 10%;
+    }
+    .orb-2 {
+      width: 350px;
+      height: 350px;
+      background: var(--accent1);
+      bottom: 10%;
+      right: 10%;
+      animation-delay: -5s;
+    }
+    @keyframes float-orb {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, 30px) scale(1.1); }
+    }
+    .level-box { 
+      background: rgba(13, 13, 23, 0.85); 
+      border: 1px solid rgba(255, 255, 255, 0.08); 
+      border-top: 1px solid rgba(0, 243, 255, 0.3);
+      border-bottom: 1px solid rgba(255, 0, 60, 0.2);
+      border-radius: 28px; 
+      padding: 40px 30px; 
+      max-width: 620px; 
+      width: 100%; 
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05); 
+      text-align: center; 
+      backdrop-filter: blur(10px);
+      position: relative;
+    }
+    .level-title-main { 
+      font-family: 'Bebas Neue', sans-serif; 
+      font-size: clamp(2.4rem, 6vw, 3.8rem); 
+      background: linear-gradient(90deg, var(--accent2) 0%, #ffffff 50%, var(--accent3) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1; 
+      margin-bottom: 8px; 
+      letter-spacing: 2px; 
+      text-transform: uppercase; 
+    }
+    .level-subtitle-main { font-size: 0.8rem; color: var(--muted); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+    .level-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+    @media (max-width: 480px) { .level-grid { grid-template-columns: 1fr; } }
+    .level-card-select { 
+      background: rgba(20, 20, 32, 0.6); 
+      border: 1px solid var(--border); 
+      border-radius: 16px; 
+      padding: 16px 20px; 
+      cursor: pointer; 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+      text-align: left; 
+      position: relative; 
+      overflow: hidden;
+    }
+    .level-card-select::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(0, 243, 255, 0.1) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .level-card-select:hover { 
+      border-color: rgba(0, 243, 255, 0.5); 
+      transform: translateY(-2px); 
+      box-shadow: 0 8px 20px rgba(0, 243, 255, 0.1); 
+    }
+    .level-card-select.active { 
+      border-color: var(--accent3); 
+      background: rgba(0, 243, 255, 0.08); 
+      box-shadow: 0 0 25px rgba(0, 243, 255, 0.25); 
+      transform: scale(1.02);
+    }
+    .level-card-select.active::before {
+      opacity: 1;
+    }
+    .level-card-num { 
+      font-size: 0.65rem; 
+      font-weight: 800; 
+      color: var(--accent3); 
+      margin-bottom: 6px; 
+      font-family: monospace; 
+      letter-spacing: 2px; 
+      opacity: 0.8;
+    }
+    .level-card-name { font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .level-card-amount { 
+      font-family: 'Bebas Neue', sans-serif; 
+      font-size: 1.8rem; 
+      color: var(--green); 
+      text-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
+    }
+    .level-card-select.locked {
+      opacity: 0.45;
+      cursor: not-allowed;
+      border-color: rgba(255, 255, 255, 0.05);
+      background: rgba(10, 10, 15, 0.4);
+    }
+    .level-card-select.locked:hover {
+      border-color: rgba(255, 255, 255, 0.05) !important;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+    .item-card.locked-item {
+      opacity: 0.45;
+      cursor: not-allowed;
+      border-color: rgba(255, 255, 255, 0.05) !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+    
+    .passive-toggle-wrap { 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 12px; 
+      background: rgba(255, 0, 60, 0.03); 
+      border: 1px dashed rgba(255, 0, 60, 0.3); 
+      border-radius: 12px; 
+      padding: 12px 24px; 
+      margin-bottom: 25px; 
+      cursor: pointer; 
+      user-select: none; 
+      transition: all 0.2s;
+    }
+    .passive-toggle-wrap:hover {
+      background: rgba(255, 0, 60, 0.08);
+      border-color: var(--accent1);
+      box-shadow: 0 0 15px rgba(255, 0, 61, 0.15);
+    }
+    .passive-toggle-wrap input { cursor: pointer; width: 16px; height: 16px; accent-color: var(--accent1); }
+    .passive-toggle-label { 
+      font-size: 0.85rem; 
+      font-weight: 800; 
+      color: #ff8093; 
+      text-transform: uppercase; 
+      letter-spacing: 1px; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      cursor: pointer; 
+    }
+    
+    .level-rules-box { 
+      background: rgba(5, 5, 10, 0.6); 
+      border: 1px solid rgba(252, 238, 10, 0.2); 
+      border-left: 4px solid var(--accent2);
+      border-radius: 12px; 
+      padding: 20px; 
+      text-align: left; 
+      margin-bottom: 30px; 
+      min-height: 100px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 6px; 
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+    .level-rules-title { 
+      font-size: 0.75rem; 
+      font-weight: 800; 
+      color: var(--accent2); 
+      text-transform: uppercase; 
+      letter-spacing: 2px; 
+      margin-bottom: 4px; 
+      font-family: monospace;
+      text-shadow: 0 0 10px rgba(252, 238, 10, 0.3);
+    }
+    .level-rules-desc { font-size: 0.85rem; color: #b3b7c2; line-height: 1.6; }
+    
+    .start-game-btn { 
+      width: 100%; 
+      padding: 16px; 
+      background: linear-gradient(135deg, var(--green) 0%, #00cc52 100%); 
+      border: none; 
+      border-radius: 14px; 
+      color: #000; 
+      font-family: 'Outfit', sans-serif; 
+      font-size: 1.05rem; 
+      font-weight: 800; 
+      text-transform: uppercase; 
+      letter-spacing: 2px; 
+      cursor: pointer; 
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+      box-shadow: 0 10px 30px rgba(0, 255, 102, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3); 
+    }
+    .start-game-btn:hover { 
+      background: #ffffff; 
+      box-shadow: 0 15px 35px rgba(255, 255, 255, 0.4); 
+      transform: translateY(-2px) scale(1.01); 
+    }
+    .start-game-btn:active {
+      transform: translateY(0) scale(0.99);
+    }
+
+    /* Casino / Decryptor Terminal styling */
+    .decryptor-wrap { padding: 0 15px; max-width: 600px; margin: 25px auto 10px; }
+    .decryptor-panel { background: #0b0b12; border: 2px solid var(--border); border-radius: 14px; padding: 16px 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); position: relative; }
+    .decryptor-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px; }
+    .decryptor-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--accent3); letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+    .decryptor-subtitle { font-size: 0.65rem; color: var(--muted); font-family: monospace; letter-spacing: 2px; text-transform: uppercase; }
+    .decryptor-body { display: flex; flex-direction: column; gap: 12px; }
+    .decryptor-intro { font-size: 0.78rem; line-height: 1.4; color: #aaa; }
+    .decryptor-intro b { color: var(--accent2); }
+    .decryptor-controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .decryptor-input-wrap { display: flex; align-items: center; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px; flex: 1; min-width: 140px; }
+    .decryptor-currency-symbol { color: var(--green); font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; margin-right: 6px; }
+    .decryptor-input { background: transparent; border: none; color: var(--accent2); font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; width: 100%; outline: none; }
+    .decryptor-input::-webkit-outer-spin-button, .decryptor-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .decryptor-input[type=number] { -moz-appearance: textfield; }
+    .decryptor-presets { display: flex; gap: 6px; }
+    .decryptor-preset-btn { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; color: var(--muted); padding: 6px 10px; font-size: 0.7rem; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: monospace; }
+    .decryptor-preset-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+    .decryptor-action-btn { background: var(--accent1); border: none; border-radius: 8px; color: #fff; font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 800; padding: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; width: 100%; box-shadow: 0 4px 10px rgba(255,0,60,0.25); text-align: center; }
+    .decryptor-action-btn:hover { background: #fff; color: #000; box-shadow: 0 6px 15px rgba(255,255,255,0.4); }
+    .decryptor-action-btn.hacking { background: var(--bg2); color: var(--muted); border: 1px solid var(--border); cursor: not-allowed; box-shadow: none; }
+    .decryptor-progress-wrap { display: none; flex-direction: column; gap: 4px; margin-top: 4px; }
+    .decryptor-progress-bar-bg { background: var(--bg2); border: 1px solid var(--border); height: 8px; border-radius: 10px; overflow: hidden; }
+    .decryptor-progress-bar { height: 100%; width: 0%; background: var(--accent3); transition: width 0.1s linear; }
+    .decryptor-progress-text { font-family: monospace; font-size: 0.65rem; color: var(--accent3); letter-spacing: 1px; }
+    
+    .decryptor-result { display: none; padding: 10px; border-radius: 8px; font-size: 0.8rem; line-height: 1.45; animation: blink-result 1.5s ease-in-out infinite; }
+    .decryptor-result.win { background: rgba(0, 255, 102, 0.08); border: 1px solid var(--green); color: var(--green); }
+    .decryptor-result.loss { background: rgba(255, 0, 60, 0.08); border: 1px solid var(--accent1); color: #ff8093; }
+    @keyframes blink-result { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+
+    /* FAQ Accordion Styling */
+    .faq-container { margin-top: 35px; border-top: 1px dashed var(--border); padding-top: 30px; text-align: left; }
+    .faq-container h2 { margin-bottom: 20px !important; }
+    .faq-item { background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; transition: all 0.2s ease; }
+    .faq-item:hover { border-color: var(--accent3); background: rgba(255, 255, 255, 0.02); }
+    .faq-question { padding: 16px 20px; font-weight: 800; color: var(--text); cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; user-select: none; }
+    .faq-question::after { content: '▼'; font-size: 0.65rem; color: var(--accent3); transition: transform 0.2s ease; }
+    .faq-item.active { border-color: var(--accent3); background: rgba(0, 243, 255, 0.02); }
+    .faq-item.active .faq-question::after { transform: rotate(180deg); color: var(--green); }
+    .faq-answer { padding: 0 20px 20px; color: var(--muted); font-size: 0.8rem; line-height: 1.6; display: none; border-top: 1px dashed rgba(255,255,255,0.03); padding-top: 15px; }
+    .faq-item.active .faq-answer { display: block; }
+
+    /* Reviews Section Styling */
+    .reviews-container { margin-top: 40px; border-top: 1px dashed var(--border); padding-top: 35px; text-align: left; }
+    .reviews-summary { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 12px; padding: 15px 20px; }
+    .rating-big-num { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--accent2); line-height: 1; text-shadow: 0 0 10px rgba(252,238,10,0.3); }
+    .rating-stars-display { font-size: 1.2rem; color: var(--accent2); margin-bottom: 4px; }
+    .rating-count { font-size: 0.75rem; color: var(--muted); }
+    
+    .review-form { background: rgba(13, 13, 23, 0.5); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 30px; display: flex; flex-direction: column; gap: 12px; }
+    .review-form-title { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; color: var(--text); letter-spacing: 1px; margin-bottom: 6px; }
+    .review-row-inputs { display: flex; gap: 12px; flex-wrap: wrap; }
+    .review-input-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 200px; }
+    .review-input-group label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
+    
+    .review-field { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: 'Outfit', sans-serif; font-size: 0.85rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+    .review-field:focus { border-color: var(--accent3); box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
+    
+    .star-select-wrap { display: flex; gap: 6px; align-items: center; height: 38px; }
+    .star-btn { background: transparent; border: none; font-size: 1.6rem; color: var(--border); cursor: pointer; transition: color 0.15s, transform 0.1s; outline: none; padding: 0 2px; }
+    .star-btn:hover { transform: scale(1.15); }
+    .star-btn.selected { color: var(--accent2); text-shadow: 0 0 10px rgba(252,238,10,0.5); }
+    
+    .review-btn-submit { padding: 12px 20px; background: var(--accent3); border: none; border-radius: 8px; color: #000; font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 800; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px; align-self: flex-start; box-shadow: 0 4px 12px rgba(0, 243, 255, 0.2); margin-top: 8px; }
+    .review-btn-submit:hover { background: #fff; box-shadow: 0 6px 16px rgba(255,255,255,0.4); transform: translateY(-1px); }
+    .review-btn-submit:active { transform: scale(0.98); }
+    
+    .reviews-list { display: flex; flex-direction: column; gap: 14px; max-height: 400px; overflow-y: auto; padding-right: 6px; }
+    .reviews-list::-webkit-scrollbar { width: 4px; }
+    .reviews-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    
+    .review-card { background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border); border-radius: 10px; padding: 15px; display: flex; flex-direction: column; gap: 6px; }
+    .review-card-header { display: flex; justify-content: space-between; align-items: center; }
+    .review-card-author { font-size: 0.85rem; font-weight: 800; color: var(--text); }
+    .review-card-stars { font-size: 0.85rem; color: var(--accent2); }
+    .review-card-text { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+    .review-card-date { font-size: 0.65rem; color: var(--border); font-family: monospace; align-self: flex-end; margin-top: 2px; }
+  </style> 
+</head> 
+<body> 
+  
+  <div class="level-overlay" id="level-overlay">
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="level-box">
+      <div class="level-title-main">Select Wealth Challenge</div>
+      <div class="level-subtitle-main">Choose your starting bank balance & mode</div>
+      
+      <div class="level-grid">
+        <div class="level-card-select active" id="level-card-1" onclick="window.selectLevelCard(1, 100000000000)">
+          <div class="level-card-num">LEVEL 01</div>
+          <div class="level-card-name">Starter Loan 🍼</div>
+          <div class="level-card-amount">$100B</div>
+        </div>
+        <div class="level-card-select" id="level-card-2" onclick="window.selectLevelCard(2, 500000000000)">
+          <div class="level-card-num">LEVEL 02</div>
+          <div class="level-card-name">Billionaire Prep 💼</div>
+          <div class="level-card-amount">$500B</div>
+        </div>
+        <div class="level-card-select" id="level-card-3" onclick="window.selectLevelCard(3, 1000000000000)">
+          <div class="level-card-num">LEVEL 03</div>
+          <div class="level-card-name">Trillionaire Grind 🏆</div>
+          <div class="level-card-amount">$1.00T</div>
+        </div>
+        <div class="level-card-select" id="level-card-4" onclick="window.selectLevelCard(4, 5000000000000)">
+          <div class="level-card-num">LEVEL 04</div>
+          <div class="level-card-name">Tech Lord Mode 🚀</div>
+          <div class="level-card-amount">$5.00T</div>
+        </div>
+      </div>
+      
+      <div class="passive-toggle-wrap" onclick="window.togglePassiveIncome()">
+        <input type="checkbox" id="passive-income-checkbox" onclick="event.stopPropagation()">
+        <span class="passive-toggle-label">⚠️ Passive Income Hell (+2% cash every 45s)</span>
+      </div>
+      
+      <div class="level-rules-box">
+        <div class="level-rules-title" id="rules-title">Level Rules</div>
+        <div class="level-rules-desc" id="rules-desc">Loading level rules...</div>
+      </div>
+      
+      <button class="start-game-btn" onclick="window.startGame()">Initialize Transactions ⚡</button>
+    </div>
+  </div>
+  
+  <div class="celebration-screen" id="celebration-screen">
+    <canvas id="fireworks"></canvas>
+    <div class="celebration-box">
+      <div class="celebration-title">Mission Accomplished</div>
+      <div class="celebration-subtitle">You have successfully liquidated the entire <b>$1 Trillion Dollars</b>!<br>Your bank balance is zero and your billionaire status is legendary. 💸</div>
+      <div class="cel-btn-stack">
+        <button class="cel-btn cel-btn-next-level" id="cel-next-btn" style="display:none;" onclick="window.goToNextLevel()">Advance to Level 2 🚀</button>
+        <button class="cel-btn cel-btn-challenge" onclick="window.shareGame()">⚔️ Challenge a Friend</button>
+        <button class="cel-btn cel-btn-receipt" onclick="window.downloadReceipt()">📄 Download Receipt</button>
+        <button class="cel-btn cel-btn-replay" onclick="window.closeCelebration()">Play Again 🔄</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hint-overlay" id="hint-overlay" onclick="window.closeHint()">
+    <div class="hint-box" onclick="event.stopPropagation()">
+      <button class="hint-close-btn" onclick="window.closeHint()">✕</button>
+      <div class="hint-tag">💡 Pro Strategy Tip</div>
+      <div class="hint-big-emoji" id="hint-emoji">🏆</div>
+      <div class="hint-text-main" id="hint-text">Loading tip...</div>
+      
+      <div class="hint-nav" style="margin-bottom: 20px;">
+        <button class="hint-nav-btn" id="hint-prev-btn" onclick="window.prevHint()">◀ Prev</button>
+        <span class="hint-counter-text" id="hint-counter">1 / 1</span>
+        <button class="hint-nav-btn" id="hint-next-btn" onclick="window.nextHint()">Next ▶</button>
+      </div>
+      
+      <div class="hint-next-info" id="hint-next-info-box">Next tip unlocks in <b id="hint-countdown">30</b>s</div>
+      <button class="hint-got-it" onclick="window.closeHint()">Got it! 👍</button>
+    </div>
+  </div>
+
+  <div class="hero"> 
+    <h1 class="hero-title">Spend One <span>Trillion</span></h1> 
+    <div class="wallet"> 
+      <div class="wallet-label">Net Worth Balance</div> 
+      <div class="wallet-amount" id="balance">$1.00T</div> 
+    </div> 
+    <div class="hero-timer-wrap">
+      <div class="hero-timer-label">⏱ Speedrun Timer</div>
+      <div class="timer-val" id="game-timer">0m 00s</div>
+      <div class="hero-timer-status" id="timer-status">Starts on your first purchase</div>
+    </div>
+    <div class="hero-btns">
+      <button class="challenge-btn" onclick="window.shareGame()">⚔️ Challenge a Friend</button>
+      <button class="challenge-btn" style="border-color:var(--muted); color:var(--muted);" onclick="window.openLevelSelector()">⚙️ Change Level</button>
+      <button class="hint-btn" id="hint-btn-el" onclick="window.showHint()">💡 Hint</button>
+      <button class="challenge-btn" id="sound-toggle-btn" style="border-color:var(--muted); color:var(--muted);" onclick="window.toggleSound()">🔊 Sound On</button>
+    </div>
+  </div> 
+
+  <!-- Scrolling News Ticker -->
+  <div class="news-ticker-wrap">
+    <div class="ticker-label">Breaking News</div>
+    <div class="ticker-content">
+      <div class="ticker-text" id="ticker-text">LOADING MARKET PORTFOLIO DATA... SECURE DIGITAL TRANS-WALLET ONLINE... STOCK TICKER ACTIVE... ELON TWEETS ABOUT SAREE EMPIRE EXPANSION...</div>
+    </div>
+  </div>
+
+  <!-- Decryptor Casino Terminal -->
+  <div class="decryptor-wrap">
+    <div class="decryptor-panel">
+      <div class="decryptor-header">
+        <div class="decryptor-title">🎰 Wealth Decryptor Casino</div>
+        <div class="decryptor-subtitle">Gamble to Lose</div>
+      </div>
+      <div class="decryptor-body">
+        <div class="decryptor-intro">
+          Gamble your wealth in a reverse-casino! Place a bet: if banking security catches you, your cash bet is **incinerated** (victory!). If the hack succeeds, you **double your money** and get richer (defeat!).
+        </div>
+        <div class="decryptor-controls">
+          <div class="decryptor-input-wrap">
+            <span class="decryptor-currency-symbol">$</span>
+            <input type="number" class="decryptor-input" id="casino-bet-val" value="1000000000" min="1" step="100000000" onblur="window.sanitizeCasinoInput()">
+          </div>
+          <div class="decryptor-presets">
+            <button class="decryptor-preset-btn" onclick="window.setCasinoPreset(10)">10%</button>
+            <button class="decryptor-preset-btn" onclick="window.setCasinoPreset(25)">25%</button>
+            <button class="decryptor-preset-btn" onclick="window.setCasinoPreset(50)">50%</button>
+          </div>
+        </div>
+        
+        <button class="decryptor-action-btn" id="decryptor-hack-btn" onclick="window.runCyberHack()">Gamble Wealth ⚡</button>
+        
+        <div class="decryptor-progress-wrap" id="decryptor-progress">
+          <div class="decryptor-progress-text" id="decryptor-progress-status">Bypassing encryption... 0%</div>
+          <div class="decryptor-progress-bar-bg">
+            <div class="decryptor-progress-bar" id="decryptor-progress-fill"></div>
+          </div>
+        </div>
+        
+        <div class="decryptor-result" id="decryptor-result-box"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="filter-row" id="filter-row"> 
+    <button class="filter-btn active" onclick="window.filterItems('all',this)">All</button> 
+    <button class="filter-btn" onclick="window.filterItems('everyday',this)">Everyday</button> 
+    <button class="filter-btn" onclick="window.filterItems('luxury',this)">Luxury</button> 
+    <button class="filter-btn" onclick="window.filterItems('property',this)">Property</button> 
+    <button class="filter-btn" onclick="window.filterItems('transport',this)">Transport</button> 
+    <button class="filter-btn" onclick="window.filterItems('mega',this)">Mega</button> 
+  </div> 
+  
+  <div class="section" id="items-section"></div> 
+  
+  <div class="receipt-wrap"> 
+    <div class="receipt"> 
+      <div class="receipt-header"> 
+        <div class="receipt-title">Transaction Statement</div> 
+        <div class="receipt-meta">
+          <span id="receipt-tx-id">TX-99824X</span>
+          <span id="receipt-timestamp">SECURE MODE</span>
+        </div>
+      </div> 
+      <div id="receipt-body"></div> 
+      <div class="receipt-footer"> 
+        <div class="receipt-sub-row" style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); margin-bottom: 8px;">
+          <div>Liquid Cash Available</div>
+          <div id="receipt-cash">$1.00T</div>
+        </div>
+        <div class="receipt-sub-row" style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; border-bottom: 1px dashed var(--border); padding-bottom: 8px;">
+          <div>Investment Portfolio Value</div>
+          <div id="receipt-portfolio">$0</div>
+        </div>
+        <div class="receipt-total-row"> 
+          <div class="receipt-total-label">Total Net Worth</div> 
+          <div class="receipt-total-val" id="receipt-total">$1.00T</div> 
+        </div> 
+        <div class="receipt-actions">
+          <button class="receipt-btn-action receipt-btn-download" onclick="window.downloadReceipt()">📄 Save Receipt</button>
+          <button class="receipt-btn-action receipt-btn-reset" onclick="window.clearAll()">Reset Vault</button>
+        </div>
+        <div class="receipt-barcode">
+          <div class="barcode-lines"></div>
+          <div class="barcode-text">TRILLION-DIGITAL-VAULT</div>
+        </div>
+      </div> 
+    </div> 
+  </div> 
+
+  <div class="seo-footer">
+    <div class="seo-content">
+      
+      <div style="border-bottom: 1px dashed var(--border); padding-bottom: 25px; margin-bottom: 25px;">
+        <h2>🧠 About The Creators</h2>
+        <p>Behind this project is <strong>Abhinav Gupta</strong>, a passionate creator with a vision for building clean, responsive, and minimalist web applications. Working closely alongside him is his brother, <strong>Ansh Vaish</strong>, who assists in a professional capacity with core system optimization and backend alignment. From simulating a massive trillion-dollar wallet to engineering practical wealth-tracking tools like their live <a href="https://your-sip-calculator-link.onrender.com" target="_blank" class="seo-link">SIP Calculator</a>, this duo loves delivering clutter-free interfaces for global users.</p>
+      </div>
+
+      <h2>🚀 The Ultimate Trillion-Dollar Challenge</h2>
+      <p>Think spending money is easy? Try doing it with a <strong>$1,000,000,000,000</strong> blank check! Welcome to the ultimate <strong>Spend 1 Trillion Dollars Simulator</strong>—the fastest, most addictive cyberpunk shopping game on the web. We gave you the ultimate billionaire fortune, now your only job is to go completely broke.</p>
+      
+      <h3>🛒 What's Inside the Vault?</h3>
+      <ul>
+        <li><strong>Everyday Luxuries:</strong> Grab premium acoustic guitars, scale figurine sets, or the ultimate PC setup.</li>
+        <li><strong>Heavy Flex:</strong> Ride in a Scorpio N, chill on your private island, or launch a global saree empire.</li>
+        <li><strong>God Mode Acquisitions:</strong> Buy out Twitter X, secure massive gold vaults, or own an infinite SIP investment portfolio.</li>
+      </ul>
+      
+      <p>Type your quantities instantly, track your real-time transaction history, and watch the screen explode with massive fireworks the second your balance hits absolute zero.</p>
+      <p><strong>Are you fast enough to empty the world's biggest wallet? Play now and claim your legendary title!</strong></p>
+      
+      <!-- Frequently Asked Questions (FAQ) Section for Search Authority -->
+      <div class="faq-container">
+        <h2>❓ Frequently Asked Questions (FAQ)</h2>
+        
+        <div class="faq-item" onclick="this.classList.toggle('active')">
+          <div class="faq-question">How do you play the Spend 1 Trillion Dollars Game?</div>
+          <div class="faq-answer">
+            The goal is simple: start with a balance of $1 Trillion (or choose from Level 1-4 budgets) and spend it all until you reach zero. Buy items from various categories like everyday goods, luxury, property, transport, and mega items. You can also risk your cash at the reverse-casino terminal where losing the bet burns your money (bringing you closer to victory) and winning doubles your cash.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="this.classList.toggle('active')">
+          <div class="faq-question">Can you actually spend a trillion dollars in this simulator?</div>
+          <div class="faq-answer">
+            Yes, but it takes strategic planning! Low-tier items cost very little, while high-tier mega items like skyscrapers, space stations, and buying out companies consume billions. Use the multi-buy features, invest in fluctuating markets, and leverage the Decryptor Casino to accelerate your spending.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="this.classList.toggle('active')">
+          <div class="faq-question">Who created the Spend 1 Trillion Dollars Game?</div>
+          <div class="faq-answer">
+            The game was designed and created by <strong>Abhinav Gupta</strong>, a developer focusing on clean web experiences, with professional assistance from his brother <strong>Ansh Vaish</strong> for system balancing and core mechanics optimization.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="this.classList.toggle('active')">
+          <div class="faq-question">What other web tools has the developer built?</div>
+          <div class="faq-answer">
+            In addition to this game, the developer has built a live mutual fund <a href="https://your-sip-calculator-link.onrender.com" target="_blank" class="seo-link">SIP Calculator</a> (Systematic Investment Plan) and <a href="https://space-shooter-x.onrender.com" target="_blank" class="seo-link">Space Shooter X</a>, showing a range of mathematical simulators and HTML5 game projects.
+          </div>
+        </div>
+      </div>
+
+      <!-- Player Reviews & Ratings Section for SEO Authority & User Engagement -->
+      <div class="reviews-container">
+        <h2>⭐ Player Reviews & Ratings</h2>
+        
+        <!-- Ratings Overview -->
+        <div class="reviews-summary">
+          <div class="rating-big-num" id="avg-rating-value">4.9</div>
+          <div>
+            <div class="rating-stars-display" id="avg-rating-stars">★★★★★</div>
+            <div class="rating-count" id="total-ratings-count">Based on 148 ratings</div>
+          </div>
+        </div>
+
+        <!-- Add Review Form -->
+        <div class="review-form">
+          <div class="review-form-title">Transmit Your Review</div>
+          
+          <div class="review-row-inputs">
+            <div class="review-input-group">
+              <label for="review-author">Billionaire Handle</label>
+              <input type="text" id="review-author" class="review-field" placeholder="e.g. CyberGamer_7">
+            </div>
+            
+            <div class="review-input-group">
+              <label>Select Rating</label>
+              <div class="star-select-wrap">
+                <button class="star-btn selected" data-value="1" onclick="window.setStarRating(1)">★</button>
+                <button class="star-btn selected" data-value="2" onclick="window.setStarRating(2)">★</button>
+                <button class="star-btn selected" data-value="3" onclick="window.setStarRating(3)">★</button>
+                <button class="star-btn selected" data-value="4" onclick="window.setStarRating(4)">★</button>
+                <button class="star-btn selected" data-value="5" onclick="window.setStarRating(5)">★</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="review-input-group" style="width: 100%;">
+            <label for="review-message">Review Description</label>
+            <textarea id="review-message" class="review-field" rows="3" placeholder="Write your simulator feedback..."></textarea>
+          </div>
+
+          <button class="review-btn-submit" onclick="window.submitReview()">Post Review 📡</button>
+        </div>
+
+        <!-- Recent Reviews List -->
+        <div class="reviews-list" id="reviews-list">
+          <!-- Dynamic reviews loaded by Javascript -->
+        </div>
+      </div>
+
+      <div class="creations-plug">
+        ✨ Check out more creations: Plan your real-world financial goals with our advanced <a href="https://your-sip-calculator-link.onrender.com" target="_blank" class="seo-link">SIP Calculator</a> or blast through cosmic waves in <a href="https://space-shooter-x.onrender.com" target="_blank" class="seo-link">Space Shooter X</a>!
+      </div>
+    </div>
+  </div>
+  
+  <div class="toast" id="toast"></div> 
+
+  <script> 
+    let TOTAL = 1000000000000; 
+    let cash = TOTAL;
+    let balance = TOTAL; // Net Worth (Cash + Portfolio)
+    let spent = 0; 
+    let purchases = {}; 
+    let activeFilter = 'all'; 
+    let qtyState = {};
+    let transactionLog = []; // Stores random event history for the receipt 
+    let unlockedLevel = 1;
+ 
+    // Live asset price and trend tracker
+    let investPrices = {};
+    let investTrends = {};
+ 
+    const ITEMS = [ 
+      { id:'coffee', cat:'everyday', emoji:'☕', name:'Premium Coffee', price:7 }, 
+      { id:'book', cat:'everyday', emoji:'📚', name:'Sci-Fi Book', price:15 },
+      { id:'pizza', cat:'everyday', emoji:'🍕', name:'Pizza Feast', price:18 }, 
+      { id:'ticket', cat:'everyday', emoji:'🎟️', name:'Movie Ticket & Popcorn', price:25 },
+      { id:'charity', cat:'everyday', emoji:'❤️', name:'Donate to Charity', price:100 },
+      { id:'guitar', cat:'everyday', emoji:'🎸', name:'Acoustic Guitar', price:850 }, 
+      { id:'sneakers', cat:'everyday', emoji:'👟', name:'Designer Sneakers', price:250 }, 
+      { id:'phone', cat:'everyday', emoji:'📱', name:'Smartphone Pro Max', price:1400 }, 
+      { id:'pc_setup', cat:'everyday', emoji:'🖥️', name:'Ultimate PC Setup', price:5500 }, 
+      { id:'figurines', cat:'everyday', emoji:'🧸', name:'Scale Figurine Set', price:1200 }, 
+      { id:'rolex', cat:'luxury', emoji:'⌚', name:'Rolex Daytona', price:45000 }, 
+      { id:'piano', cat:'luxury', emoji:'🎹', name:'Steinway Grand Piano', price:120000 },
+      { id:'jewelry', cat:'luxury', emoji:'💍', name:'Gold & Diamond Stock', price:250000 }, 
+      { id:'ferrari', cat:'luxury', emoji:'🏎', name:'Ferrari Hypercar', price:350000 }, 
+      { id:'sub', cat:'luxury', emoji:'🤿', name:'Deep-Sea Submarine', price:2500000 },
+      { id:'bitcoin', cat:'luxury', emoji:'🪙', name:'Bitcoin Portfolio', price:10000000, invest:true },
+      { id:'yacht', cat:'luxury', emoji:'⛵', name:'Mega Superyacht', price:150000000 }, 
+      { id:'castle', cat:'property', emoji:'🏰', name:'Scottish Castle', price:18000000 },
+      { id:'dubai_pent', cat:'property', emoji:'🏙️', name:'Dubai Penthouse', price:28000000 }, 
+      { id:'mansion', cat:'property', emoji:'🏰', name:'Luxury Villa', price:45000000 }, 
+      { id:'island', cat:'property', emoji:'🏝', name:'Private Island', price:150000000 }, 
+      { id:'skyscraper',cat:'property', emoji:'🏙', name:'City Skyscraper', price:850000000 }, 
+      { id:'space_station', cat:'property', emoji:'🛰️', name:'Orbital Space Station', price:35000000000 },
+      { id:'scorpio', cat:'transport', emoji:'🚙', name:'Scorpio N Z8T MT', price:30000 },
+      { id:'hoverboard', cat:'transport', emoji:'🛹', name:'Prototype Hoverboard', price:150000 },
+      { id:'hyperloop', cat:'transport', emoji:'🚊', name:'Hyperloop Pod', price:8000000 },
+      { id:'jet', cat:'transport', emoji:'✈️', name:'Private Jet', price:65000000 }, 
+      { id:'rocket', cat:'transport', emoji:'🚀', name:'SpaceX Rocket', price:150000000 }, 
+      { id:'cruise', cat:'transport', emoji:'🚢', name:'Cruise Liner', price:620000000 }, 
+      { id:'saree_empire', cat:'mega', emoji:'🥻', name:'Global Saree Empire', price:500000000 },
+      { id:'sip_calc', cat:'mega', emoji:'📈', name:'Infinite SIP Portfolio', price:1000000000, invest:true },
+      { id:'football_club', cat:'mega', emoji:'⚽', name:'Buy a Football Club', price:3500000000 },
+      { id:'gold_vault', cat:'mega', emoji:'🪙', name:'Massive Gold Vault', price:5000000000, invest:true },
+      { id:'ai_cluster', cat:'mega', emoji:'🧠', name:'AI Supercomputer', price:12000000000, invest:true },
+      { id:'nfl', cat:'mega', emoji:'🏈', name:'Buy an NFL Team', price:4000000000 }, 
+      { id:'twitter', cat:'mega', emoji:'🐦', name:'Buy Twitter X', price:44000000000, invest:true },
+      { id:'moon_base', cat:'mega', emoji:'🌑', name:'Lunar Colony Base', price:80000000000 },
+      { id:'dark_matter', cat:'mega', emoji:'🛸', name:'Dark Matter Propulsion Engine', price:120000000000 },
+      { id:'mars_terraform', cat:'mega', emoji:'🪐', name:'Mars Terraforming Project', price:180000000000 },
+      { id:'mind_upload', cat:'mega', emoji:'🧠', name:'Cybernetic Mind Upload Network', price:220000000000 },
+      { id:'dyson_swarm', cat:'mega', emoji:'🌌', name:'Dyson Swarm Array', price:250000000000 }
+    ]; 
+
+    const TICKER_HEADLINES = [
+      "ELON MUSK DEMANDS PAYOUT IN DOGECOIN...",
+      "AI INFLATION DECLARED UNSTOPPABLE BY TECH COGNIZANCE...",
+      "SPACEX ANNOUNCES TICKET PRICES TO MARS DECREASED BY 1.2%...",
+      "SAREE EMPIRE EXPANDS TO CYBER-NEO TOKYO...",
+      "SIP CALCULATORS REPORT HISTORIC RETURNS OF 18% APY...",
+      "GLOBAL GOLD RESERVE REPORTED SECURE IN DIGITAL VAULT...",
+      "LOCAL PC BUILDER DESIGNS A QUANTUM GRAPHICS CARD...",
+      "GLOBAL WARMING SOLVED BY A NEW SHIELD EMITTER...",
+      "TWITTER X INTRODUCES NEURAL-LINK DIRECT TWEETING..."
+    ];
+
+    const EVENTS = [
+      {
+        title: "IRS Audit Fine",
+        effect: function() {
+          let fine = 30000000000; 
+          let actualLoss = liquidateForLoss(fine);
+          transactionLog.push({ emoji: '🚨', name: 'IRS Audit Fine', amount: -actualLoss });
+          showEventAlert("🚨 IRS Audit Fine", `The IRS audited you and fined you ${fmt(actualLoss)}!`, false);
+        }
+      },
+      {
+        title: "Crypto Crash",
+        effect: function() {
+          let oldPrice = investPrices['bitcoin'] || 10000000;
+          let crashed = Math.round(oldPrice * 0.4);
+          let loss = (purchases['bitcoin'] ? purchases['bitcoin'].qty : 0) * (oldPrice - crashed);
+          investPrices['bitcoin'] = crashed;
+          investTrends['bitcoin'] = -60;
+          if (loss > 0) transactionLog.push({ emoji: '📉', name: 'Bitcoin Crypto Crash (-60%)', amount: -loss });
+          else transactionLog.push({ emoji: '📉', name: 'Bitcoin Crypto Crash (-60%)', amount: 0 });
+          showEventAlert("📉 Crypto Crashed", `Meme coin speculation bubble burst. Bitcoin crashed by 60%!`, false);
+        }
+      },
+      {
+        title: "Biotech Fail",
+        effect: function() {
+          let loss = 15000000000; 
+          let actualLoss = liquidateForLoss(loss);
+          transactionLog.push({ emoji: '💥', name: 'Biotech Startup Fails', amount: -actualLoss });
+          showEventAlert("💥 Startup Fails", `Neural-link biotech failed clinical trials. Lost -${fmt(actualLoss)}.`, false);
+        }
+      },
+      {
+        title: "Space Crash Loss",
+        effect: function() {
+          let cost = 25000000000; 
+          let actualLoss = liquidateForLoss(cost);
+          transactionLog.push({ emoji: '🚀', name: 'Rocket Launch Failure', amount: -actualLoss });
+          showEventAlert("🚀 Rocket Launch Fails", `Uninsured SpaceX launch failed. Rebuilding rocket cost -${fmt(actualLoss)}.`, false);
+        }
+      },
+      {
+        title: "Billionaire Bash",
+        effect: function() {
+          let partyCost = 10000000000; 
+          let actualLoss = liquidateForLoss(partyCost);
+          transactionLog.push({ emoji: '🎉', name: 'Monaco Mega-Party', amount: -actualLoss });
+          showEventAlert("🎉 Monaco Mega-Party", `Spent -${fmt(actualLoss)} renting out Monaco for a weekend gala.`, false);
+        }
+      },
+      {
+        title: "Patent Royalties",
+        effect: function() {
+          let royalty = 5000000000; 
+          cash += royalty;
+          transactionLog.push({ emoji: '⚙️', name: 'Quantum Chip Patent Royalties', amount: royalty });
+          showEventAlert("⚙️ Patent Royalties", `Your quantum chip patent licensing paid out +${fmt(royalty)}.`, true);
+        }
+      },
+      {
+        title: "Saree Market Loss",
+        effect: function() {
+          let loss = 8000000000; 
+          let actualLoss = liquidateForLoss(loss);
+          transactionLog.push({ emoji: '🥻', name: 'Saree Cargo Ship Sinks', amount: -actualLoss });
+          showEventAlert("🥻 Saree Ship Sinks", `Cargo freighter carrying global saree stock sank in a storm. Lost -${fmt(actualLoss)}.`, false);
+        }
+      },
+      {
+        title: "Island Meteor",
+        effect: function() {
+          let cost = 12000000000; 
+          let actualLoss = liquidateForLoss(cost);
+          transactionLog.push({ emoji: '☄️', name: 'Asteroid Island Damage', amount: -actualLoss });
+          showEventAlert("☄️ Meteor Strikes Island", `Sustained -${fmt(actualLoss)} in rebuilding damages on your private island.`, false);
+        }
+      }
+    ];
+
+    function fmt(n) { 
+      if (n >= 1e12) return '$' + (n/1e12).toFixed(2) + 'T'; 
+      if (n >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B'; 
+      if (n >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M'; 
+      return '$' + n.toLocaleString(); 
+    } 
+
+    function updateMetaTags() {
+      const randomID = "TX-" + Math.floor(100000 + Math.random() * 900000);
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      document.getElementById('receipt-tx-id').innerText = randomID;
+      document.getElementById('receipt-timestamp').innerText = timeStr;
+    }
+
+    // ---- AUDIO SYNTH ENGINE ----
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    window.toggleSound = function() {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById('sound-toggle-btn');
+      if (btn) {
+        btn.innerHTML = soundEnabled ? '🔊 Sound On' : '🔇 Muted';
+      }
+    };
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        
+        const now = audioCtx.currentTime;
+        
+        if (type === 'click' || type === 'buy') {
+          // Soothing pop click (triangle wave)
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(450, now);
+          osc.frequency.exponentialRampToValueAtTime(180, now + 0.08);
+          gainNode.gain.setValueAtTime(0.35, now);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } 
+        else if (type === 'firewall') {
+          // Soothing triangle sweep down (bet lost)
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(580, now);
+          osc.frequency.exponentialRampToValueAtTime(200, now + 0.3);
+          gainNode.gain.setValueAtTime(0.25, now);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } 
+        else if (type === 'winnings') {
+          // Soft warning bell - dual triangle oscillators (bet won)
+          const fNotes = [180, 220];
+          fNotes.forEach(freq => {
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
+            gainNode.gain.setValueAtTime(0.25, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+            osc.start(now);
+            osc.stop(now + 0.6);
+          });
+        }
+        else if (type === 'firework_launch') {
+          // Whistling rocket launch ("Suuuu")
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(350, now);
+          osc.frequency.linearRampToValueAtTime(1400, now + 0.6);
+          gainNode.gain.setValueAtTime(0.12, now);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+          osc.start(now);
+          osc.stop(now + 0.6);
+
+          // Whooshing noise
+          const bufferSize = audioCtx.sampleRate * 0.6;
+          const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+          }
+          const noise = audioCtx.createBufferSource();
+          noise.buffer = buffer;
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(800, now);
+          filter.frequency.exponentialRampToValueAtTime(1600, now + 0.6);
+          const noiseGain = audioCtx.createGain();
+          noiseGain.gain.setValueAtTime(0.06, now);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+          
+          noise.connect(filter);
+          filter.connect(noiseGain);
+          noiseGain.connect(audioCtx.destination);
+          noise.start(now);
+          noise.stop(now + 0.6);
+        }
+        else if (type === 'firework_pop') {
+          // Initial Crack/Snap
+          const bufferSize = audioCtx.sampleRate * 0.08;
+          const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+          }
+          const noise = audioCtx.createBufferSource();
+          noise.buffer = buffer;
+          const filter = audioCtx.createBiquadFilter();
+          filter.type = 'highpass';
+          filter.frequency.setValueAtTime(1000, now);
+          const noiseGain = audioCtx.createGain();
+          noiseGain.gain.setValueAtTime(0.15, now);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          
+          noise.connect(filter);
+          filter.connect(noiseGain);
+          noiseGain.connect(audioCtx.destination);
+          noise.start(now);
+          noise.stop(now + 0.08);
+
+          // Low thud
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(150, now);
+          osc.frequency.exponentialRampToValueAtTime(45, now + 0.45);
+          gainNode.gain.setValueAtTime(0.38, now);
+          gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+          osc.start(now);
+          osc.stop(now + 0.45);
+          
+          // Crackling Sparks
+          const count = 7;
+          for (let i = 0; i < count; i++) {
+            const popOsc = audioCtx.createOscillator();
+            const popGain = audioCtx.createGain();
+            popOsc.connect(popGain);
+            popGain.connect(audioCtx.destination);
+            
+            const delay = 0.08 + Math.random() * 0.28;
+            popOsc.type = 'square';
+            popOsc.frequency.setValueAtTime(800 + Math.random() * 1000, now + delay);
+            popGain.gain.setValueAtTime(0.015, now + delay);
+            popGain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.02);
+            
+            popOsc.start(now + delay);
+            popOsc.stop(now + delay + 0.02);
+          }
+        }
+        else if (type === 'win') {
+          const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, index) => {
+            const oscN = audioCtx.createOscillator();
+            const gainN = audioCtx.createGain();
+            oscN.connect(gainN);
+            gainN.connect(audioCtx.destination);
+            
+            oscN.type = 'square';
+            oscN.frequency.setValueAtTime(freq, now + index * 0.08);
+            gainN.gain.setValueAtTime(0.03, now + index * 0.08);
+            gainN.gain.exponentialRampToValueAtTime(0.002, now + index * 0.08 + 0.12);
+            
+            oscN.start(now + index * 0.08);
+            oscN.stop(now + index * 0.08 + 0.12);
+          });
+        }
+      } catch (e) {
+        console.error("Audio error", e);
+      }
+    }
+
+    // ---- LEVEL STATE & PASSIVE INCOME ----
+    let selectedLevel = 3; // default is level 3 (Trillionaire Grind)
+    let selectedLevelCash = 1000000000000;
+    let passiveIncomeEnabled = false;
+    let passiveIncomeInterval = null;
+    let passiveIncomeTimer = 45; // 45s countdown
+
+    const LEVEL_RULES = {
+      1: {
+        title: "Level 1: Starter Loan 🍼",
+        desc: "You start with <b>$100 Billion</b>. Perfect for learning the market and testing your speedrunning strategies. A quick, fun playground."
+      },
+      2: {
+        title: "Level 2: Billionaire Prep 💼",
+        desc: "You start with <b>$500 Billion</b>. A moderate challenge. You will need to balance luxury buys, Scorpio N fleets, and basic investments."
+      },
+      3: {
+        title: "Level 3: Trillionaire Grind 🏆",
+        desc: "You start with <b>$1.00 Trillion</b>. The classic simulator experience. Empty the digital vault and race against market fluctuations!"
+      },
+      4: {
+        title: "Level 4: Tech Lord Mode 🚀",
+        desc: "You start with <b>$5.00 Trillion</b>. The ultimate cyber challenge. Unlock trillion-dollar items capped at $250B and spend it all!"
+      }
+    };
+
+    window.selectLevelCard = function(lvl, amt, skipSound) {
+      if (lvl > unlockedLevel) {
+        showToast(`🔒 Level ${lvl} is locked! Clear the previous level first.`);
+        return;
+      }
+      if (!skipSound) playSound('click');
+      selectedLevel = lvl;
+      selectedLevelCash = amt;
+      document.querySelectorAll('.level-card-select').forEach(card => card.classList.remove('active'));
+      const cardEl = document.getElementById('level-card-' + lvl);
+      if (cardEl) cardEl.classList.add('active');
+      renderLevelRules();
+    };
+
+    function updateLevelSelectorUI() {
+      for (let l = 1; l <= 4; l++) {
+        const card = document.getElementById('level-card-' + l);
+        if (card) {
+          const isLocked = l > unlockedLevel;
+          if (isLocked) {
+            card.classList.add('locked');
+            const nameEl = card.querySelector('.level-card-name');
+            if (nameEl && !nameEl.innerText.includes('🔒')) {
+              if (!card.dataset.origName) {
+                card.dataset.origName = nameEl.innerHTML;
+              }
+              nameEl.innerHTML = `🔒 Locked`;
+            }
+          } else {
+            card.classList.remove('locked');
+            const nameEl = card.querySelector('.level-card-name');
+            if (nameEl && card.dataset.origName) {
+              nameEl.innerHTML = card.dataset.origName;
+            }
+          }
+        }
+      }
+    }
+
+    function renderLevelRules() {
+      const rule = LEVEL_RULES[selectedLevel];
+      const titleEl = document.getElementById('rules-title');
+      const descEl = document.getElementById('rules-desc');
+      if (titleEl) titleEl.innerText = rule.title;
+      if (descEl) descEl.innerHTML = rule.desc;
+    }
+
+    window.togglePassiveIncome = function() {
+      playSound('click');
+      const checkbox = document.getElementById('passive-income-checkbox');
+      if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+        passiveIncomeEnabled = checkbox.checked;
+      }
+    };
+
+    window.startGame = function() {
+      playSound('click');
+      TOTAL = selectedLevelCash;
+      const checkbox = document.getElementById('passive-income-checkbox');
+      passiveIncomeEnabled = checkbox ? checkbox.checked : false;
+      
+      // Hide welcome overlay
+      const overlayEl = document.getElementById('level-overlay');
+      if (overlayEl) overlayEl.classList.add('hide');
+      
+      // Reset game with new starting balance
+      window.clearAll();
+    };
+
+    window.openLevelSelector = function() {
+      playSound('click');
+      // Pause timers
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      if (passiveIncomeInterval) { clearInterval(passiveIncomeInterval); passiveIncomeInterval = null; }
+      
+      // Show level selector overlay
+      const overlayEl = document.getElementById('level-overlay');
+      if (overlayEl) overlayEl.classList.remove('hide');
+      
+      // Update locked visual states
+      updateLevelSelectorUI();
+      
+      // Sync checkbox
+      const checkbox = document.getElementById('passive-income-checkbox');
+      if (checkbox) checkbox.checked = passiveIncomeEnabled;
+      window.selectLevelCard(selectedLevel, selectedLevelCash, true);
+    };
+
+    function startPassiveIncomeTimer() {
+      if (passiveIncomeInterval) clearInterval(passiveIncomeInterval);
+      if (!passiveIncomeEnabled) return;
+      
+      passiveIncomeTimer = 45;
+      passiveIncomeInterval = setInterval(() => {
+        if (isGamePaused()) return; // only run while the speedrun timer is active!
+        passiveIncomeTimer--;
+        
+        if (passiveIncomeTimer <= 0) {
+          passiveIncomeTimer = 45;
+          let gain = Math.round(cash * 0.02);
+          if (gain > 0) {
+            cash += gain;
+            updateWallet();
+            renderItems();
+            renderReceipt();
+            
+            // Log passive income as a random event in the receipt!
+            transactionLog.push({ emoji: '⚠️', name: 'Passive Income Interest (+2%)', amount: gain });
+            renderReceipt();
+            
+            // Visual alert
+            showToast(`⚠️ Passive Income: +${fmt(gain)} added!`);
+            
+            const balEl = document.getElementById('balance');
+            const walletEl = document.querySelector('.wallet');
+            if (balEl && walletEl) {
+              walletEl.classList.add('shake-wallet');
+              balEl.classList.add('flash-red');
+              setTimeout(() => {
+                walletEl.classList.remove('shake-wallet');
+                balEl.classList.remove('flash-red');
+              }, 1200);
+            }
+          }
+        }
+      }, 1000);
+    }
+
+    // Liquidate assets to cover a cash loss/fine
+    function liquidateForLoss(amount) {
+      calculateNetWorth(); // update balance
+      if (balance <= amount) {
+        // Lose everything!
+        let actualLoss = balance;
+        cash = 0;
+        for (let id in purchases) {
+          if (purchases[id].item.invest) {
+            delete purchases[id];
+          }
+        }
+        return actualLoss;
+      }
+      
+      // Otherwise, we have enough total net worth. Liquidate assets if needed to cover the loss.
+      let needed = amount - cash;
+      if (needed > 0) {
+        for (let id in purchases) {
+          if (purchases[id].item.invest) {
+            let price = investPrices[id];
+            let ownedQty = purchases[id].qty;
+            let assetValue = ownedQty * price;
+            
+            if (assetValue >= needed) {
+              let qtyToSell = Math.ceil(needed / price);
+              if (qtyToSell > ownedQty) qtyToSell = ownedQty;
+              let revenue = qtyToSell * price;
+              cash += revenue;
+              purchases[id].qty -= qtyToSell;
+              purchases[id].total -= (purchases[id].total / (purchases[id].qty + qtyToSell)) * qtyToSell;
+              if (purchases[id].qty === 0) {
+                delete purchases[id];
+              }
+              needed -= revenue;
+            } else {
+              cash += assetValue;
+              delete purchases[id];
+              needed -= assetValue;
+            }
+            if (needed <= 0) break;
+          }
+        }
+      }
+      // Now cash is guaranteed to be >= amount (since balance > amount and we liquidated assets)
+      cash -= amount;
+      return amount;
+    }
+
+    // ---- CYBER CASINO HACK ENGINE ----
+    let isHacking = false;
+    let consecutiveBurns = 0;
+
+    window.sanitizeCasinoInput = function() {
+      const input = document.getElementById('casino-bet-val');
+      if (!input) return;
+      let val = parseInt(input.value);
+      if (isNaN(val) || val < 1) val = 1000000000; // default 1B
+      let maxBetLimit = Math.round(balance * 0.5); // Cap bet at 50% of current Net Worth
+      if (maxBetLimit < 1) maxBetLimit = 1;
+      let limit = Math.min(cash, maxBetLimit);
+      if (limit < 1 && cash > 0) limit = cash;
+      if (val > limit) val = limit;
+      if (val < 1 && cash > 0) val = 1;
+      input.value = val;
+    };
+
+    window.setCasinoPreset = function(percent) {
+      playSound('click');
+      const input = document.getElementById('casino-bet-val');
+      if (!input) return;
+      let betAmt = Math.round(balance * (percent / 100));
+      if (betAmt > cash) betAmt = cash;
+      if (betAmt < 1) betAmt = 1;
+      input.value = betAmt;
+      window.sanitizeCasinoInput();
+    };
+
+    window.runCyberHack = function() {
+      if (isHacking) return;
+      playSound('click');
+      window.sanitizeCasinoInput();
+      
+      const betVal = parseInt(document.getElementById('casino-bet-val').value);
+      if (betVal > cash || betVal <= 0) {
+        showToast("Insufficient cash for this bet!");
+        return;
+      }
+      
+      startTimer(); // Hack triggers the speedrun timer!
+      
+      isHacking = true;
+      const hackBtn = document.getElementById('decryptor-hack-btn');
+      if (hackBtn) {
+        hackBtn.classList.add('hacking');
+        hackBtn.innerText = "🎰 GAMBLING WEALTH...";
+      }
+      
+      const progressWrap = document.getElementById('decryptor-progress');
+      const progressFill = document.getElementById('decryptor-progress-fill');
+      const progressStatus = document.getElementById('decryptor-progress-status');
+      const resultBox = document.getElementById('decryptor-result-box');
+      
+      if (progressWrap) progressWrap.style.display = 'flex';
+      if (resultBox) resultBox.style.display = 'none';
+      if (progressFill) progressFill.style.width = '0%';
+      
+      let progress = 0;
+      let hackTimer = setInterval(() => {
+        progress += Math.floor(Math.random() * 12) + 5;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(hackTimer);
+          executeHackOutcome(betVal);
+        }
+        if (progressFill) progressFill.style.width = progress + '%';
+        if (progressStatus) progressStatus.innerText = `Securing High-Risk Encryption Bet... ${progress}%`;
+      }, 100);
+    };
+
+    function executeHackOutcome(betVal) {
+      isHacking = false;
+      const hackBtn = document.getElementById('decryptor-hack-btn');
+      if (hackBtn) {
+        hackBtn.classList.remove('hacking');
+        hackBtn.innerText = "Gamble Wealth ⚡";
+      }
+      
+      const pWrap = document.getElementById('decryptor-progress');
+      if (pWrap) pWrap.style.display = 'none';
+      
+      const resultBox = document.getElementById('decryptor-result-box');
+      if (resultBox) {
+        resultBox.style.display = 'block';
+        
+        // 60% probability of failing the hack (Losing money - Win condition!)
+        // 40% probability of succeeding the hack (Gaining money - Lose condition!)
+        const rolls = Math.random();
+        let forcedWin = false;
+        if (consecutiveBurns >= 3) {
+          forcedWin = true; // Force win (double money/defeat) on 4th consecutive cash burn
+        }
+        
+        if (rolls < 0.6 && !forcedWin) {
+          // HACK DETECTED - Cash burned! (Success/Win)
+          consecutiveBurns++;
+          playSound('firewall');
+          cash -= betVal;
+          resultBox.className = "decryptor-result loss";
+          resultBox.innerHTML = `⚠️ <b>BET LOST (VICTORY)!</b> Bank firewall incinerated your bet of <b>-${fmt(betVal)}</b>! (Yes!)`;
+          
+          transactionLog.push({ emoji: '🚨', name: 'Federal Firewall Cash Burn', amount: -betVal });
+          showToast(`-${fmt(betVal)} burned! 🍾`);
+        } else {
+          // HACK SUCCESSFUL - Stole double! (Failure/Loss)
+          consecutiveBurns = 0;
+          playSound('winnings');
+          let winnings = betVal * 2;
+          cash += winnings;
+          resultBox.className = "decryptor-result win";
+          if (forcedWin) {
+            resultBox.innerHTML = `💸 <b>BET WON (DEFEAT)!</b> Anti-cheat lock triggered: Stole an extra <b>+${fmt(winnings)}</b> to halt your win streak! (Noooo!)`;
+          } else {
+            resultBox.innerHTML = `💸 <b>BET WON (DEFEAT)!</b> Bypassed security and stole an extra <b>+${fmt(winnings)}</b>! (Noooo!)`;
+          }
+          
+          transactionLog.push({ emoji: '💸', name: 'Bank Hack Loot (Double Bet)', amount: winnings });
+          showToast(`+${fmt(winnings)} added! 😭`);
+        }
+      }
+      
+      updateWallet();
+      renderItems();
+      renderReceipt();
+    }
+
+    // ---- TIMER STATE ----
+    let timerStarted = false;
+    let timerStopped = false;
+    let timerSeconds = 0;
+    let timerInterval = null;
+
+    function startTimer() {
+      if (timerStarted || timerStopped) return;
+      timerStarted = true;
+      const el = document.getElementById('game-timer');
+      if (el) el.classList.add('running');
+      const stEl = document.getElementById('timer-status');
+      if (stEl) stEl.innerText = '⏱ Running...';
+      timerInterval = setInterval(() => {
+        timerSeconds++;
+        const timerEl = document.getElementById('game-timer');
+        if (timerEl) timerEl.innerText = formatTime(timerSeconds);
+      }, 1000);
+      startPassiveIncomeTimer();
+    }
+
+    function stopTimer() {
+      if (!timerStarted || timerStopped) return;
+      timerStopped = true;
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      if (passiveIncomeInterval) { clearInterval(passiveIncomeInterval); passiveIncomeInterval = null; }
+      const el = document.getElementById('game-timer');
+      if (el) { el.classList.remove('running'); el.classList.add('finished'); }
+      const stEl = document.getElementById('timer-status');
+      if (stEl) stEl.innerText = `🏆 Finished in ${formatTime(timerSeconds)}!`;
+    }
+
+    function resetTimer() {
+      timerStarted = false;
+      timerStopped = false;
+      timerSeconds = 0;
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      if (passiveIncomeInterval) { clearInterval(passiveIncomeInterval); passiveIncomeInterval = null; }
+      const el = document.getElementById('game-timer');
+      if (el) { el.innerText = '0m 00s'; el.classList.remove('running', 'finished'); }
+      const stEl = document.getElementById('timer-status');
+      if (stEl) stEl.innerText = 'Starts on your first purchase';
+    }
+
+    function formatTime(s) {
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      return `${m}m ${sec.toString().padStart(2, '0')}s`;
+    }
+
+    // ---- HINTS ----
+    const HINTS = [
+      { emoji: '🏆', text: "Buy Mega items first! One Lunar Colony Base drains $80 Billion instantly — the fastest path to zero!" },
+      { emoji: '🚫', text: "Avoid assets like Bitcoin or Twitter X! They fluctuate and can GROW your net worth, making it harder to go broke." },
+      { emoji: '🔢', text: "Set quantity to 999 on cheap items to burn through cash fast. Try buying 500 Ferraris at once!" },
+      { emoji: '⏱️', text: "Speed tip: Filter by MEGA and spam-buy everything. Orbital Space Station at $35B each is absolutely devastating!" },
+      { emoji: '☄️', text: "Random events strike every 35 seconds and drain billions! IRS Fine alone costs $30B — spend faster than events can hit!" },
+      { emoji: '⚡', text: "The Auto-Liquidate system sells your investments automatically if you run low on cash — no need to sell manually!" },
+    ];
+    let maxUnlockedHint = 1; // starts at 1, max is HINTS.length (6)
+    let activeHintIdx = 0; // the index of the hint currently viewed in the modal
+    let hintTimer = 30; // countdown timer for the next hint
+    let hintInterval = null;
+
+    window.showHint = function() {
+      playSound('click');
+      activeHintIdx = maxUnlockedHint - 1; // default to the latest unlocked hint
+      renderHintModal();
+      document.getElementById('hint-overlay').classList.add('active');
+    };
+
+    window.closeHint = function() {
+      playSound('click');
+      document.getElementById('hint-overlay').classList.remove('active');
+    };
+
+    window.prevHint = function() {
+      playSound('click');
+      if (activeHintIdx > 0) {
+        activeHintIdx--;
+        renderHintModal();
+      }
+    };
+
+    window.nextHint = function() {
+      playSound('click');
+      if (activeHintIdx < maxUnlockedHint - 1) {
+        activeHintIdx++;
+        renderHintModal();
+      }
+    };
+
+    function startHintTimer() {
+      if (hintInterval) clearInterval(hintInterval);
+      hintTimer = 30;
+      updateHintButtonText();
+      
+      hintInterval = setInterval(() => {
+        if (maxUnlockedHint < HINTS.length) {
+          hintTimer--;
+          const cdEl = document.getElementById('hint-countdown');
+          if (cdEl) cdEl.innerText = hintTimer;
+          
+          if (hintTimer <= 0) {
+            maxUnlockedHint++;
+            hintTimer = 30;
+            showToast('💡 New strategy hint unlocked!');
+            
+            // If the modal is currently open, update it to show the new hint automatically
+            const modalOpen = document.getElementById('hint-overlay').classList.contains('active');
+            if (modalOpen) {
+              activeHintIdx = maxUnlockedHint - 1; // focus on the new hint
+              renderHintModal();
+            }
+          }
+        } else {
+          // All hints unlocked
+          clearInterval(hintInterval);
+          hintInterval = null;
+          const infoEl = document.getElementById('hint-next-info-box');
+          if (infoEl) infoEl.style.display = 'none'; // hide countdown if all unlocked
+        }
+        updateHintButtonText();
+      }, 1000);
+    }
+
+    function updateHintButtonText() {
+      const btn = document.getElementById('hint-btn-el');
+      if (!btn) return;
+      if (maxUnlockedHint < HINTS.length) {
+        btn.innerHTML = `💡 Hint (${hintTimer}s)`;
+      } else {
+        btn.innerHTML = `💡 Hint`;
+      }
+    }
+
+    function renderHintModal() {
+      const h = HINTS[activeHintIdx];
+      const emojiEl = document.getElementById('hint-emoji');
+      const textEl = document.getElementById('hint-text');
+      const counterEl = document.getElementById('hint-counter');
+      
+      if (emojiEl) emojiEl.innerText = h.emoji;
+      if (textEl) textEl.innerText = h.text;
+      if (counterEl) counterEl.innerText = `${activeHintIdx + 1} / ${maxUnlockedHint}`;
+      
+      // Enable/disable buttons
+      const prevBtn = document.getElementById('hint-prev-btn');
+      const nextBtn = document.getElementById('hint-next-btn');
+      
+      if (prevBtn) {
+        prevBtn.disabled = activeHintIdx === 0;
+        prevBtn.style.opacity = activeHintIdx === 0 ? '0.3' : '1';
+        prevBtn.style.cursor = activeHintIdx === 0 ? 'not-allowed' : 'pointer';
+      }
+      
+      if (nextBtn) {
+        const canGoNext = activeHintIdx < maxUnlockedHint - 1;
+        nextBtn.disabled = !canGoNext;
+        nextBtn.style.opacity = !canGoNext ? '0.3' : '1';
+        nextBtn.style.cursor = !canGoNext ? 'not-allowed' : 'pointer';
+      }
+      
+      // Show or hide countdown box
+      const infoEl = document.getElementById('hint-next-info-box');
+      if (infoEl) {
+        if (maxUnlockedHint >= HINTS.length) {
+          infoEl.style.display = 'none';
+        } else {
+          infoEl.style.display = 'block';
+          const cdEl = document.getElementById('hint-countdown');
+          if (cdEl) cdEl.innerText = hintTimer;
+        }
+      }
+    }
+
+    function resetHints() {
+      maxUnlockedHint = 1;
+      activeHintIdx = 0;
+      hintTimer = 30;
+      startHintTimer();
+    }
+
+    window.filterItems = function(cat, btn) { 
+      playSound('click');
+      activeFilter = cat; 
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); 
+      btn.classList.add('active'); 
+      renderItems(); 
+    }; 
+
+    window.changeQty = function(id, delta) {
+      const item = ITEMS.find(i => i.id === id);
+      let itemCap = Infinity;
+      if (selectedLevel === 1) itemCap = 13000000000;
+      else if (selectedLevel === 2) itemCap = 45000000000;
+      else if (selectedLevel === 3) itemCap = 121000000000;
+      if (item && item.price > itemCap) return;
+
+      playSound('click');
+      let currentVal = parseInt(document.getElementById('qty-val-' + id).value) || 1;
+      currentVal += delta;
+      if (currentVal < 1) currentVal = 1;
+      document.getElementById('qty-val-' + id).value = currentVal;
+      window.setQty(id, currentVal);
+    };
+
+    window.setQty = function(id, value) {
+      let qty = parseInt(value);
+      if (isNaN(qty) || qty < 1) qty = 1;
+      qtyState[id] = qty;
+      const item = ITEMS.find(i => i.id === id);
+      let price = item.invest ? investPrices[id] : item.price;
+      const totalCost = price * qty;
+      const buyBtn = document.getElementById('buy-btn-' + id);
+      if (buyBtn) {
+        buyBtn.innerText = `BUY (${fmt(totalCost)})`;
+        
+        // Check affordability against total Net Worth (Cash + Portfolio Value)
+        let totalPortfolio = 0;
+        for (let pid in purchases) {
+          if (purchases[pid].item.invest) {
+            totalPortfolio += purchases[pid].qty * investPrices[pid];
+          }
+        }
+        if (cash + totalPortfolio < totalCost) buyBtn.classList.add('disabled-btn');
+        else buyBtn.classList.remove('disabled-btn');
+      }
+    };
+
+    window.sanitizeInput = function(id, value) {
+      let qty = parseInt(value);
+      if (isNaN(qty) || qty < 1) qty = 1;
+      const inputEl = document.getElementById('qty-val-' + id);
+      if (inputEl) {
+        inputEl.value = qty;
+      }
+      window.setQty(id, qty);
+    };
+
+    // Auto-liquidate investments if liquid cash is low
+    function autoLiquidate(amount) {
+      let needed = amount - cash;
+      if (needed <= 0) return true; // Already have enough cash
+      
+      // Calculate total portfolio value
+      let portfolioValue = 0;
+      for (let id in purchases) {
+        if (purchases[id].item.invest) {
+          portfolioValue += purchases[id].qty * investPrices[id];
+        }
+      }
+      
+      if (cash + portfolioValue < amount) {
+        return false; // Total net worth is too low
+      }
+      
+      // Liquidate (sell) assets to cover the difference
+      for (let id in purchases) {
+        if (purchases[id].item.invest) {
+          let price = investPrices[id];
+          let ownedQty = purchases[id].qty;
+          let assetValue = ownedQty * price;
+          
+          if (assetValue >= needed) {
+            let qtyToSell = Math.ceil(needed / price);
+            if (qtyToSell > ownedQty) qtyToSell = ownedQty;
+            let revenue = qtyToSell * price;
+            cash += revenue;
+            purchases[id].qty -= qtyToSell;
+            purchases[id].total -= (purchases[id].total / (purchases[id].qty + qtyToSell)) * qtyToSell;
+            
+            if (purchases[id].qty === 0) {
+              delete purchases[id];
+            }
+            needed -= revenue;
+          } else {
+            cash += assetValue;
+            delete purchases[id];
+            needed -= assetValue;
+          }
+          if (needed <= 0) break;
+        }
+      }
+      return true;
+    }
+
+    window.buyItem = function(id) { 
+      const item = ITEMS.find(i => i.id === id);
+      let itemCap = Infinity;
+      if (selectedLevel === 1) itemCap = 13000000000;
+      else if (selectedLevel === 2) itemCap = 45000000000;
+      else if (selectedLevel === 3) itemCap = 121000000000;
+      if (item && item.price > itemCap) {
+        showToast("This item is locked on this level!");
+        return;
+      }
+
+      playSound('buy');
+      const inputEl = document.getElementById('qty-val-' + id);
+      let qty = 1;
+      if (inputEl) {
+        qty = parseInt(inputEl.value);
+        if (isNaN(qty) || qty < 1) {
+          qty = 1;
+          inputEl.value = 1;
+        }
+      }
+      qtyState[id] = qty;
+      let price = item.invest ? investPrices[id] : item.price;
+      const totalCost = price * qty;
+      
+      startTimer();
+      // Try to liquidate assets if short on cash
+      if (!autoLiquidate(totalCost)) { 
+        showToast("Insufficient Funds!"); 
+        return; 
+      } 
+      
+      cash -= totalCost; 
+      spent += totalCost; 
+      if (purchases[id]) { 
+        purchases[id].qty += qty; 
+        purchases[id].total += totalCost; 
+      } else { 
+        purchases[id] = { item, qty: qty, total: totalCost }; 
+      } 
+      qtyState[id] = 1; 
+      updateWallet(); 
+      renderItems(); 
+      renderReceipt(); 
+      showToast(`Purchased ${qty}x ${item.name}!`); 
+      if (balance <= 0) window.triggerCelebration();
+    }; 
+
+    window.sellItem = function(id) {
+      const item = ITEMS.find(i => i.id === id);
+      let itemCap = Infinity;
+      if (selectedLevel === 1) itemCap = 13000000000;
+      else if (selectedLevel === 2) itemCap = 45000000000;
+      else if (selectedLevel === 3) itemCap = 121000000000;
+      if (item && item.price > itemCap) {
+        showToast("This item is locked on this level!");
+        return;
+      }
+
+      playSound('click');
+      if (!purchases[id] || purchases[id].qty <= 0) {
+        showToast("You don't own any shares of this asset!");
+        return;
+      }
+      const inputEl = document.getElementById('qty-val-' + id);
+      let qtyToSell = 1;
+      if (inputEl) {
+        qtyToSell = parseInt(inputEl.value);
+        if (isNaN(qtyToSell) || qtyToSell < 1) qtyToSell = 1;
+      }
+      if (qtyToSell > purchases[id].qty) {
+        qtyToSell = purchases[id].qty;
+      }
+      
+      let price = investPrices[id];
+      let revenue = price * qtyToSell;
+      
+      cash += revenue;
+      purchases[id].qty -= qtyToSell;
+      purchases[id].total -= (purchases[id].total / (purchases[id].qty + qtyToSell)) * qtyToSell;
+      
+      if (purchases[id].qty === 0) {
+        delete purchases[id];
+      }
+      
+      qtyState[id] = 1;
+      updateWallet();
+      renderItems();
+      renderReceipt();
+      showToast(`Sold ${qtyToSell}x ${item.name} for ${fmt(revenue)}!`);
+    };
+
+    function renderItems() { 
+      const section = document.getElementById('items-section'); 
+      const filtered = activeFilter === 'all' ? ITEMS : ITEMS.filter(i => i.cat === activeFilter); 
+      section.innerHTML = ''; 
+      const grid = document.createElement('div'); 
+      grid.className = 'items-grid'; 
+      
+      function getUnlockLevel(itemPrice) {
+        if (itemPrice <= 13000000000) return 1;
+        if (itemPrice <= 45000000000) return 2;
+        if (itemPrice <= 121000000000) return 3;
+        return 4;
+      }
+
+      filtered.forEach(item => { 
+        const currentQty = qtyState[item.id] || 1;
+        let price = item.invest ? investPrices[item.id] : item.price;
+        const currentCost = price * currentQty;
+        
+        // Check item level limits
+        let itemCap = Infinity;
+        if (selectedLevel === 1) itemCap = 13000000000;
+        else if (selectedLevel === 2) itemCap = 45000000000;
+        else if (selectedLevel === 3) itemCap = 121000000000;
+        
+        let isLockedOnLevel = item.price > itemCap;
+
+        // Check affordability using total net worth (cash + portfolio)
+        let totalPortfolio = 0;
+        for (let pid in purchases) {
+          if (purchases[pid].item.invest) {
+            totalPortfolio += purchases[pid].qty * investPrices[pid];
+          }
+        }
+        const cantAfford = (cash + totalPortfolio) < currentCost; 
+        
+        let trendHtml = '';
+        let sellBtnHtml = '';
+        let ownedHtml = '';
+        
+        if (item.invest) {
+          let trend = investTrends[item.id] || 0;
+          let trendClass = trend >= 0 ? 'trend-up' : 'trend-down';
+          let trendSign = trend >= 0 ? '▲' : '▼';
+          trendHtml = `<span class="trend-badge ${trendClass}" id="item-trend-${item.id}">${trendSign} ${Math.abs(trend).toFixed(1)}%</span>`;
+          
+          let ownedQty = purchases[item.id] ? purchases[item.id].qty : 0;
+          if (ownedQty > 0) {
+            ownedHtml = `<div class="owned-badge">OWNED: ${ownedQty}</div>`;
+            sellBtnHtml = `<button class="sell-btn" onclick="window.sellItem('${item.id}')">SELL</button>`;
+          }
+        }
+
+        let actionHtml = '';
+        if (isLockedOnLevel) {
+          actionHtml = `
+            <div style="text-align: center; color: var(--accent1); font-size: 0.72rem; font-weight: 800; text-transform: uppercase; border: 1px dashed rgba(255, 0, 60, 0.25); padding: 10px; border-radius: 8px; width: 100%; letter-spacing: 0.5px; background: rgba(255, 0, 60, 0.02); margin-top: 8px;">
+              🔒 Unlocks at Level ${getUnlockLevel(item.price)}
+            </div>
+          `;
+        } else {
+          actionHtml = `
+            <div class="qty-controls">
+              <button class="qty-btn" onclick="window.changeQty('${item.id}', -1)">-</button>
+              <input type="number" class="qty-input" id="qty-val-${item.id}" value="${currentQty}" oninput="window.setQty('${item.id}', this.value)" onblur="window.sanitizeInput('${item.id}', this.value)">
+              <button class="qty-btn" onclick="window.changeQty('${item.id}', 1)">+</button>
+            </div>
+            <div class="card-actions" style="display: flex; gap: 6px; width: 100%;">
+              <button class="buy-btn ${cantAfford ? 'disabled-btn' : ''}" style="flex: 1;" id="buy-btn-${item.id}" onclick="window.buyItem('${item.id}')">
+                BUY (${fmt(currentCost)})
+              </button>
+              ${sellBtnHtml}
+            </div>
+          `;
+        }
+
+        const card = document.createElement('div'); 
+        card.className = `item-card ${item.invest ? 'invest-card' : ''} ${isLockedOnLevel ? 'locked-item' : ''}`;
+        card.innerHTML = `
+          ${trendHtml}
+          <div class="item-emoji">${item.emoji}</div>
+          <div class="item-name">${item.name}</div>
+          <div class="item-price" id="item-price-${item.id}">${fmt(price)}</div>
+          ${ownedHtml}
+          ${actionHtml}
+        `;
+        grid.appendChild(card);
+      });
+      section.appendChild(grid);
+    }
+
+    function calculateNetWorth() {
+      let portfolioValue = 0;
+      for (let id in purchases) {
+        if (purchases[id].item.invest) {
+          portfolioValue += purchases[id].qty * investPrices[id];
+        }
+      }
+      balance = cash + portfolioValue;
+    }
+
+    // Fully updates and synchronizes all BUY button states across the entire page
+    function updateAllBuyButtons() {
+      // Calculate net worth
+      let totalPortfolio = 0;
+      for (let pid in purchases) {
+        if (purchases[pid].item.invest) {
+          totalPortfolio += purchases[pid].qty * investPrices[pid];
+        }
+      }
+      let netWorth = cash + totalPortfolio;
+      
+      ITEMS.forEach(item => {
+        const buyBtn = document.getElementById(`buy-btn-${item.id}`);
+        const inputEl = document.getElementById(`qty-val-${item.id}`);
+        if (buyBtn && inputEl) {
+          let qty = parseInt(inputEl.value) || 1;
+          let price = item.invest ? investPrices[item.id] : item.price;
+          let currentCost = price * qty;
+          
+          buyBtn.innerText = `BUY (${fmt(currentCost)})`;
+          if (netWorth < currentCost) {
+            buyBtn.classList.add('disabled-btn');
+          } else {
+            buyBtn.classList.remove('disabled-btn');
+          }
+        }
+      });
+    }
+
+    function updateWallet() {
+      calculateNetWorth();
+      const balEl = document.getElementById('balance');
+      balEl.innerText = fmt(balance);
+      if(balance === 0) balEl.classList.add('empty');
+      else balEl.classList.remove('empty');
+      
+      const cashLabel = document.getElementById('receipt-cash');
+      const portfolioLabel = document.getElementById('receipt-portfolio');
+      if (cashLabel) cashLabel.innerText = fmt(cash);
+      if (portfolioLabel) {
+        let pVal = balance - cash;
+        portfolioLabel.innerText = fmt(pVal);
+      }
+      
+      const totalLabel = document.getElementById('receipt-total');
+      if (totalLabel) totalLabel.innerText = fmt(balance);
+      
+      // Update all disabled button states dynamically
+      updateAllBuyButtons();
+      
+      // Win detection
+      if (balance <= 0 && timerStarted && !timerStopped) {
+        window.triggerCelebration();
+      }
+    }
+
+    function renderReceipt() {
+      const body = document.getElementById('receipt-body');
+      body.innerHTML = '';
+      const hasPurchases = Object.keys(purchases).length > 0;
+      const hasEvents = transactionLog.length > 0;
+      if (!hasPurchases && !hasEvents) {
+        body.innerHTML = '<div class="receipt-empty-state">No transactions recorded yet. Empty the vault!</div>';
+        return;
+      }
+      let html = '<div class="receipt-list">';
+      
+      // --- Purchases ---
+      for(let id in purchases) {
+        let p = purchases[id];
+        let price = p.item.invest ? investPrices[id] : p.item.price;
+        let currentTotal = price * p.qty;
+        html += `
+          <div class="receipt-item">
+            <div class="receipt-item-emoji">${p.item.emoji}</div>
+            <div class="receipt-item-name">${p.item.name} ${p.item.invest ? '<span style="color:var(--accent2); font-size:0.75rem; font-weight:800;">[ASSET]</span>' : ''}</div>
+            <div class="receipt-item-qty">x${p.qty}</div>
+            <div class="receipt-item-cost">${fmt(currentTotal)}</div>
+          </div>
+        `;
+      }
+      
+      // --- Random Events Log ---
+      if (hasEvents) {
+        html += `<div style="display:flex;align-items:center;gap:8px;padding:12px 0 4px;">
+          <div style="flex:1;height:1px;background:var(--border);"></div>
+          <span style="font-size:0.62rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;font-family:monospace;">⚡ Random Events</span>
+          <div style="flex:1;height:1px;background:var(--border);"></div>
+        </div>`;
+        transactionLog.forEach(entry => {
+          const isGain = entry.amount >= 0;
+          const amountColor = isGain ? 'var(--green)' : 'var(--accent1)';
+          const sign = isGain ? '+' : '-';
+          const displayAmt = entry.amount === 0 ? 'Portfolio Hit' : `${sign}${fmt(Math.abs(entry.amount))}`;
+          html += `
+            <div class="receipt-item" style="border-bottom:1px dashed #111120;">
+              <div class="receipt-item-emoji">${entry.emoji}</div>
+              <div class="receipt-item-name" style="color:#aaa;font-weight:600;font-size:0.8rem;">${entry.name}</div>
+              <div class="receipt-item-cost" style="color:${amountColor};font-size:1rem;">${displayAmt}</div>
+            </div>
+          `;
+        });
+      }
+      
+      html += '</div>';
+      body.innerHTML = html;
+    }
+
+    function isGamePaused() {
+      const overlay = document.getElementById('level-overlay');
+      return !overlay || !overlay.classList.contains('hide') || !timerStarted || timerStopped;
+    }
+
+    function updateMarket() {
+      if (isGamePaused()) return;
+      ITEMS.forEach(item => {
+        if (item.invest) {
+          // Average fluctuation is negative so it's easier to win
+          let changePct = (Math.random() * 11 - 7); 
+          investTrends[item.id] = changePct;
+          let oldPrice = investPrices[item.id];
+          let newPrice = Math.round(oldPrice * (1 + changePct / 100));
+          if (newPrice < 1) newPrice = 1;
+          investPrices[item.id] = newPrice;
+          
+          // Update DOM directly to preserve keyboard focus
+          const priceEl = document.getElementById(`item-price-${item.id}`);
+          if (priceEl) {
+            priceEl.innerText = fmt(newPrice);
+          }
+          
+          const trendEl = document.getElementById(`item-trend-${item.id}`);
+          if (trendEl) {
+            let trendClass = changePct >= 0 ? 'trend-up' : 'trend-down';
+            let trendSign = changePct >= 0 ? '▲' : '▼';
+            trendEl.className = `trend-badge ${trendClass}`;
+            trendEl.innerHTML = `${trendSign} ${Math.abs(changePct).toFixed(1)}%`;
+          }
+        }
+      });
+      updateWallet();
+      renderReceipt();
+    }
+
+    function initTicker() {
+      const tickerText = document.getElementById('ticker-text');
+      if (tickerText) {
+        let headlines = [...TICKER_HEADLINES];
+        headlines.sort(() => Math.random() - 0.5);
+        tickerText.innerText = headlines.join(" --- ") + " --- ";
+      }
+    }
+
+    function triggerRandomEvent() {
+      if (isGamePaused()) return;
+      let eventIdx = Math.floor(Math.random() * EVENTS.length);
+      EVENTS[eventIdx].effect();
+    }
+
+    function showEventAlert(title, message, isGain) {
+      const container = document.getElementById('event-alert-container') || createAlertContainer();
+      const alert = document.createElement('div');
+      alert.className = `event-alert ${isGain ? 'gain' : 'loss'}`;
+      alert.innerHTML = `
+        <div class="event-title ${isGain ? 'gain' : 'loss'}">${title}</div>
+        <div class="event-desc">${message}</div>
+      `;
+      container.appendChild(alert);
+      
+      setTimeout(() => {
+        alert.remove();
+      }, 7000);
+      
+      const tickerText = document.getElementById('ticker-text');
+      if (tickerText) {
+        tickerText.innerText = `[ALERT] ${title.toUpperCase()}: ${message.toUpperCase()} --- ${tickerText.innerText}`;
+      }
+      
+      const balEl = document.getElementById('balance');
+      const walletEl = document.querySelector('.wallet');
+      if (balEl && walletEl) {
+        walletEl.classList.add('shake-wallet');
+        balEl.classList.add(isGain ? 'flash-green' : 'flash-red');
+        
+        setTimeout(() => {
+          walletEl.classList.remove('shake-wallet');
+          balEl.classList.remove('flash-green', 'flash-red');
+        }, 1200);
+      }
+      
+      updateWallet();
+      renderItems();
+    }
+
+    function createAlertContainer() {
+      const container = document.createElement('div');
+      container.id = 'event-alert-container';
+      container.className = 'event-alert-container';
+      document.body.appendChild(container);
+      return container;
+    }
+
+    window.clearAll = function() {
+      playSound('click');
+      cash = TOTAL;
+      balance = TOTAL;
+      spent = 0;
+      purchases = {};
+      qtyState = {};
+      transactionLog = [];
+      resetTimer();
+      resetHints();
+      
+      // Reset casino UI elements
+      const resultBox = document.getElementById('decryptor-result-box');
+      if (resultBox) resultBox.style.display = 'none';
+      const progressWrap = document.getElementById('decryptor-progress');
+      if (progressWrap) progressWrap.style.display = 'none';
+      const inputEl = document.getElementById('casino-bet-val');
+      if (inputEl) inputEl.value = 1000000000; // default 1B
+      isHacking = false;
+      consecutiveBurns = 0;
+      const hackBtn = document.getElementById('decryptor-hack-btn');
+      if (hackBtn) {
+        hackBtn.classList.remove('hacking');
+        hackBtn.innerText = "Run Cyber-Hack ⚡";
+      }
+      
+      ITEMS.forEach(item => {
+        if (item.invest) {
+          investPrices[item.id] = item.price;
+          investTrends[item.id] = 0;
+        }
+      });
+
+      updateMetaTags();
+      updateWallet();
+      renderItems();
+      renderReceipt();
+      showToast("Wallet Reset!");
+    };
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    // Fireworks particles and animation logic
+    let canvas = document.getElementById('fireworks');
+    let ctx = canvas.getContext('2d');
+    let fireworksList = [];
+    let particlesList = [];
+    let animationId = null;
+
+    function resizeCanvas() {
+      if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+    }
+
+    class Firework {
+      constructor(sx, sy, tx, ty) {
+        playSound('firework_launch');
+        this.x = sx;
+        this.y = sy;
+        this.sx = sx;
+        this.sy = sy;
+        this.tx = tx;
+        this.ty = ty;
+        this.distanceToTarget = Math.sqrt((tx - sx)**2 + (ty - sy)**2);
+        this.distanceTraveled = 0;
+        this.coordinates = [[sx, sy], [sx, sy], [sx, sy]];
+        this.angle = Math.atan2(ty - sy, tx - sx);
+        this.speed = 2.5;
+        this.acceleration = 1.04;
+        this.brightness = Math.random() * 20 + 50;
+        this.hue = Math.random() * 360;
+      }
+      update(index) {
+        this.coordinates.pop();
+        this.coordinates.unshift([this.x, this.y]);
+        this.speed *= this.acceleration;
+        let vx = Math.cos(this.angle) * this.speed;
+        let vy = Math.sin(this.angle) * this.speed;
+        this.distanceTraveled = Math.sqrt((this.x + vx - this.sx)**2 + (this.y + vy - this.sy)**2);
+        if(this.distanceTraveled >= this.distanceToTarget) {
+          playSound('firework_pop');
+          createParticles(this.tx, this.ty, this.hue);
+          fireworksList.splice(index, 1);
+        } else {
+          this.x += vx;
+          this.y += vy;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+        ctx.lineTo(this.x, this.y);
+        ctx.strokeStyle = `hsl(${this.hue}, 100%, ${this.brightness}%)`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
+
+    class Particle {
+      constructor(x, y, hue) {
+        this.x = x;
+        this.y = y;
+        this.coordinates = [[x, y], [x, y], [x, y], [x, y], [x, y]];
+        this.angle = Math.random() * Math.PI * 2;
+        this.speed = Math.random() * 8 + 1;
+        this.friction = 0.95;
+        this.gravity = 0.8;
+        this.hue = hue + (Math.random() * 40 - 20);
+        this.brightness = Math.random() * 20 + 60;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.015 + 0.012;
+      }
+      update(index) {
+        this.coordinates.pop();
+        this.coordinates.unshift([this.x, this.y]);
+        this.speed *= this.friction;
+        this.x += Math.cos(this.angle) * this.speed;
+        this.y += Math.sin(this.angle) * this.speed + this.gravity;
+        this.alpha -= this.decay;
+        if(this.alpha <= this.decay) {
+          particlesList.splice(index, 1);
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.moveTo(this.coordinates[this.coordinates.length - 1][0], this.coordinates[this.coordinates.length - 1][1]);
+        ctx.lineTo(this.x, this.y);
+        ctx.strokeStyle = `hsla(${this.hue}, 100%, ${this.brightness}%, ${this.alpha})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
+
+    function createParticles(x, y, hue) {
+      let count = 40;
+      while(count--) {
+        particlesList.push(new Particle(x, y, hue));
+      }
+    }
+
+    function fireworksLoop() {
+      if (!canvas) return;
+      animationId = requestAnimationFrame(fireworksLoop);
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.globalCompositeOperation = 'lighter';
+      
+      let i = fireworksList.length;
+      while(i--) {
+        fireworksList[i].draw();
+        fireworksList[i].update(i);
+      }
+      let j = particlesList.length;
+      while(j--) {
+        particlesList[j].draw();
+        particlesList[j].update(j);
+      }
+      
+      if(Math.random() * 100 < 5) {
+        fireworksList.push(new Firework(canvas.width / 2, canvas.height, Math.random() * canvas.width, Math.random() * (canvas.height / 2)));
+      }
+    }
+
+    window.triggerCelebration = function() {
+      playSound('win');
+      stopTimer();
+      const timeStr = formatTime(timerSeconds);
+      
+      // Level progression check
+      let unlockedNext = false;
+      if (selectedLevel === unlockedLevel && unlockedLevel < 4) {
+        unlockedLevel++;
+        localStorage.setItem('unlockedLevel', unlockedLevel);
+        unlockedNext = true;
+      }
+      
+      const subEl = document.querySelector('.celebration-subtitle');
+      if (subEl) {
+        let msg = `You liquidated the entire <b>${fmt(TOTAL)}</b> in <b style="color:var(--accent3);">${timeStr}</b>!<br>Your billionaire status is legendary. 💸`;
+        if (unlockedNext) {
+          const nextLvlName = LEVEL_RULES[unlockedLevel].title;
+          msg += `<br><br><span style="color:var(--accent2); font-weight:800; font-size:1.15rem; text-shadow:0 0 15px rgba(252,238,10,0.5);">🎉 Level Unlocked: ${nextLvlName}!</span>`;
+        }
+        subEl.innerHTML = msg;
+      }
+      
+      // Configure "Proceed to Next Level" button
+      const nextBtn = document.getElementById('cel-next-btn');
+      if (nextBtn) {
+        if (selectedLevel < 4) {
+          nextBtn.style.display = 'flex';
+          nextBtn.innerText = `Advance to Level ${selectedLevel + 1} 🚀`;
+        } else {
+          nextBtn.style.display = 'none';
+        }
+      }
+      
+      document.getElementById('celebration-screen').classList.add('active');
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      if (!animationId) {
+        fireworksLoop();
+      }
+    };
+
+    window.closeCelebration = function() {
+      playSound('click');
+      document.getElementById('celebration-screen').classList.remove('active');
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+      window.removeEventListener('resize', resizeCanvas);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      fireworksList = [];
+      particlesList = [];
+      window.clearAll();
+    };
+
+    window.goToNextLevel = function() {
+      playSound('click');
+      document.getElementById('celebration-screen').classList.remove('active');
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+      window.removeEventListener('resize', resizeCanvas);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      fireworksList = [];
+      particlesList = [];
+      
+      const nextLvl = selectedLevel + 1;
+      if (nextLvl <= 4) {
+        selectedLevel = nextLvl;
+        if (selectedLevel === 1) selectedLevelCash = 100000000000;
+        else if (selectedLevel === 2) selectedLevelCash = 500000000000;
+        else if (selectedLevel === 3) selectedLevelCash = 1000000000000;
+        else if (selectedLevel === 4) selectedLevelCash = 5000000000000;
+      }
+      
+      window.openLevelSelector();
+    };
+
+    window.downloadReceipt = function() {
+      playSound('click');
+      const hasPurchases = Object.keys(purchases).length > 0;
+      const hasEvents = transactionLog.length > 0;
+      if (!hasPurchases && !hasEvents) {
+        showToast("No transactions found!");
+        return;
+      }
+      const txCode = document.getElementById('receipt-tx-id').innerText;
+      const timeCode = document.getElementById('receipt-timestamp').innerText;
+      const now = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
+
+      // Build purchase rows
+      let purchaseRows = '';
+      for (let id in purchases) {
+        let p = purchases[id];
+        let price = p.item.invest ? investPrices[id] : p.item.price;
+        let currentTotal = price * p.qty;
+        purchaseRows += `<tr>
+          <td class="em">${p.item.emoji}</td>
+          <td class="nm">${p.item.name}${p.item.invest ? ' <span class="badge">ASSET</span>' : ''}</td>
+          <td class="qt">x${p.qty}</td>
+          <td class="am">${fmt(currentTotal)}</td>
+        </tr>`;
+      }
+
+      // Build event rows
+      let eventRows = '';
+      transactionLog.forEach(entry => {
+        const isGain = entry.amount >= 0;
+        const sign = isGain ? '+' : '-';
+        const color = isGain ? '#00ff66' : '#ff003c';
+        const displayAmt = entry.amount === 0 ? 'Portfolio Hit' : `${sign}${fmt(Math.abs(entry.amount))}`;
+        eventRows += `<tr>
+          <td class="em">${entry.emoji}</td>
+          <td class="nm" style="color:#aaa;">${entry.name}</td>
+          <td class="qt" style="color:#6b6b80;font-size:0.72rem;">EVENT</td>
+          <td class="am" style="color:${color};">${displayAmt}</td>
+        </tr>`;
+      });
+
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Receipt ${txCode} — ${fmt(TOTAL)} Wealth Challenge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:#030305;color:#fff;font-family:'Outfit',sans-serif;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:40px 15px;}
+    .receipt{background:#0e0e14;border:2px dashed #222230;border-radius:8px;max-width:580px;width:100%;padding:35px 30px;box-shadow:0 20px 60px rgba(0,0,0,0.95);}
+    .rh{text-align:center;border-bottom:2px dashed #222230;padding-bottom:22px;margin-bottom:20px;}
+    .rt{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#fcee0a;letter-spacing:3px;text-shadow:0 0 20px rgba(252,238,10,0.3);}
+    .rs{font-size:0.72rem;color:#6b6b80;letter-spacing:2px;margin-top:4px;text-transform:uppercase;font-family:monospace;}
+    .rm{display:flex;justify-content:space-between;font-size:0.68rem;color:#6b6b80;font-family:monospace;margin-top:10px;text-transform:uppercase;}
+    .divider{display:flex;align-items:center;gap:10px;padding:14px 0 6px;}
+    .dl{flex:1;height:1px;background:#222230;}
+    .dlb{font-size:0.62rem;color:#6b6b80;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;font-family:monospace;}
+    table{width:100%;border-collapse:collapse;}
+    td{padding:10px 4px;border-bottom:1px dashed #1a1a26;vertical-align:middle;}
+    .em{font-size:1.4rem;width:38px;}
+    .nm{font-size:0.88rem;font-weight:600;color:#e2e2e9;}
+    .qt{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:#00f3ff;text-align:center;width:65px;}
+    .am{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:#00ff66;text-align:right;width:110px;}
+    .badge{background:rgba(252,238,10,0.1);color:#fcee0a;border:1px solid rgba(252,238,10,0.3);border-radius:3px;font-size:0.62rem;padding:1px 5px;font-weight:800;letter-spacing:1px;}
+    .rf{border-top:2px dashed #222230;margin-top:22px;padding-top:20px;}
+    .rr{display:flex;justify-content:space-between;font-size:0.8rem;color:#6b6b80;margin-bottom:8px;}
+    .rrv{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:#e2e2e9;}
+    .rtot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;}
+    .rtl{font-size:0.9rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
+    .rtv{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;color:#ff003c;text-shadow:0 0 20px rgba(255,0,60,0.4);}
+    .bc{margin-top:28px;opacity:0.35;text-align:center;}
+    .bcl{width:100%;height:28px;background:repeating-linear-gradient(90deg,#fff,#fff 2px,transparent 2px,transparent 7px,#fff 7px,#fff 8px,transparent 8px,transparent 12px);}
+    .bct{font-family:monospace;font-size:0.58rem;color:#6b6b80;letter-spacing:3px;margin-top:5px;}
+    .stamp{text-align:center;margin-top:18px;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:#2a2a3a;letter-spacing:3px;}
+  </style>
+</head>
+<body>
+<div class="receipt">
+  <div class="rh">
+    <div class="rt">Transaction Statement</div>
+    <div class="rs">The ${fmt(TOTAL)} Wealth Challenge · Official Record</div>
+    <div class="rm"><span>${txCode}</span><span>${now} · ${timeCode}</span></div>
+  </div>
+  ${purchaseRows ? `<div class="divider"><div class="dl"></div><div class="dlb">🛒 Purchases</div><div class="dl"></div></div><table>${purchaseRows}</table>` : ''}
+  ${eventRows ? `<div class="divider"><div class="dl"></div><div class="dlb">⚡ Random Events</div><div class="dl"></div></div><table>${eventRows}</table>` : ''}
+  <div class="rf">
+    <div class="rr"><span>Liquid Cash Available</span><span class="rrv">${fmt(cash)}</span></div>
+    <div class="rr"><span>Investment Portfolio Value</span><span class="rrv">${fmt(balance - cash)}</span></div>
+    <div class="rtot"><div class="rtl">Total Net Worth</div><div class="rtv">${fmt(balance)}</div></div>
+  </div>
+  <div class="bc"><div class="bcl"></div><div class="bct">WEALTH-DIGITAL-VAULT · ${txCode}</div></div>
+  <div class="stamp">Thank you for emptying the vault</div>
+</div>
+</body>
+</html>`;
+
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Receipt_${txCode}.html`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showToast("Beautiful Receipt Saved! 🎉");
+    };
+
+    window.shareGame = function() {
+      playSound('click');
+      let shareText;
+      if (timerStopped && timerSeconds > 0) {
+        shareText = `⚔️ Hey, I went broke in ${formatTime(timerSeconds)}! Can you beat me? Play here:`;
+      } else if (spent > 0) {
+        shareText = `I just spent ${fmt(spent)} in the Wealth Simulator! 💸 Can you spend it faster? Play here:`;
+      } else {
+        shareText = `Got a massive blank check and need to go broke! Let's see how fast you can spend it. Play here:`;
+      }
+      const shareUrl = window.location.href; 
+      if (navigator.share) {
+        navigator.share({
+          title: 'Spend One Trillion!',
+          text: shareText,
+          url: shareUrl
+        }).catch((error) => console.log('Error sharing', error));
+      } else {
+        const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + " " + shareUrl)}`;
+        window.open(waUrl, '_blank');
+      }
+    };
+
+    // Review and Rating State
+    let selectedRating = 5;
+    let reviewsData = [];
+
+    // SUPABASE DATABASE CREDENTIALS (Paste yours here to enable global database saving)
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+    let supabase = null;
+
+    if (SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY_HERE') {
+      try {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      } catch (err) {
+        console.error("Failed to initialize Supabase client", err);
+      }
+    }
+
+    window.setStarRating = function(rating) {
+      playSound('click');
+      selectedRating = rating;
+      const stars = document.querySelectorAll('.star-select-wrap .star-btn');
+      stars.forEach((star, index) => {
+        if (index < rating) {
+          star.classList.add('selected');
+        } else {
+          star.classList.remove('selected');
+        }
+      });
+    };
+
+    window.submitReview = async function() {
+      const authorEl = document.getElementById('review-author');
+      const messageEl = document.getElementById('review-message');
+      
+      const author = authorEl.value.trim();
+      const message = messageEl.value.trim();
+      
+      if (!author || !message) {
+        showToast("Please fill in billionaire handle and description! ⚠️");
+        return;
+      }
+      
+      playSound('buy');
+      
+      const newReview = {
+        name: author,
+        rating: selectedRating,
+        text: message,
+        date: new Date().toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })
+      };
+
+      if (supabase) {
+        try {
+          const { error } = await supabase
+            .from('reviews')
+            .insert([{
+              name: newReview.name,
+              rating: newReview.rating,
+              text: newReview.text,
+              date_str: newReview.date
+            }]);
+          
+          if (error) throw error;
+          
+          // Re-fetch global reviews
+          await fetchSupabaseReviews();
+        } catch (err) {
+          console.error("Supabase insert failed, falling back to local database.", err);
+          saveLocalReview(newReview);
+        }
+      } else {
+        saveLocalReview(newReview);
+      }
+      
+      // Clear form
+      authorEl.value = '';
+      messageEl.value = '';
+      window.setStarRating(5);
+      
+      // Update UI
+      renderReviews();
+      updateAggregateRatings();
+      showToast("Review transmitted successfully! 📡");
+    };
+
+    function saveLocalReview(review) {
+      reviewsData.unshift(review);
+      localStorage.setItem('spend_1trillion_reviews', JSON.stringify(reviewsData));
+    }
+
+    async function fetchSupabaseReviews() {
+      if (!supabase) return;
+      try {
+        const { data, error } = await supabase
+          .from('reviews')
+          .select('*')
+          .order('id', { ascending: false });
+        
+        if (error) throw error;
+        
+        if (data) {
+          reviewsData = data.map(r => ({
+            name: r.name,
+            rating: r.rating,
+            text: r.text,
+            date: r.date_str || new Date(r.created_at).toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })
+          }));
+        }
+      } catch (err) {
+        console.error("Supabase fetch failed", err);
+      }
+    }
+
+    function renderReviews() {
+      const listEl = document.getElementById('reviews-list');
+      if (!listEl) return;
+      
+      let html = '';
+      reviewsData.forEach(r => {
+        let starsStr = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+        html += `
+          <div class="review-card">
+            <div class="review-card-header">
+              <span class="review-card-author">${escapeHTML(r.name)}</span>
+              <span class="review-card-stars">${starsStr}</span>
+            </div>
+            <div class="review-card-text">"${escapeHTML(r.text)}"</div>
+            <div class="review-card-date">${r.date}</div>
+          </div>
+        `;
+      });
+      listEl.innerHTML = html || '<div class="receipt-empty-state">No transmissions yet. Be the first!</div>';
+    }
+
+    function updateAggregateRatings() {
+      const totalRatings = reviewsData.length + 145; 
+      let sum = 145 * 4.9; 
+      reviewsData.forEach(r => {
+        sum += r.rating;
+      });
+      const avg = (sum / totalRatings).toFixed(1);
+      
+      document.getElementById('avg-rating-value').innerText = avg;
+      document.getElementById('avg-rating-stars').innerText = '★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg));
+      document.getElementById('total-ratings-count').innerText = `Based on ${totalRatings} ratings`;
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+
+    async function initReviews() {
+      const saved = localStorage.getItem('spend_1trillion_reviews');
+      if (saved) {
+        reviewsData = JSON.parse(saved);
+      } else {
+        reviewsData = [
+          {
+            name: "Satoshi_99",
+            rating: 5,
+            text: "This simulator is wild. Spending $1T is way harder than I thought! The Decryptor Casino pity system is a lifesaver when you want to burn money.",
+            date: "08 Jun 2026, 12:45"
+          },
+          {
+            name: "CyberShopper",
+            rating: 5,
+            text: "Extremely polished UI and the synthesized audio is clean. Love the career levels! Unlocking Dyson Swarms at level 4 feels like a true achievement.",
+            date: "07 Jun 2026, 18:20"
+          },
+          {
+            name: "Neona",
+            rating: 5,
+            text: "Awesome work by Abhinav and Ansh. The market trend fluctuations keep the gameplay engaging. Can't stop playing until I go broke.",
+            date: "05 Jun 2026, 09:12"
+          }
+        ];
+        localStorage.setItem('spend_1trillion_reviews', JSON.stringify(reviewsData));
+      }
+
+      if (supabase) {
+        await fetchSupabaseReviews();
+      }
+
+      renderReviews();
+      updateAggregateRatings();
+    }
+
+    window.onload = function() {
+      // Load progress
+      unlockedLevel = parseInt(localStorage.getItem('unlockedLevel')) || 1;
+      selectedLevel = unlockedLevel;
+      if (selectedLevel === 1) selectedLevelCash = 100000000000;
+      else if (selectedLevel === 2) selectedLevelCash = 500000000000;
+      else if (selectedLevel === 3) selectedLevelCash = 1000000000000;
+      else if (selectedLevel === 4) selectedLevelCash = 5000000000000;
+
+      ITEMS.forEach(item => {
+        if (item.invest) {
+          investPrices[item.id] = item.price;
+          investTrends[item.id] = 0;
+        }
+      });
+
+      updateLevelSelectorUI();
+
+      // Show rules description for default level
+      window.selectLevelCard(selectedLevel, selectedLevelCash, true);
+
+      updateMetaTags();
+      updateWallet();
+      renderItems();
+      renderReceipt();
+      initTicker();
+      initReviews();
+      
+      // Auto-fluctuate investments every 3s
+      setInterval(updateMarket, 3000);
+      
+      // Auto-trigger random news events every 35s
+      setInterval(triggerRandomEvent, 35000);
+    };
+  </script> 
+</body> 
+</html>
