@@ -964,8 +964,8 @@
   
   <div class="toast" id="toast"></div> 
 
+  <!-- Separate script block to catch syntax/compile errors in the main script -->
   <script> 
-    // Global error handler to catch and display any load-time or runtime errors on the page
     window.onerror = function(message, source, lineno, colno, error) {
       try {
         const errDiv = document.createElement('div');
@@ -989,7 +989,9 @@
       }
       return false;
     };
+  </script>
 
+  <script> 
     let TOTAL = 1000000000000; 
     let cash = TOTAL;
     let balance = TOTAL; // Net Worth (Cash + Portfolio)
