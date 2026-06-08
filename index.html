@@ -2507,7 +2507,11 @@
       let unlockedNext = false;
       if (selectedLevel === unlockedLevel && unlockedLevel < 4) {
         unlockedLevel++;
-        localStorage.setItem('unlockedLevel', unlockedLevel);
+        try {
+          localStorage.setItem('unlockedLevel', unlockedLevel);
+        } catch (e) {
+          console.warn("Failed to save progress to localStorage:", e);
+        }
         unlockedNext = true;
       }
       
@@ -2797,7 +2801,11 @@
 
     function saveLocalReview(review) {
       reviewsData.unshift(review);
-      localStorage.setItem('spend_1trillion_reviews', JSON.stringify(reviewsData));
+      try {
+        localStorage.setItem('spend_1trillion_reviews', JSON.stringify(reviewsData));
+      } catch (e) {
+        console.warn("Failed to save review to localStorage:", e);
+      }
     }
 
     async function fetchSupabaseReviews() {
@@ -2956,7 +2964,12 @@
 
     window.onload = function() {
       // Load progress
-      unlockedLevel = parseInt(localStorage.getItem('unlockedLevel')) || 1;
+      try {
+        unlockedLevel = parseInt(localStorage.getItem('unlockedLevel')) || 1;
+      } catch (e) {
+        console.warn("Failed to read progress from localStorage, defaulting to level 1:", e);
+        unlockedLevel = 1;
+      }
       selectedLevel = unlockedLevel;
       if (selectedLevel === 1) selectedLevelCash = 100000000000;
       else if (selectedLevel === 2) selectedLevelCash = 500000000000;
