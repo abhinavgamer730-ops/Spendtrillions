@@ -2828,37 +2828,54 @@
       if (!listEl) return;
       
       let html = '';
-      reviewsData.forEach(r => {
-        let starsStr = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
-        html += `
-          <div class="review-card">
-            <div class="review-card-header">
-              <span class="review-card-author">${escapeHTML(r.name)}</span>
-              <span class="review-card-stars">${starsStr}</span>
+      if (Array.isArray(reviewsData)) {
+        reviewsData.forEach(r => {
+          if (!r) return;
+          const rating = parseInt(r.rating) || 5;
+          const validRating = Math.max(1, Math.min(5, rating));
+          let starsStr = '★'.repeat(validRating) + '☆'.repeat(5 - validRating);
+          html += `
+            <div class="review-card">
+              <div class="review-card-header">
+                <span class="review-card-author">${escapeHTML(r.name)}</span>
+                <span class="review-card-stars">${starsStr}</span>
+              </div>
+              <div class="review-card-text">"${escapeHTML(r.text)}"</div>
+              <div class="review-card-date">${escapeHTML(r.date)}</div>
             </div>
-            <div class="review-card-text">"${escapeHTML(r.text)}"</div>
-            <div class="review-card-date">${r.date}</div>
-          </div>
-        `;
-      });
+          `;
+        });
+      }
       listEl.innerHTML = html || '<div class="receipt-empty-state">No transmissions yet. Be the first!</div>';
     }
 
     function updateAggregateRatings() {
-      const totalRatings = reviewsData.length + 145; 
+      const totalRatings = (Array.isArray(reviewsData) ? reviewsData.length : 0) + 145; 
       let sum = 145 * 4.9; 
-      reviewsData.forEach(r => {
-        sum += r.rating;
-      });
-      const avg = (sum / totalRatings).toFixed(1);
+      if (Array.isArray(reviewsData)) {
+        reviewsData.forEach(r => {
+          if (r && r.rating) {
+            const rating = parseInt(r.rating) || 5;
+            sum += Math.max(1, Math.min(5, rating));
+          }
+        });
+      }
+      const avgNum = sum / totalRatings;
+      const avg = isNaN(avgNum) ? '4.9' : avgNum.toFixed(1);
+      const roundedAvg = Math.max(1, Math.min(5, Math.round(parseFloat(avg) || 4.9)));
       
-      document.getElementById('avg-rating-value').innerText = avg;
-      document.getElementById('avg-rating-stars').innerText = '★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg));
-      document.getElementById('total-ratings-count').innerText = `Based on ${totalRatings} ratings`;
+      const valEl = document.getElementById('avg-rating-value');
+      const starsEl = document.getElementById('avg-rating-stars');
+      const countEl = document.getElementById('total-ratings-count');
+      
+      if (valEl) valEl.innerText = avg;
+      if (starsEl) starsEl.innerText = '★'.repeat(roundedAvg) + '☆'.repeat(5 - roundedAvg);
+      if (countEl) countEl.innerText = `Based on ${totalRatings} ratings`;
     }
 
     function escapeHTML(str) {
-      return str.replace(/[&<>'"]/g, 
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/[&<>'"]/g, 
         tag => ({
           '&': '&amp;',
           '<': '&lt;',
@@ -2870,10 +2887,48 @@
     }
 
     async function initReviews() {
-      const saved = localStorage.getItem('spend_1trillion_reviews');
-      if (saved) {
-        reviewsData = JSON.parse(saved);
-      } else {
+      try {
+        const saved = localStorage.getItem('spend_1trillion_reviews');
+        if (saved && saved !== 'undefined') {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            reviewsData = parsed;
+          } else {
+            throw new Error("Reviews data in localStorage is not an array");
+          }
+        } else {
+          // Prepopulate
+          reviewsData = [
+            {
+              name: "Satoshi_99",
+              rating: 5,
+              text: "This simulator is wild. Spending $1T is way harder than I thought! The Decryptor Casino pity system is a lifesaver when you want to burn money.",
+              date: "08 Jun 2026, 12:45"
+            },
+            {
+              name: "CyberShopper",
+              rating: 5,
+              text: "Extremely polished UI and the synthesized audio is clean. Love the career levels! Unlocking Dyson Swarms at level 4 feels like a true achievement.",
+              date: "07 Jun 2026, 18:20"
+            },
+            {
+              name: "Neona",
+              rating: 5,
+              text: "Awesome work by Abhinav and Ansh. The market trend fluctuations keep the gameplay engaging. Can't stop playing until I go broke.",
+              date: "05 Jun 2026, 09:12"
+            }
+          ];
+          localStorage.setItem('spend_1trillion_reviews', JSON.stringify(reviewsData));
+        }
+
+        if (supabase) {
+          await fetchSupabaseReviews();
+        }
+
+        renderReviews();
+        updateAggregateRatings();
+      } catch (err) {
+        console.error("Failed to initialize reviews, falling back to default:", err);
         reviewsData = [
           {
             name: "Satoshi_99",
@@ -2894,15 +2949,9 @@
             date: "05 Jun 2026, 09:12"
           }
         ];
-        localStorage.setItem('spend_1trillion_reviews', JSON.stringify(reviewsData));
+        renderReviews();
+        updateAggregateRatings();
       }
-
-      if (supabase) {
-        await fetchSupabaseReviews();
-      }
-
-      renderReviews();
-      updateAggregateRatings();
     }
 
     window.onload = function() {
