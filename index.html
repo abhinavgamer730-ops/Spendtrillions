@@ -992,6 +992,41 @@
   </script>
 
   <script> 
+    // ---- CRITICAL: Hoist onclick handlers before any data that might cause errors ----
+    // These are declared as named functions so they are hoisted to the top of the script.
+    function selectLevelCard(lvl, amt, skipSound) {
+      try {
+        if (lvl > unlockedLevel) {
+          showToast('\uD83D\uDD12 Level ' + lvl + ' is locked! Clear the previous level first.');
+          return;
+        }
+        if (!skipSound) playSound('click');
+        selectedLevel = lvl;
+        selectedLevelCash = amt;
+        var selectorCards = document.querySelectorAll('.level-card-select');
+        for (var i = 0; i < selectorCards.length; i++) {
+          selectorCards[i].classList.remove('active');
+        }
+        var cardEl = document.getElementById('level-card-' + lvl);
+        if (cardEl) cardEl.classList.add('active');
+        if (typeof renderLevelRules === 'function') renderLevelRules();
+      } catch(e) { console.error('selectLevelCard error:', e); }
+    }
+    window.selectLevelCard = selectLevelCard;
+
+    function startGame() {
+      try {
+        playSound('click');
+        TOTAL = selectedLevelCash;
+        var checkbox = document.getElementById('passive-income-checkbox');
+        passiveIncomeEnabled = checkbox ? checkbox.checked : false;
+        var overlayEl = document.getElementById('level-overlay');
+        if (overlayEl) overlayEl.classList.add('hide');
+        if (typeof window.clearAll === 'function') window.clearAll();
+      } catch(e) { console.error('startGame error:', e); }
+    }
+    window.startGame = startGame;
+
     let TOTAL = 1000000000000; 
     let cash = TOTAL;
     let balance = TOTAL; // Net Worth (Cash + Portfolio)
@@ -1367,6 +1402,8 @@
       }
     };
 
+    // selectLevelCard is already declared as a hoisted function above.
+    // Reassign with the full implementation here (overrides the stub).
     window.selectLevelCard = function(lvl, amt, skipSound) {
       if (lvl > unlockedLevel) {
         showToast(`🔒 Level ${lvl} is locked! Clear the previous level first.`);
@@ -1426,6 +1463,8 @@
       }
     };
 
+    // startGame is already declared as a hoisted function above.
+    // Reassign with full implementation here.
     window.startGame = function() {
       playSound('click');
       TOTAL = selectedLevelCash;
