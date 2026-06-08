@@ -965,6 +965,31 @@
   <div class="toast" id="toast"></div> 
 
   <script> 
+    // Global error handler to catch and display any load-time or runtime errors on the page
+    window.onerror = function(message, source, lineno, colno, error) {
+      try {
+        const errDiv = document.createElement('div');
+        errDiv.style.position = 'fixed';
+        errDiv.style.top = '0';
+        errDiv.style.left = '0';
+        errDiv.style.width = '100%';
+        errDiv.style.background = '#ff003c';
+        errDiv.style.color = '#ffffff';
+        errDiv.style.padding = '15px';
+        errDiv.style.zIndex = '999999';
+        errDiv.style.fontFamily = 'monospace';
+        errDiv.style.fontSize = '12px';
+        errDiv.style.fontWeight = 'bold';
+        errDiv.style.borderBottom = '3px solid #ffffff';
+        errDiv.style.boxShadow = '0 5px 20px rgba(0,0,0,0.5)';
+        errDiv.innerHTML = '⚠️ JS EXCEPTION: ' + message + '<br>Location: ' + source + ' (Line: ' + lineno + ', Col: ' + colno + ')';
+        document.body.appendChild(errDiv);
+      } catch (e) {
+        console.error("Error displaying error banner:", e);
+      }
+      return false;
+    };
+
     let TOTAL = 1000000000000; 
     let cash = TOTAL;
     let balance = TOTAL; // Net Worth (Cash + Portfolio)
