@@ -1373,7 +1373,10 @@
       if (!skipSound) playSound('click');
       selectedLevel = lvl;
       selectedLevelCash = amt;
-      document.querySelectorAll('.level-card-select').forEach(card => card.classList.remove('active'));
+      const selectorCards = document.querySelectorAll('.level-card-select');
+      for (let i = 0; i < selectorCards.length; i++) {
+        selectorCards[i].classList.remove('active');
+      }
       const cardEl = document.getElementById('level-card-' + lvl);
       if (cardEl) cardEl.classList.add('active');
       renderLevelRules();
@@ -1856,7 +1859,10 @@
     window.filterItems = function(cat, btn) { 
       playSound('click');
       activeFilter = cat; 
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); 
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      for (let i = 0; i < filterBtns.length; i++) {
+        filterBtns[i].classList.remove('active');
+      }
       btn.classList.add('active'); 
       renderItems(); 
     }; 
@@ -2775,13 +2781,13 @@
       playSound('click');
       selectedRating = rating;
       const stars = document.querySelectorAll('.star-select-wrap .star-btn');
-      stars.forEach((star, index) => {
-        if (index < rating) {
-          star.classList.add('selected');
+      for (let i = 0; i < stars.length; i++) {
+        if (i < rating) {
+          stars[i].classList.add('selected');
         } else {
-          star.classList.remove('selected');
+          stars[i].classList.remove('selected');
         }
-      });
+      }
     };
 
     window.submitReview = async function() {
