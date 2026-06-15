@@ -81,6 +81,14 @@
       },
       {
         "@type": "Question",
+        "name": "Can you spend Elon Musk's money in this simulator?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! The game features a dedicated 'Elon Musk Mode' (Level 4) with a massive $5 Trillion budget, allowing players to experience the scale of the world's first trillionaire's wealth by trying to spend it all on mega assets."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "Can you actually spend a trillion dollars in this simulator?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -692,7 +700,7 @@
         </div>
         <div class="level-card-select" id="level-card-4" onclick="window.selectLevelCard(4, 5000000000000)">
           <div class="level-card-num">LEVEL 04</div>
-          <div class="level-card-name">Tech Lord Mode 🚀</div>
+          <div class="level-card-name">Tech Lord (Elon Musk Mode) 🚀</div>
           <div class="level-card-amount">$5.00T</div>
         </div>
       </div>
@@ -744,6 +752,7 @@
   </div>
 
   <div class="hero"> 
+    <div style="font-size:0.75rem; letter-spacing:3px; color:var(--accent2); text-transform:uppercase; font-weight:800; margin-bottom:8px;">Spend Elon's Money Simulator</div>
     <h1 class="hero-title">Spend One <span>Trillion</span></h1> 
     <div class="wallet"> 
       <div class="wallet-label">Net Worth Balance</div> 
@@ -882,6 +891,13 @@
           <div class="faq-question">How do you play the Spend 1 Trillion Dollars Game?</div>
           <div class="faq-answer">
             The goal is simple: start with a balance of $1 Trillion (or choose from Level 1-4 budgets) and spend it all until you reach zero. Buy items from various categories like everyday goods, luxury, property, transport, and mega items. You can also risk your cash at the reverse-casino terminal where losing the bet burns your money (bringing you closer to victory) and winning doubles your cash.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="this.classList.toggle('active')">
+          <div class="faq-question">Can you spend Elon Musk's money in this simulator?</div>
+          <div class="faq-answer">
+            Yes! The game features a dedicated 'Elon Musk Mode' (Level 4) with a massive $5 Trillion budget, allowing players to experience the scale of the world's first trillionaire's wealth by trying to spend it all on mega assets.
           </div>
         </div>
 
@@ -1090,6 +1106,9 @@
     ];
 
     var TICKER_HEADLINES = [
+      'ELON MUSK DECLARED WORLD\'S FIRST TRILLIONAIRE...',
+      'IS SPENDING ELON\'S MONEY HARDER THAN EARNING IT? SIMULATOR ONLINE...',
+      'ELON TWEETS: "CAN ANYONE GO COMPLETELY BROKE PLAYING SPEND ONE TRILLION?"...',
       'ELON MUSK DEMANDS PAYOUT IN DOGECOIN...',
       'AI INFLATION DECLARED UNSTOPPABLE BY TECH COGNIZANCE...',
       'SPACEX ANNOUNCES TICKET PRICES TO MARS DECREASED BY 1.2%...',
@@ -1105,7 +1124,7 @@
       1: { title: 'Level 1: Starter Loan 🍼',      desc: 'You start with <b>$100 Billion</b>. Perfect for learning the market and testing your speedrunning strategies. A quick, fun playground.' },
       2: { title: 'Level 2: Billionaire Prep 💼',   desc: 'You start with <b>$500 Billion</b>. A moderate challenge. Balance luxury buys, Scorpio N fleets, and basic investments.' },
       3: { title: 'Level 3: Trillionaire Grind 🏆', desc: 'You start with <b>$1.00 Trillion</b>. The classic simulator experience. Empty the digital vault and race against market fluctuations!' },
-      4: { title: 'Level 4: Tech Lord Mode 🚀',     desc: 'You start with <b>$5.00 Trillion</b>. The ultimate cyber challenge. Unlock trillion-dollar items and spend it all!' }
+      4: { title: 'Level 4: Tech Lord (Elon Musk Mode) 🚀',     desc: 'You start with <b>$5.00 Trillion</b>. The ultimate cyber challenge. Can you spend Elon Musk\'s massive net worth and empty the vault?' }
     };
 
     var HINTS = [
