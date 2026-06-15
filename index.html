@@ -161,6 +161,11 @@
       20%, 40%, 60%, 80% { transform: translateX(6px); }
     }
 
+    @keyframes logo-float {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-6px); }
+    }
+
     .challenge-btn { margin-top: 20px; padding: 10px 24px; background: transparent; border: 1px solid var(--accent3); border-radius: 8px; color: var(--accent3); font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 800; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 8px; }
     .challenge-btn:hover { background: var(--accent3); color: #000; box-shadow: 0 0 15px rgba(0,243,255,0.4); }
     
@@ -752,6 +757,9 @@
   </div>
 
   <div class="hero"> 
+    <div style="margin-bottom: 12px; display: inline-block;">
+      <img src="logo.png" alt="Spend 1 Trillion Dollars Logo" style="width: 80px; height: 80px; filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.4)); animation: logo-float 4s ease-in-out infinite alternate;">
+    </div>
     <div style="font-size:0.75rem; letter-spacing:3px; color:var(--accent2); text-transform:uppercase; font-weight:800; margin-bottom:8px;">Spend Elon's Money Simulator</div>
     <h1 class="hero-title">Spend One <span>Trillion</span></h1> 
     <div class="wallet"> 
