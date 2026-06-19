@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://spend1trillion.com/sitemap.xml
+Sitemap: https://abhinavgamer730-ops.github.io/Spendtrillions/sitemap.xml
