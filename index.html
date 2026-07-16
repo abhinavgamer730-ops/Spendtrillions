@@ -153,10 +153,47 @@
     .hero-title { font-family:'Bebas Neue', sans-serif; font-size:clamp(2.5rem, 8vw, 5rem); line-height:0.9; margin-bottom:10px; text-transform: uppercase; } 
     .hero-title span { color: var(--accent3); text-shadow: 0 0 20px rgba(0, 243, 255, 0.5); } 
     
-    .wallet { display:inline-flex; flex-direction:column; align-items:center; background:var(--panel); border:2px solid var(--border); border-radius:14px; padding:15px 30px; margin-top: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 100%; max-width: 440px; transition: transform 0.1s; } 
+    .wallet { display:inline-flex; flex-direction:column; align-items:center; background:var(--panel); border:2px solid var(--border); border-radius:14px; padding:15px 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 100%; max-width: 440px; transition: transform 0.1s; } 
     .wallet-label { font-size:0.7rem; letter-spacing:3px; color:var(--accent2); text-transform:uppercase; margin-bottom:6px; font-weight: 800; } 
     .wallet-amount { font-family:'Bebas Neue', sans-serif; font-size:clamp(2rem, 5.5vw, 3.5rem); color:var(--green); letter-spacing:1px; line-height:1; text-shadow: 0 0 20px rgba(0,255,102,0.4); text-align: center; width: 100%; } 
     .wallet-amount.empty { color: var(--accent1); text-shadow: 0 0 20px rgba(255,0,60,0.5); } 
+
+    .wallet.sticky {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 480px;
+      margin: 0;
+      z-index: 1000;
+      background: rgba(17, 17, 24, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      box-shadow: 0 0 25px rgba(0, 243, 255, 0.25), inset 0 0 10px rgba(0, 243, 255, 0.1);
+      padding: 8px 24px;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 40px;
+      animation: slide-down-hud 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .wallet.sticky .wallet-label {
+      margin-bottom: 0;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+    }
+    .wallet.sticky .wallet-amount {
+      font-size: clamp(1.5rem, 4.5vw, 2.2rem);
+      width: auto;
+      text-align: right;
+    }
+
+    @keyframes slide-down-hud {
+      0% { transform: translate(-50%, -100px); opacity: 0; }
+      100% { transform: translate(-50%, 0); opacity: 1; }
+    } 
 
     .shake-wallet { animation: shake 0.5s ease-in-out; }
     .wallet-amount.flash-green { color: var(--green) !important; text-shadow: 0 0 25px var(--green) !important; }
@@ -228,6 +265,78 @@
     .filter-btn { padding:8px 18px; border:1px solid var(--border); border-radius:6px; background:var(--panel); color:var(--muted); font-family:'Outfit', sans-serif; font-size:0.75rem; font-weight:600; cursor:pointer; transition:0.2s; white-space:nowrap; text-transform: uppercase; letter-spacing: 1px; } 
     .filter-btn:hover { border-color:var(--accent3); color:var(--accent3); } 
     .filter-btn.active { background:var(--accent3); color:#000; border-color:var(--accent3); box-shadow: 0 0 15px rgba(0,243,255,0.4); } 
+    
+    .search-row {
+      display: flex;
+      justify-content: center;
+      padding: 15px 15px 5px;
+      background: var(--bg);
+    }
+    .search-input-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+    }
+    .search-input {
+      width: 100%;
+      padding: 10px 15px 10px 40px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent3);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+    }
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 0.9rem;
+      pointer-events: none;
+    } 
+
+    /* Click Particle CSS */
+    .cash-particle {
+      position: absolute;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      pointer-events: none;
+      z-index: 9999;
+      letter-spacing: 1px;
+      animation: float-up-fade 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    .cash-particle.gain {
+      color: var(--green);
+      text-shadow: 0 0 10px rgba(0, 255, 102, 0.6);
+    }
+    .cash-particle.loss {
+      color: var(--accent1);
+      text-shadow: 0 0 10px rgba(255, 0, 60, 0.6);
+    }
+
+    @keyframes float-up-fade {
+      0% {
+        transform: translate(-50%, -50%) scale(0.8) translateY(0);
+        opacity: 0;
+      }
+      15% {
+        transform: translate(-50%, -50%) scale(1.1) translateY(-10px);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(0.9) translate(var(--x-offset, 0px), -60px);
+        opacity: 0;
+      }
+    } 
     
     .section { padding:15px; max-width: 1200px; margin: 0 auto; } 
     .items-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; } 
@@ -769,9 +878,11 @@
     </div>
     <h2 style="font-size:0.75rem; letter-spacing:3px; color:var(--accent2); text-transform:uppercase; font-weight:800; margin-bottom:8px; display:inline-block;">Spend Elon's Money Simulator</h2>
     <h1 class="hero-title">Spend One <span>Trillion</span></h1> 
-    <div class="wallet"> 
-      <div class="wallet-label">Net Worth Balance</div> 
-      <div class="wallet-amount" id="balance">$1.00T</div> 
+    <div class="wallet-anchor" style="width: 100%; max-width: 440px; min-height: 104px; display: inline-flex; margin-top: 15px;">
+      <div class="wallet" style="margin-top: 0;"> 
+        <div class="wallet-label">Net Worth Balance</div> 
+        <div class="wallet-amount" id="balance">$1.00T</div> 
+      </div>
     </div> 
     <div class="hero-timer-wrap">
       <div class="hero-timer-label">⏱ Speedrun Timer</div>
@@ -838,6 +949,14 @@
     <button class="filter-btn" onclick="window.filterItems('property',this)">Property</button> 
     <button class="filter-btn" onclick="window.filterItems('transport',this)">Transport</button> 
     <button class="filter-btn" onclick="window.filterItems('mega',this)">Mega</button> 
+  </div> 
+
+  <!-- Real-Time Item Search Bar -->
+  <div class="search-row">
+    <div class="search-input-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="item-search" placeholder="Search item names..." oninput="window.filterBySearch(this.value)">
+    </div>
   </div> 
   
   <div class="section" id="items-section"></div> 
@@ -1032,6 +1151,7 @@
     var spent = 0;
     var purchases = {};
     var activeFilter = 'all';
+    var searchQuery = '';
     var qtyState = {};
     var transactionLog = [];
     var unlockedLevel = 1;
@@ -1477,12 +1597,14 @@
         var rolls = Math.random(); var forcedWin = (consecutiveBurns >= 3);
         if (rolls < 0.6 && !forcedWin) {
           consecutiveBurns++; playSound('firewall'); cash -= betVal;
+          spawnCashParticle(false, fmt(betVal));
           rBox.className = 'decryptor-result loss';
           rBox.innerHTML = '⚠️ <b>BET LOST (VICTORY)!</b> Firewall burned your bet of <b>-' + fmt(betVal) + '</b>! (Yes!)';
           transactionLog.push({ emoji:'🚨', name:'Federal Firewall Cash Burn', amount:-betVal });
           showToast('-' + fmt(betVal) + ' burned! 🍾');
         } else {
           consecutiveBurns = 0; playSound('winnings'); var winnings = betVal * 2; cash += winnings;
+          spawnCashParticle(true, fmt(winnings));
           rBox.className = 'decryptor-result win';
           rBox.innerHTML = forcedWin
             ? '💸 <b>BET WON (DEFEAT)!</b> Anti-cheat triggered: stole extra <b>+' + fmt(winnings) + '</b>! (Noooo!)'
@@ -1633,6 +1755,7 @@
       else purchases[id] = { item:item, qty:qty, total:totalCost };
       qtyState[id] = 1;
       updateWallet(); renderItems(); renderReceipt();
+      spawnCashParticle(false, fmt(totalCost));
       showToast('Purchased ' + qty + 'x ' + item.name + '!');
       if (balance <= 0) window.triggerCelebration();
     };
@@ -1650,18 +1773,54 @@
       purchases[id].qty -= qty; purchases[id].total -= (purchases[id].total / (purchases[id].qty + qty)) * qty;
       if (purchases[id].qty === 0) delete purchases[id];
       qtyState[id] = 1; updateWallet(); renderItems(); renderReceipt();
+      spawnCashParticle(true, fmt(rev));
       showToast('Sold ' + qty + 'x ' + item.name + ' for ' + fmt(rev) + '!');
     };
+
+    function spawnCashParticle(isGain, amountText) {
+      var e = window.event;
+      var x = 0, y = 0;
+      if (e && e.clientX) {
+        x = e.clientX + window.scrollX;
+        y = e.clientY + window.scrollY;
+      } else {
+        x = window.innerWidth / 2;
+        y = window.innerHeight / 2;
+      }
+      var el = document.createElement('div');
+      el.className = 'cash-particle ' + (isGain ? 'gain' : 'loss');
+      el.innerText = (isGain ? '+' : '-') + amountText;
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      var offset = (Math.random() - 0.5) * 40;
+      el.style.setProperty('--x-offset', offset + 'px');
+      document.body.appendChild(el);
+      setTimeout(function() {
+        if (el.parentNode) el.parentNode.removeChild(el);
+      }, 800);
+    }
 
     // ============================================================
     // RENDER ITEMS
     // ============================================================
     function getUnlockLevel(p) { return p <= 13e9 ? 1 : p <= 45e9 ? 2 : p <= 121e9 ? 3 : 4; }
 
+    window.filterBySearch = function(val) {
+      searchQuery = (val || '').toLowerCase().trim();
+      renderItems();
+    };
+
     function renderItems() {
       var section = document.getElementById('items-section'); if (!section) return;
       var filtered = activeFilter === 'all' ? ITEMS : ITEMS.filter(function(i) { return i.cat === activeFilter; });
+      if (searchQuery) {
+        filtered = filtered.filter(function(i) { return i.name.toLowerCase().includes(searchQuery); });
+      }
       section.innerHTML = '';
+      if (filtered.length === 0) {
+        section.innerHTML = '<div style="text-align:center; color:var(--muted); padding:40px 15px; font-size:1.1rem; width:100%; border:1px dashed var(--border); border-radius:14px; background:var(--panel);">🔍 No cyber assets match "' + escapeHTML(searchQuery) + '"</div>';
+        return;
+      }
       var grid = document.createElement('div'); grid.className = 'items-grid';
       var cap = selectedLevel === 1 ? 13e9 : selectedLevel === 2 ? 45e9 : selectedLevel === 3 ? 121e9 : Infinity;
       var pv = 0; for (var pid in purchases) { if (purchases[pid].item.invest) pv += purchases[pid].qty * investPrices[pid]; }
@@ -2010,6 +2169,19 @@
       initTicker(); initReviews();
       setInterval(updateMarket, 3000);
       setInterval(triggerRandomEvent, 35000);
+
+      // Sticky HUD Scroll Listener
+      window.addEventListener('scroll', function() {
+        var wallet = document.querySelector('.wallet');
+        var anchor = document.querySelector('.wallet-anchor');
+        if (!wallet || !anchor) return;
+        var anchorRect = anchor.getBoundingClientRect();
+        if (anchorRect.top < 12) {
+          wallet.classList.add('sticky');
+        } else {
+          wallet.classList.remove('sticky');
+        }
+      });
     }
 
     // ============================================================
