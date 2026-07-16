@@ -356,34 +356,6 @@
     .sell-btn { padding: 10px; background: transparent; border: 1px solid var(--accent1); border-radius: 8px; color: var(--accent1); font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 800; cursor: pointer; transition: 0.15s; text-transform: uppercase; letter-spacing: 0.5px; width: 35%; text-align: center; }
     .sell-btn:hover { background: var(--accent1); color: #fff; box-shadow: 0 0 10px rgba(255, 0, 60, 0.3); }
 
-    .max-btn {
-      padding: 10px 4px;
-      background: transparent;
-      border: 1px solid var(--accent2);
-      border-radius: 8px;
-      color: var(--accent2);
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.7rem;
-      font-weight: 800;
-      cursor: pointer;
-      transition: 0.15s;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      text-align: center;
-      min-width: 42px;
-    }
-    .max-btn:hover {
-      background: var(--accent2);
-      color: #000;
-      box-shadow: 0 0 10px rgba(252, 238, 10, 0.4);
-    }
-    .max-btn.disabled-btn {
-      border-color: var(--border);
-      color: var(--muted);
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
     .item-emoji { font-size:2.4rem; text-align: center; } 
     .item-name { font-size:0.85rem; font-weight:800; color:var(--text); text-align: center; min-height: 34px; display: flex; align-items: center; justify-content: center; } 
     .item-price { font-family:'Bebas Neue', sans-serif; font-size:1.4rem; color:var(--green); text-align: center; margin-bottom: 2px;} 
@@ -1805,34 +1777,6 @@
       showToast('Sold ' + qty + 'x ' + item.name + ' for ' + fmt(rev) + '!');
     };
 
-    window.buyMax = function(id) {
-      var item = null; for (var i = 0; i < ITEMS.length; i++) { if (ITEMS[i].id === id) { item = ITEMS[i]; break; } }
-      var cap = selectedLevel === 1 ? 13000000000 : selectedLevel === 2 ? 45000000000 : selectedLevel === 3 ? 121000000000 : Infinity;
-      if (item && item.price > cap) { showToast('This item is locked on this level!'); return; }
-      
-      var price = item.invest ? investPrices[id] : item.price;
-      var pv = 0; for (var pid in purchases) { if (purchases[pid].item.invest) pv += purchases[pid].qty * investPrices[pid]; }
-      var maxQty = Math.floor((cash + pv) / price);
-      
-      if (maxQty < 1) { showToast('Insufficient Funds!'); return; }
-      if (maxQty > 100000) maxQty = 100000;
-      
-      var totalCost = price * maxQty;
-      playSound('buy');
-      startTimer();
-      if (!autoLiquidate(totalCost)) { showToast('Insufficient Funds!'); return; }
-      
-      cash -= totalCost; spent += totalCost;
-      if (purchases[id]) { purchases[id].qty += maxQty; purchases[id].total += totalCost; }
-      else purchases[id] = { item:item, qty:maxQty, total:totalCost };
-      
-      qtyState[id] = 1;
-      updateWallet(); renderItems(); renderReceipt();
-      spawnCashParticle(false, fmt(totalCost));
-      showToast('Purchased Max ' + maxQty + 'x ' + item.name + '!');
-      if (balance <= 0) window.triggerCelebration();
-    };
-
     function spawnCashParticle(isGain, amountText) {
       var e = window.event;
       var x = 0, y = 0;
@@ -1898,10 +1842,9 @@
           }
         }
 
-        var cantAffordOne = (cash + pv) < price;
         var actionHtml = locked
           ? '<div style="text-align:center;color:var(--accent1);font-size:0.72rem;font-weight:800;text-transform:uppercase;border:1px dashed rgba(255,0,60,0.25);padding:10px;border-radius:8px;width:100%;background:rgba(255,0,60,0.02);margin-top:8px;">🔒 Unlocks at Level ' + getUnlockLevel(item.price) + '</div>'
-          : '<div class="qty-controls"><button class="qty-btn" onclick="window.changeQty(\'' + item.id + '\',-1)">-</button><input type="number" class="qty-input" id="qty-val-' + item.id + '" value="' + qty + '" oninput="window.setQty(\'' + item.id + '\',this.value)" onblur="window.sanitizeInput(\'' + item.id + '\',this.value)"><button class="qty-btn" onclick="window.changeQty(\'' + item.id + '\',1)">+</button></div><div class="card-actions" style="display:flex;gap:6px;width:100%;"><button class="buy-btn ' + (cantAfford?'disabled-btn':'') + '" style="flex:1;" id="buy-btn-' + item.id + '" onclick="window.buyItem(\'' + item.id + '\')">BUY (' + fmt(cost) + ')</button><button class="max-btn ' + (cantAffordOne?'disabled-btn':'') + '" id="max-btn-' + item.id + '" onclick="window.buyMax(\'' + item.id + '\')">MAX</button>' + sellHtml + '</div>';
+          : '<div class="qty-controls"><button class="qty-btn" onclick="window.changeQty(\'' + item.id + '\',-1)">-</button><input type="number" class="qty-input" id="qty-val-' + item.id + '" value="' + qty + '" oninput="window.setQty(\'' + item.id + '\',this.value)" onblur="window.sanitizeInput(\'' + item.id + '\',this.value)"><button class="qty-btn" onclick="window.changeQty(\'' + item.id + '\',1)">+</button></div><div class="card-actions" style="display:flex;gap:6px;width:100%;"><button class="buy-btn ' + (cantAfford?'disabled-btn':'') + '" style="flex:1;" id="buy-btn-' + item.id + '" onclick="window.buyItem(\'' + item.id + '\')">BUY (' + fmt(cost) + ')</button>' + sellHtml + '</div>';
 
         var card = document.createElement('div');
         card.className = 'item-card' + (item.invest?' invest-card':'') + (locked?' locked-item':'');
@@ -1919,14 +1862,10 @@
       var nw = cash + pv;
       for (var i = 0; i < ITEMS.length; i++) {
         var btn = document.getElementById('buy-btn-' + ITEMS[i].id); var inp = document.getElementById('qty-val-' + ITEMS[i].id);
-        var maxBtn = document.getElementById('max-btn-' + ITEMS[i].id);
         if (btn && inp) {
           var qty = parseInt(inp.value) || 1; var price = ITEMS[i].invest ? investPrices[ITEMS[i].id] : ITEMS[i].price; var cost = price * qty;
           btn.innerText = 'BUY (' + fmt(cost) + ')';
           if (nw < cost) btn.classList.add('disabled-btn'); else btn.classList.remove('disabled-btn');
-          if (maxBtn) {
-            if (nw < price) maxBtn.classList.add('disabled-btn'); else maxBtn.classList.remove('disabled-btn');
-          }
         }
       }
     }
