@@ -4,7 +4,7 @@
   <meta charset="UTF-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <title>Spend Elon Musk's Money - Spend 1 Trillion Dollars Game Simulator</title> 
-  <meta name="description" content="Play the ultimate Spend Elon Musk's Money & Spend 1 Trillion Dollars simulator game! Try to go completely broke by purchasing SpaceX rockets, luxury islands, or gambling in the Cyber Casino.">
+  <meta name="description" content="Play the Spend Elon Musk's Money & Spend 1 Trillion Dollars simulator! Go broke buying SpaceX rockets, luxury islands, or gambling in the Cyber Casino.">
   <meta name="keywords" content="spend elon musk's money, spend elon money, spend elons money, spend elon musk money game, elon musk simulator, spend elon musk net worth, elon musk money game, spend 1 trillion dollars, spend one trillion dollars, spend 1 trillion game, spend bill gates money, spend jeff bezos money, billionaire money spender, money spending simulator, play elon musk money game, spend elons money game, neal fun elon musk, billionaire simulator game, cyberpunk shopping game, abhinav gupta, ansh vaish">
   
   <!-- SEO Canonical URL (Important for subdomains to pass authority correctly) -->
@@ -1428,6 +1428,7 @@
       var cardEl = document.getElementById('level-card-' + lvl);
       if (cardEl) cardEl.classList.add('active');
       renderLevelRules();
+      if (typeof AutoSEOEngine !== 'undefined') AutoSEOEngine.update();
     };
 
     window.togglePassiveIncome = function() {
@@ -1444,6 +1445,7 @@
       var overlay = document.getElementById('level-overlay');
       if (overlay) overlay.classList.add('hide');
       window.clearAll();
+      if (typeof AutoSEOEngine !== 'undefined') AutoSEOEngine.update();
     };
 
     window.openLevelSelector = function() {
@@ -1456,6 +1458,16 @@
       var cb = document.getElementById('passive-income-checkbox');
       if (cb) cb.checked = passiveIncomeEnabled;
       window.selectLevelCard(selectedLevel, selectedLevelCash, true);
+    };
+
+    // ============================================================
+    // FILTER
+    // ============================================================
+    window.filterItems = function(cat, btn) {
+      playSound('click'); activeFilter = cat;
+      var btns = document.querySelectorAll('.filter-btn'); for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+      btn.classList.add('active'); renderItems();
+      if (typeof AutoSEOEngine !== 'undefined') AutoSEOEngine.update();
     };
 
     // ============================================================
@@ -1848,7 +1860,9 @@
 
         var card = document.createElement('div');
         card.className = 'item-card' + (item.invest?' invest-card':'') + (locked?' locked-item':'');
-        card.innerHTML = trendHtml + '<div class="item-emoji">' + item.emoji + '</div><div class="item-name">' + item.name + '</div><div class="item-price" id="item-price-' + item.id + '">' + fmt(price) + '</div>' + ownedHtml + actionHtml;
+        card.setAttribute('itemscope', '');
+        card.setAttribute('itemtype', 'https://schema.org/Product');
+        card.innerHTML = trendHtml + '<div class="item-emoji" itemprop="image" aria-label="' + escapeHTML(item.name) + '">' + item.emoji + '</div><div class="item-name" itemprop="name">' + item.name + '</div><div class="item-price" id="item-price-' + item.id + '" itemprop="offers" itemscope itemtype="https://schema.org/Offer"><meta itemprop="priceCurrency" content="USD"><span itemprop="price" content="' + price + '">' + fmt(price) + '</span></div>' + ownedHtml + actionHtml;
         grid.appendChild(card);
       }
       section.appendChild(grid);
@@ -2155,11 +2169,183 @@
     }
 
     // ============================================================
+    // AUTOMATED SEO ENGINE (DYNAMIC METADATA & STRUCTURED DATA)
+    // ============================================================
+    var AutoSEOEngine = (function() {
+      var baseUrl = "https://abhinavgamer730-ops.github.io/Spendtrillions/";
+      var levelMap = {
+        1: { title: "Starter Loan ($100B Mode)", slug: "level-1-starter-loan", hash: "#level-1-starter-loan", keywords: "starter loan billionaire game, 100 billion dollars simulator, spend money game level 1" },
+        2: { title: "Billionaire Prep ($500B Mode)", slug: "level-2-billionaire-prep", hash: "#level-2-billionaire-prep", keywords: "billionaire prep simulator, 500 billion dollars game, spend billionaire wealth" },
+        3: { title: "Trillionaire Grind ($1 Trillion Mode)", slug: "level-3-trillionaire-grind", hash: "#level-3-trillionaire-grind", keywords: "spend 1 trillion dollars, spend one trillion, trillionaire grind simulator, billionaire game" },
+        4: { title: "Spend Elon Musk's Money ($5 Trillion Mode)", slug: "level-4-elon-musk", hash: "#level-4-elon-musk", keywords: "spend elon musk's money, spend elon money, spend elons money, spend elon musk net worth, elon musk simulator game, 5 trillion dollars game" }
+      };
+
+      function setMetaTag(selector, attrName, attrValue, content) {
+        var el = document.querySelector(selector);
+        if (!el) {
+          el = document.createElement('meta');
+          if (attrName === 'name') el.setAttribute('name', attrValue);
+          if (attrName === 'property') el.setAttribute('property', attrValue);
+          document.head.appendChild(el);
+        }
+        el.setAttribute('content', content);
+      }
+
+      function setCanonicalURL(url) {
+        var link = document.querySelector('link[rel="canonical"]');
+        if (!link) {
+          link = document.createElement('link');
+          link.setAttribute('rel', 'canonical');
+          document.head.appendChild(link);
+        }
+        link.setAttribute('href', url);
+      }
+
+      function updateDynamicJSONLD() {
+        var scriptId = 'auto-seo-jsonld';
+        var scriptEl = document.getElementById(scriptId);
+        if (!scriptEl) {
+          scriptEl = document.createElement('script');
+          scriptEl.type = 'application/ld+json';
+          scriptEl.id = scriptId;
+          document.head.appendChild(scriptEl);
+        }
+
+        var lvl = levelMap[selectedLevel] || levelMap[1];
+        var currentUrl = baseUrl + (lvl.hash || '');
+
+        var structuredData = [
+          {
+            "@context": "https://schema.org",
+            "@type": "VideoGame",
+            "@id": baseUrl + "#game",
+            "name": "Spend Elon Musk's Money - Spend 1 Trillion Dollars Game",
+            "alternateName": ["Spend 1 Trillion Dollars Game", "Elon Musk Net Worth Simulator", "Billionaire Wealth Spender"],
+            "description": "Play the ultimate Spend Elon Musk's Money & Spend 1 Trillion Dollars simulator! Spend Elon's $5 Trillion net worth on SpaceX rockets, superyachts, luxury islands, or gamble in the Cyber Casino.",
+            "genre": "Simulation Game",
+            "playMode": "SinglePlayer",
+            "applicationCategory": "BrowserGame",
+            "operatingSystem": "Any Web Browser",
+            "url": baseUrl,
+            "author": { "@type": "Person", "name": "Abhinav Gupta" },
+            "publisher": { "@type": "Person", "name": "Abhinav Gupta" },
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD", "availability": "https://schema.org/InStock" },
+            "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "bestRating": "5", "worstRating": "1", "ratingCount": "148" }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": baseUrl },
+              { "@type": "ListItem", "position": 2, "name": lvl.title, "item": currentUrl },
+              { "@type": "ListItem", "position": 3, "name": "Category: " + (typeof activeFilter !== 'undefined' && activeFilter ? activeFilter.toUpperCase() : "ALL"), "item": currentUrl + "-cat-" + (typeof activeFilter !== 'undefined' && activeFilter ? activeFilter : 'all') }
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "HowTo",
+            "name": "How to Spend Elon Musk's $5 Trillion Net Worth",
+            "description": "Learn how to spend Elon Musk's massive net worth in under 2 minutes using strategic purchasing and the Cyber Casino in the simulator.",
+            "step": [
+              { "@type": "HowToStep", "name": "Select Level 4", "text": "Choose Level 4 (Tech Lord - Elon Musk Mode) to unlock the $5 Trillion wallet budget." },
+              { "@type": "HowToStep", "name": "Purchase Mega Cyber Assets", "text": "Navigate to the Mega category and buy high-value items like Dyson Swarms, Lunar Colony Bases, and SpaceX Rockets." },
+              { "@type": "HowToStep", "name": "Gamble in the Wealth Decryptor Casino", "text": "Place high bets in the Cyber Casino. When security catches your intrusion, your cash bet is burned immediately." },
+              { "@type": "HowToStep", "name": "Reach Zero Balance", "text": "Liquidate all funds to hit $0 net worth and unlock your Trillionaire Victory status." }
+            ]
+          }
+        ];
+
+        scriptEl.textContent = JSON.stringify(structuredData, null, 2);
+      }
+
+      function update() {
+        var lvl = levelMap[selectedLevel] || levelMap[3];
+        var titleText = lvl.title + " - Spend 1 Trillion Dollars Game Simulator";
+        var descText = "Play " + lvl.title + "! Can you spend " + (selectedLevel === 4 ? "Elon Musk's $5 Trillion net worth" : "a $1 Trillion fortune") + " and go broke? Buy SpaceX rockets, luxury islands, or gamble in the Cyber Casino.";
+        var currentUrl = baseUrl + (lvl.hash || '');
+
+        document.title = titleText;
+        setMetaTag('meta[name="description"]', 'name', 'description', descText);
+        setMetaTag('meta[name="keywords"]', 'name', 'keywords', lvl.keywords + ", spend elon musk's money, spend 1 trillion dollars, spend bill gates money, spend jeff bezos net worth, billionaire simulator");
+
+        setMetaTag('meta[property="og:title"]', 'property', 'og:title', titleText);
+        setMetaTag('meta[property="og:description"]', 'property', 'og:description', descText);
+        setMetaTag('meta[property="og:url"]', 'property', 'og:url', currentUrl);
+
+        setMetaTag('meta[name="twitter:title"]', 'name', 'twitter:title', titleText);
+        setMetaTag('meta[name="twitter:description"]', 'name', 'twitter:description', descText);
+
+        setCanonicalURL(baseUrl);
+
+        if (window.location.hash !== lvl.hash && (!activeFilter || activeFilter === 'all')) {
+          if (history.replaceState) {
+            history.replaceState(null, null, lvl.hash);
+          }
+        }
+
+        updateDynamicJSONLD();
+      }
+
+      function parseHashRoute() {
+        var hash = window.location.hash || '';
+        for (var lvlNum in levelMap) {
+          if (hash.indexOf(levelMap[lvlNum].slug) !== -1) {
+            return parseInt(lvlNum);
+          }
+        }
+        return null;
+      }
+
+      function audit() {
+        var results = {
+          title: document.title,
+          titleLength: document.title.length,
+          titleValid: document.title.length >= 30 && document.title.length <= 70,
+          description: (document.querySelector('meta[name="description"]') || {}).content || '',
+          descriptionLength: ((document.querySelector('meta[name="description"]') || {}).content || '').length,
+          descriptionValid: ((document.querySelector('meta[name="description"]') || {}).content || '').length >= 120 && ((document.querySelector('meta[name="description"]') || {}).content || '').length <= 165,
+          canonical: (document.querySelector('link[rel="canonical"]') || {}).href || '',
+          canonicalValid: !!document.querySelector('link[rel="canonical"]'),
+          h1Count: document.querySelectorAll('h1').length,
+          h2Count: document.querySelectorAll('h2').length,
+          jsonLdScriptPresent: !!document.getElementById('auto-seo-jsonld'),
+          microdataItemsCount: document.querySelectorAll('[itemscope]').length
+        };
+        console.group('🚀 AutoSEOEngine Audit Report');
+        console.log('Document Title:', results.title, '(' + results.titleLength + ' chars) - ' + (results.titleValid ? '✅ PASS' : '⚠️ WARN'));
+        console.log('Meta Description:', results.description, '(' + results.descriptionLength + ' chars) - ' + (results.descriptionValid ? '✅ PASS' : '⚠️ WARN'));
+        console.log('Canonical URL:', results.canonical, results.canonicalValid ? '✅ PASS' : '❌ FAIL');
+        console.log('Headings Hierarchy: H1=' + results.h1Count + ', H2=' + results.h2Count + ' - ' + (results.h1Count === 1 ? '✅ PASS' : '⚠️ WARN'));
+        console.log('JSON-LD Dynamic Schemas:', results.jsonLdScriptPresent ? '✅ PASS' : '❌ FAIL');
+        console.log('Microdata Items Rendered:', results.microdataItemsCount + ' items tagged ✅');
+        console.groupEnd();
+        return results;
+      }
+
+      return {
+        update: update,
+        parseHashRoute: parseHashRoute,
+        audit: audit
+      };
+    })();
+
+    window.updateMetaTags = function() {
+      if (AutoSEOEngine && typeof AutoSEOEngine.update === 'function') {
+        AutoSEOEngine.update();
+      }
+    };
+
+    // ============================================================
     // INIT GAME
     // ============================================================
     function initGame() {
       try { var v=parseInt(localStorage.getItem('unlockedLevel')); unlockedLevel=(!isNaN(v)&&v>=1&&v<=4)?v:1; } catch(e) { unlockedLevel=1; }
-      selectedLevel=unlockedLevel;
+      var hashLvl = AutoSEOEngine.parseHashRoute();
+      if (hashLvl && hashLvl <= unlockedLevel) {
+        selectedLevel = hashLvl;
+      } else {
+        selectedLevel = unlockedLevel;
+      }
       selectedLevelCash=[0,100e9,500e9,1e12,5e12][selectedLevel]||100e9;
       TOTAL=selectedLevelCash; cash=TOTAL; balance=TOTAL;
       for (var i=0;i<ITEMS.length;i++) { if(ITEMS[i].invest){investPrices[ITEMS[i].id]=ITEMS[i].price;investTrends[ITEMS[i].id]=0;} }
@@ -2169,6 +2355,13 @@
       initTicker(); initReviews();
       setInterval(updateMarket, 3000);
       setInterval(triggerRandomEvent, 35000);
+
+      window.addEventListener('hashchange', function() {
+        var hLvl = AutoSEOEngine.parseHashRoute();
+        if (hLvl && hLvl <= unlockedLevel && hLvl !== selectedLevel) {
+          window.selectLevelCard(hLvl, [0,100e9,500e9,1e12,5e12][hLvl], true);
+        }
+      });
 
       // Sticky HUD Scroll Listener
       window.addEventListener('scroll', function() {
