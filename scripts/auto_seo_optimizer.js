@@ -21,11 +21,7 @@ function updateSitemap() {
   const currentDate = new Date().toISOString().split('T')[0];
 
   const urls = [
-    { loc: domain, priority: '1.0', changefreq: 'daily' },
-    { loc: domain + '#level-4-elon-musk', priority: '0.9', changefreq: 'daily' },
-    { loc: domain + '#level-3-trillionaire-grind', priority: '0.8', changefreq: 'weekly' },
-    { loc: domain + '#level-2-billionaire-prep', priority: '0.7', changefreq: 'weekly' },
-    { loc: domain + '#level-1-starter-loan', priority: '0.7', changefreq: 'weekly' }
+    { loc: domain, priority: '1.0', changefreq: 'daily' }
   ];
 
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
