@@ -14,16 +14,25 @@
   <!-- Google Search Console Site Verification (Paste your custom verification code in the content attribute below) -->
   <meta name="google-site-verification" content="ND2b8mHXDY2f3pzphw7XFo5_0zG5SkaSdOwfNb6gpCc" />
 
-  <!-- Google Analytics (GA4) Tag Placeholder -->
-  <!-- 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <!-- Google Analytics 4 (GA4) Integration -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX" id="ga-gtag-script"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX');
+    gtag('config', 'G-XXXXXXXXXX', { 'send_page_view': true });
+
+    // Safe Event Tracking Helper for Google Analytics (GA4)
+    window.trackGAEvent = function(eventName, eventParams) {
+      try {
+        if (typeof gtag === 'function') {
+          gtag('event', eventName, eventParams || {});
+        }
+      } catch (e) {
+        console.log('[GA4 Event]', eventName, eventParams);
+      }
+    };
   </script>
-  -->
 
   <!-- Social Sharing Meta Tags (Open Graph / Facebook) -->
   <meta property="og:title" content="Spend Elon Musk's Money - Spend 1 Trillion Dollars Game Simulator">
@@ -1429,6 +1438,7 @@
       if (cardEl) cardEl.classList.add('active');
       renderLevelRules();
       if (typeof AutoSEOEngine !== 'undefined') AutoSEOEngine.update();
+      if (typeof trackGAEvent === 'function') trackGAEvent('select_level', { level: lvl, amount: amt });
     };
 
     window.togglePassiveIncome = function() {
@@ -1446,6 +1456,7 @@
       if (overlay) overlay.classList.add('hide');
       window.clearAll();
       if (typeof AutoSEOEngine !== 'undefined') AutoSEOEngine.update();
+      if (typeof trackGAEvent === 'function') trackGAEvent('game_start', { level: selectedLevel, budget: TOTAL });
     };
 
     window.openLevelSelector = function() {
@@ -1468,6 +1479,7 @@
       var btns = document.querySelectorAll('.filter-btn'); for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
       btn.classList.add('active'); renderItems();
       if (typeof AutoSEOEngine !== 'undefined') AutoSEOEngine.update();
+      if (typeof trackGAEvent === 'function') trackGAEvent('select_category', { category: cat });
     };
 
     // ============================================================
@@ -1614,6 +1626,7 @@
           rBox.innerHTML = '⚠️ <b>BET LOST (VICTORY)!</b> Firewall burned your bet of <b>-' + fmt(betVal) + '</b>! (Yes!)';
           transactionLog.push({ emoji:'🚨', name:'Federal Firewall Cash Burn', amount:-betVal });
           showToast('-' + fmt(betVal) + ' burned! 🍾');
+          if (typeof trackGAEvent === 'function') trackGAEvent('casino_bet', { bet_amount: betVal, outcome: 'burn_success' });
         } else {
           consecutiveBurns = 0; playSound('winnings'); var winnings = betVal * 2; cash += winnings;
           spawnCashParticle(true, fmt(winnings));
@@ -1623,6 +1636,7 @@
             : '💸 <b>BET WON (DEFEAT)!</b> Bypassed security and stole <b>+' + fmt(winnings) + '</b>! (Noooo!)';
           transactionLog.push({ emoji:'💸', name:'Bank Hack Loot', amount:winnings });
           showToast('+' + fmt(winnings) + ' added! 😭');
+          if (typeof trackGAEvent === 'function') trackGAEvent('casino_bet', { bet_amount: betVal, outcome: 'double_defeat' });
         }
       }
       updateWallet(); renderItems(); renderReceipt();
@@ -1769,6 +1783,7 @@
       updateWallet(); renderItems(); renderReceipt();
       spawnCashParticle(false, fmt(totalCost));
       showToast('Purchased ' + qty + 'x ' + item.name + '!');
+      if (typeof trackGAEvent === 'function') trackGAEvent('buy_item', { item_id: id, item_name: item ? item.name : id, quantity: qty, cost: totalCost });
       if (balance <= 0) window.triggerCelebration();
     };
 
@@ -1787,6 +1802,7 @@
       qtyState[id] = 1; updateWallet(); renderItems(); renderReceipt();
       spawnCashParticle(true, fmt(rev));
       showToast('Sold ' + qty + 'x ' + item.name + ' for ' + fmt(rev) + '!');
+      if (typeof trackGAEvent === 'function') trackGAEvent('sell_item', { item_id: id, item_name: item ? item.name : id, quantity: qty, revenue: rev });
     };
 
     function spawnCashParticle(isGain, amountText) {
@@ -2045,6 +2061,7 @@
       var nextBtn = document.getElementById('cel-next-btn');
       if (nextBtn) { if (selectedLevel<4) { nextBtn.style.display='flex'; nextBtn.innerText='Advance to Level '+(selectedLevel+1)+' 🚀'; } else nextBtn.style.display='none'; }
       document.getElementById('celebration-screen').classList.add('active');
+      if (typeof trackGAEvent === 'function') trackGAEvent('game_victory', { level: selectedLevel, time_seconds: timerSeconds });
       initFireworks(); resizeCanvas(); window.addEventListener('resize',resizeCanvas); if (!animationId) fireworksLoop();
     };
 
